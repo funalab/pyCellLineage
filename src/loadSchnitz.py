@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Thu, 29 Nov 2018 12:33:20 +0900
+# Last modified: Fri, 30 Nov 2018 18:46:07 +0900
 import numpy as np
 import pandas as pd
 from scipy import io
@@ -144,3 +144,4 @@ if __name__ == "__main__":
     anaPath = '/Users/itabashi/Research/Analysis'
     matPath = 'Schnitzcells/9999-99-99/488/data/488_lin.mat'
     cellDf = loadSchnitz(os.path.join(anaPath, matPath))
+    print(cellDf)

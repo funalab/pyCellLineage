@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 30 Nov 2018 17:57:05 +0900
+# Last modified: Fri, 30 Nov 2018 19:42:54 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -23,7 +23,7 @@ def create3DLineage(cellDfWP, dt, savePath, attribute):
                Schnitzcells carried out.
     dt : numeric
          An image interval. This Parameter confluence the z axis tics
-         of 3D lineage..
+         of 3D lineage.
     savePath : string
                A path in which the result images will be saved.
     attribute : string
