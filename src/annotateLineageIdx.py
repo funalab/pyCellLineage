@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 30 Nov 2018 15:04:08 +0900
+# Last modified: Sat, 01 Dec 2018 15:21:05 +0900
 from measurePhenotypes import measurePhenotypes
 
 
@@ -36,7 +36,7 @@ def annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath):
                - cellNo
                - intensity
                - area
-               - linNo
+               - linIdx
     '''
 
     cellDfWP = measurePhenotypes(matFilePath, segImgsPath, rawImgsPath)
@@ -67,7 +67,7 @@ def annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath):
             linIdx += 1
             linList.append(linIdx)
 
-    cellDfWP['linNo'] = linList
+    cellDfWP['linIdx'] = linList
 
     return cellDfWP
 
