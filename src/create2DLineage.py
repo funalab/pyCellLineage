@@ -2,14 +2,14 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 03 Dec 2018 16:21:13 +0900
+# Last modified: Mon, 03 Dec 2018 18:04:24 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 
 from createGraph import createGraph
 
 
-def create2DLineage(cellDfWP, attribute):
+def create2DLineage(cellDfWP, tLInterval=1, attr=None):
     '''
     Draw 2D lineage.
 
@@ -31,6 +31,8 @@ def create2DLineage(cellDfWP, attribute):
                 - intensity
                 - area
                 ...
+    tLInterval : numeric
+                 An interval of time lapse observation.
     attribute : string
                 A name of phenotype you want to express in the lineage.
 
@@ -45,18 +47,29 @@ def create2DLineage(cellDfWP, attribute):
         if motherID == -1:
             rootIdx.append(i)
 
-    graph, adjMat = createGraph(cellDfWPL)
+    if attr is not None:
+        maxAttr = max(cellDfWP[attr])
+        colors = {key: plt.cm.gnuplot(float(value)/float(maxAttr))
+                  for key, value in cellDfWP[attr].iteritems()}
+    else:
+        colors = {i: (0, 0, 0)
+                  for i in range(len(cellDfWP))}
+
+    graph, adjMat = createGraph(cellDfWP, attr)
     layoutRT = graph.layout_reingold_tilford(root=rootIdx)
     pos = np.array(layoutRT.coords)
+    pos[:, 1] = pos[:, 1] * tLInterval
 
-    pos[:, 1] = -pos[:, 1]
+    ax = plt.gca()
+    ax.invert_yaxis()
 
     for edge in graph.es:
         source = edge.source
         target = edge.target
         dx = [pos[source][0], pos[target][0]]
         dy = [pos[source][1], pos[target][1]]
-        plot = plt.plot(dx, dy)
+        color = colors[target]
+        plot = plt.plot(dx, dy, c=color)
 
     plt.show()
 
@@ -72,4 +85,4 @@ if __name__ == "__main__":
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
                    '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
     cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
-    create2DLineage(cellDfWPL, 'hoge')
+    create2DLineage(cellDfWPL, 10, 'area')
