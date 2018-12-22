@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 28 Nov 2018 16:16:39 +0900
+# Last modified: Wed, 12 Dec 2018 00:06:28 +0900
 import os
 from scipy import io
 
@@ -31,12 +31,14 @@ def loadMatImgs(matDirPath):
 
     imgs = list()
 
-    for matFile in matFiles:
-        matStruct = io.loadmat(os.path.join(matDirPath, matFile))
+    for matFileIdx in range(len(matFiles)):
+        matStruct = io.loadmat(os.path.join(matDirPath, matFiles[matFileIdx]))
         if 'Lc' in matStruct.keys():
             imgs.append(matStruct['Lc'])
-        else:
+        elif 'LNsub' in matStruct.keys():
             imgs.append(matStruct['LNsub'])
+        else:
+            print('Lc and LNsub do not exist in frame %d.' % matFileIdx)
 
     return imgs
 

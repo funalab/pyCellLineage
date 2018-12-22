@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 05 Dec 2018 14:27:11 +0900
+# Last modified: Fri, 07 Dec 2018 00:21:18 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -80,7 +80,7 @@ def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
     if savePath is not None:
         for angle in range(0, 360, 1):
             ax.view_init(30, angle)
-            saveFile = os.path.join(savePath, str(angle)+'.png')
+            saveFile = os.path.join(savePath, str(angle)+'.tif')
             fig.savefig(saveFile, transparent=True)
 
     return fig

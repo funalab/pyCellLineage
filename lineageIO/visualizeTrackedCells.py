@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 30 Nov 2018 17:39:32 +0900
+# Last modified: Mon, 10 Dec 2018 19:25:10 +0900
 import numpy as np
 
 from annotateLineageIdx import annotateLineageIdx
@@ -30,7 +30,7 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath):
     '''
 
     cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
-    uColList = createUniqueColorList(np.max(cellDfWPL['linNo'] + 1))
+    uColList = createUniqueColorList(np.max(cellDfWPL['linIdx'] + 1))
 
     segImgs = loadMatImgs(segImgsPath)
     imgX, imgY = segImgs[0].shape
@@ -40,12 +40,12 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath):
     cellDfWPL.sort_values(['Z', 'cellNo'])
 
     for time in range(len(segImgs)):
-        timeSpecifiedDf = cellDfWPL[cellDfWPL['Z'] == time]
+        timeSpecifiedDf = cellDfWPL[cellDfWPL['Z'] == time + 1]
         for cellIdx in range(1, max(timeSpecifiedDf['cellNo']) + 2):
             boolArr = timeSpecifiedDf['cellNo'] == cellIdx - 1
-            linNoDf = timeSpecifiedDf[boolArr]
+            linIdxDf = timeSpecifiedDf[boolArr]
             isolatedCellIdx = np.where(segImgs[time] == cellIdx)
-            color = np.array(uColList[linNoDf['linNo'].values[0]]) * 255
+            color = np.array(uColList[linIdxDf['linIdx'].values[0]]) * 255
             trackedImgs[time][isolatedCellIdx] = color
 
     return trackedImgs

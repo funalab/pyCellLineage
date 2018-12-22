@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 05 Dec 2018 14:00:30 +0900
+# Last modified: Mon, 10 Dec 2018 16:09:39 +0900
 
 
 def main():
@@ -47,9 +47,9 @@ def main():
                     sourceName = name
             sourceFile = os.path.join(sourceDir, sourceName)
             if baseName == '405' or baseName == '488':
-                targetName = base + '-g-' + '%03d' % i + '.tif'
+                targetName = base + '-g-' + '%03d' % (i + 1) + '.tif'
             else:
-                targetName = base + '-p-' + '%03d' % i + '.tif'
+                targetName = base + '-p-' + '%03d' % (i + 1) + '.tif'
             targetFile = os.path.join(targetDir, targetName)
             shutil.copy2(sourceFile, targetFile)
 

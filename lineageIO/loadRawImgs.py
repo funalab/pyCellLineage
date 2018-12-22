@@ -2,7 +2,8 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 28 Nov 2018 17:35:01 +0900
+# Last modified: Wed, 12 Dec 2018 00:35:27 +0900
+import numpy as np
 import os
 from skimage import io
 
@@ -31,7 +32,9 @@ def loadRawImgs(rawImgsPath):
     imgs = list()
 
     for f in rawImgFiles:
-        imgs.append(io.imread(os.path.join(rawImgsPath, f)))
+        img = io.imread(os.path.join(rawImgsPath, f))
+        img = np.where(img == np.infty, 0, img)
+        imgs.append(img)
 
     return imgs
 

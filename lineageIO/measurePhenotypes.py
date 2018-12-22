@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 30 Nov 2018 17:49:41 +0900
+# Last modified: Fri, 21 Dec 2018 17:50:22 +0900
 import numpy as np
 
 from loadSchnitz import loadSchnitz
@@ -43,7 +43,6 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     cellDf = loadSchnitz(matFilePath)
     segImgsList = loadMatImgs(segImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
-    rawImgsList = rawImgsList[:-1]
 
     areaList = list()
     intensityList = list()
@@ -51,8 +50,8 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     for frameIdx in range(len(segImgsList)):
         areaSubList = list()
         intensitySubList = list()
-        cellIdices = np.unique(segImgsList[frameIdx])
-        for cellIdx in cellIdices:
+        cellIndices = np.unique(segImgsList[frameIdx])
+        for cellIdx in cellIndices:
             if cellIdx != 0:  # ignore background
                 boolArr = segImgsList[frameIdx] == cellIdx
                 areaSubList.append(np.sum(boolArr))
@@ -66,7 +65,7 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     area = list()
     intens = list()
     for cellIdx in range(len(cellDf)):
-        timePoint = cellDf['Z'][cellIdx]
+        timePoint = cellDf['Z'][cellIdx] - 1
         cellNo = cellDf['cellNo'][cellIdx]
         area.append(areaList[timePoint][cellNo])
         intens.append(intensityList[timePoint][cellNo])
@@ -80,9 +79,9 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
 
 if __name__ == "__main__":
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
-                   '9999-99-99/488/data/488_lin.mat')
+                   '2018-08-28/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
-                   '9999-99-99/488/segmentation/')
+                   '2018-08-28/488/segmentation/')
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
                    '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
     cellDfWP = measurePhenotypes(matFilePath, segImgsPath, rawImgsPath)

@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 03 Dec 2018 18:04:24 +0900
+# Last modified: Wed, 05 Dec 2018 14:28:37 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 
