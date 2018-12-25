@@ -2,12 +2,16 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 21 Dec 2018 17:50:22 +0900
+# Last modified: Wed, 26 Dec 2018 00:08:25 +0900
 import numpy as np
+from skimage import measure
+from skimage import morphology
 
 from loadSchnitz import loadSchnitz
 from loadMatImgs import loadMatImgs
 from loadRawImgs import loadRawImgs
+from extractIntensity import extractIntensity
+from extractArea import extractArea
 
 
 def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
@@ -48,19 +52,13 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     intensityList = list()
     cellDfWP = cellDf.copy()
     for frameIdx in range(len(segImgsList)):
-        areaSubList = list()
-        intensitySubList = list()
         cellIndices = np.unique(segImgsList[frameIdx])
-        for cellIdx in cellIndices:
-            if cellIdx != 0:  # ignore background
-                boolArr = segImgsList[frameIdx] == cellIdx
-                areaSubList.append(np.sum(boolArr))
+        cellIndices = np.delete(cellIndices, 0)  # Ignore background
 
-                tmp = rawImgsList[frameIdx] * boolArr
-                intensitySubList.append(np.sum(tmp))
-
-        areaList.append(areaSubList)
-        intensityList.append(intensitySubList)
+        areaList.append(extractArea(segImgsList[frameIdx],
+                                    rawImgsList[frameIdx]))
+        intensityList.append(extractIntensity(segImgsList[frameIdx],
+                                              rawImgsList[frameIdx]))
 
     area = list()
     intens = list()
@@ -70,7 +68,7 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
         area.append(areaList[timePoint][cellNo])
         intens.append(intensityList[timePoint][cellNo])
 
-    cellDfWP['intensity'] = [intens[i]/area[i] for i in range(len(intens))]
+    cellDfWP['intensity'] = intens
     cellDfWP['area'] = area  # [pixel ^ 2]
     # celDfWPhenotypes['area'] = area * 0.065 ** 2 [um ^ 2]
 
@@ -79,10 +77,10 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
 
 if __name__ == "__main__":
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
-                   '2018-08-28/488/data/488_lin.mat')
+                   '2018-11-10/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
-                   '2018-08-28/488/segmentation/')
+                   '2018-11-10/488/segmentation/')
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
-                   '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
+                   '2018/11/10/ECTC/488FS/')
     cellDfWP = measurePhenotypes(matFilePath, segImgsPath, rawImgsPath)
     print(cellDfWP)
