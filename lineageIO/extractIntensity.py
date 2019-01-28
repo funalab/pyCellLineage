@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Tue, 25 Dec 2018 22:43:08 +0900
+# Last modified: Mon, 28 Jan 2019 17:17:12 +0900
 import numpy as np
 from skimage import measure
 from skimage import morphology
@@ -48,7 +48,7 @@ def extractIntensity(segImg, rawImg):
     for cellIdx in cellIndices:
         erodeMask = segImg == cellIdx
         for i in range(erodeIter):
-            erodeMask = morphology.binary_erosion(binaryCellMask,
+            erodeMask = morphology.binary_erosion(erodeMask,
                                                   selem=np.ones((3, 3)))
         area = np.sum(erodeMask)
         intensity = np.sum(rawImg * erodeMask)

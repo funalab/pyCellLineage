@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 26 Dec 2018 00:08:25 +0900
+# Last modified: Mon, 28 Jan 2019 17:17:04 +0900
 import numpy as np
 from skimage import measure
 from skimage import morphology
@@ -42,6 +42,7 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
                - Z
                - cellNo
                - intensity
+               Mean fluorescent intensity of each cell
                - area
     '''
     cellDf = loadSchnitz(matFilePath)

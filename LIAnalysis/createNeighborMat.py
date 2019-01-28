@@ -2,15 +2,13 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Sat, 22 Dec 2018 17:29:34 +0900
+# Last modified: Mon, 28 Jan 2019 16:11:28 +0900
 import numpy as np
 from skimage import measure
 from skimage import draw
 
-from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
-
-def createNeighborMat(segImgsPath):
+def createNeighborMat(segImg):
     '''
     Create a matrix which express cell proximity.
 
@@ -21,12 +19,11 @@ def createNeighborMat(segImgsPath):
 
     Returns
     -------
-    neighborMat :
+    neighborMat : numpy.ndarray
+                  A matrix which express spatial neighboor of cells
+                  in microcolony.
     '''
-
-    segLastImg = loadMatImgs(segImgsPath)[-1]
-
-    cellIndices = np.unique(segLastImg)
+    cellIndices = np.unique(segImg)
     cellIndices = np.delete(cellIndices, 0)  # ignore background
     cellWidthList = list()
     xcArray = np.array([])
@@ -35,7 +32,7 @@ def createNeighborMat(segImgsPath):
     bArray = np.array([])
     thetaArray = np.array([])
     for cellIdx in cellIndices:
-        img = np.where(segLastImg == cellIdx, cellIdx, 0)
+        img = np.where(segImg == cellIdx, cellIdx, 0)
         contour = measure.find_contours(img, 0)
 
         EllipseModel = measure.EllipseModel()
@@ -66,7 +63,7 @@ def createNeighborMat(segImgsPath):
                                     aArray[i],
                                     bArray[i],
                                     rotation=thetaArray[i])
-        imgShape = np.array(segLastImg.shape) + int(medianCellWidth) * 2
+        imgShape = np.array(segImg.shape) + int(medianCellWidth) * 2
         img = np.zeros(imgShape, dtype=bool)
         xCoor = xCoor + int(medianCellWidth)
         yCoor = yCoor + int(medianCellWidth)
@@ -89,4 +86,4 @@ if __name__ == "__main__":
                    '2018-11-10/488/segmentation/')
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
                    '2018/11/10/ECTC/488FS/')
-    createNeighborMat(segImgsPath)
+    print(createNeighborMat(segImgsPath))

@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 07 Dec 2018 00:21:18 +0900
+# Last modified: Tue, 08 Jan 2019 21:03:02 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -35,8 +35,9 @@ def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
     graph, adjMat = createGraph(cellDfWP, attr)
 
     if attr is not None:
-        maxPhe = max(cellDfWP[attr])
-        colors = {key: plt.cm.gnuplot(float(value)/float(maxPhe))
+        minPhe = float(min(cellDfWP[attr]))
+        maxPhe = float(max(cellDfWP[attr]) - minPhe)
+        colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
                   for key, value in cellDfWP[attr].iteritems()}
     else:
         colors = {i: (0, 0, 0)

@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 10 Dec 2018 19:25:10 +0900
+# Last modified: Tue, 08 Jan 2019 21:27:20 +0900
 import numpy as np
 
 from annotateLineageIdx import annotateLineageIdx
@@ -39,7 +39,9 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath):
 
     cellDfWPL.sort_values(['Z', 'cellNo'])
 
+    print(cellDfWPL)
     for time in range(len(segImgs)):
+        print(time + 1)
         timeSpecifiedDf = cellDfWPL[cellDfWPL['Z'] == time + 1]
         for cellIdx in range(1, max(timeSpecifiedDf['cellNo']) + 2):
             boolArr = timeSpecifiedDf['cellNo'] == cellIdx - 1
