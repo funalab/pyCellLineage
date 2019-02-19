@@ -2,11 +2,13 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 28 Jan 2019 19:16:23 +0900
+# Last modified: Fri, 15 Feb 2019 17:30:02 +0900
 import numpy as np
+import pandas as pd
+import tqdm
 
 
-def getIndependentLineage(cellDfWPL, attr='area'):
+def getIndependentLineage(cellDfWPL):
     '''
     Get indipendent lineage
 
@@ -15,7 +17,7 @@ def getIndependentLineage(cellDfWPL, attr='area'):
     cellDfWPL : pandas.core.frame.DataFrame
                 A pandas dataframe which includes tracking result and
                 phenotypes of each cell, lineage indices.
-    area : str
+    attr : str
            A string of objective attribute.
 
     Returns
@@ -24,18 +26,26 @@ def getIndependentLineage(cellDfWPL, attr='area'):
                   A list of lineages.
     '''
 
-    numOfLin = np.max(cellDfWPL['linIdx']) + 1
-    numOfT = np.max()
-    lineageList = list()
+    listOfLinIdx = np.unique(cellDfWPL[cellDfWPL['Z'] == np.max(cellDfWPL['Z'])]['cellNo'])
+    listOfDf = list()
 
-    for i in range(numOfLin + 1):
-        sCellDf = cellDfWPL[cellDfWPL['linIdx'] == i]
-        motherCellList = list(sCellDf['motherID'])
-        motherID = motherCellList[0]
-        mLinIdx = cellDfWPL[cellDfWPL['uID'] == motherID]['linIdx']
-        mCellDf = cellDfWPL[cellDfWPL['linIdx'] == mLinIdx]
+    for i in tqdm.tqdm(range(len(listOfLinIdx))):
+        sCellDf = cellDfWPL[cellDfWPL['Z'] == np.max(cellDfWPL['Z'])][cellDfWPL['linIdx'] == i]
+        listOfDf.append(sCellDf)
+        mID = int(sCellDf['motherID'])
+        while mID >= 0:
+            sCellDf = cellDfWPL[cellDfWPL['uID'] == mID]
+            mID = int(sCellDf['motherID'])
+            listOfDf[i] = pd.concat([sCellDf, listOfDf[i]])
+
+    return listOfDf
 
 
 if __name__ == "__main__":
-    main()
-
+    from annotateLineageIdx import annotateLineageIdx
+    matFilePath = '/Users/itabashi/Research/Analysis/Schnitzcells/2019-01-02/488/data/488_lin.mat'
+    segImgsPath = '/Users/itabashi/Research/Analysis/Schnitzcells/2019-01-02/488/segmentation/'
+    rawImgsPath = '/Users/itabashi/Research/Experiment/microscope/2019/01/02/ECTC/Pos0/488'
+    cellDf = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
+    lineageList = getIndependentLineage(cellDf, 'area')
+    print(lineageList)

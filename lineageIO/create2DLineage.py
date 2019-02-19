@@ -2,14 +2,16 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 05 Dec 2018 14:28:37 +0900
+# Last modified: Tue, 19 Feb 2019 10:28:49 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 
 from createGraph import createGraph
 
 
-def create2DLineage(cellDfWP, tLInterval=1, attr=None):
+def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
+                    attrMax=0, attrMin=0,
+                    xlabel='', ylabel='time', cmap='gnuplot'):
     '''
     Draw 2D lineage.
 
@@ -31,10 +33,18 @@ def create2DLineage(cellDfWP, tLInterval=1, attr=None):
                 - intensity
                 - area
                 ...
-    tLInterval : numeric
+    dt : numeric
                  An interval of time lapse observation.
-    attribute : string
-                A name of phenotype you want to express in the lineage.
+    attr : string
+           A name of phenotype you want to express in the lineage.
+           (e.g. area, intensity)
+    savePath : string
+               A path in which the result images will be saved.
+    attrMax : numeric
+    attrMin : numeric
+    xlabel : string
+    ylabel : string
+    cmap : string
 
     Returns
     -------
@@ -48,9 +58,15 @@ def create2DLineage(cellDfWP, tLInterval=1, attr=None):
             rootIdx.append(i)
 
     if attr is not None:
-        maxAttr = max(cellDfWP[attr])
-        colors = {key: plt.cm.gnuplot(float(value)/float(maxAttr))
-                  for key, value in cellDfWP[attr].iteritems()}
+        maxAttr = float(max(cellDfWP[attr]))
+        minAttr = float(min(cellDfWP[attr]))
+        if attrMax == 0 and attrMin == 0:
+            colors = {key: plt.cm.gnuplot(
+                      (float(value) - minAttr)/(float(maxAttr) - minAttr)
+                      ) for key, value in cellDfWP[attr].iteritems()}
+        else:
+            colors = {key: plt.cm.gnuplot(
+                      (float(value) - attrMin
     else:
         colors = {i: (0, 0, 0)
                   for i in range(len(cellDfWP))}
@@ -58,7 +74,7 @@ def create2DLineage(cellDfWP, tLInterval=1, attr=None):
     graph, adjMat = createGraph(cellDfWP, attr)
     layoutRT = graph.layout_reingold_tilford(root=rootIdx)
     pos = np.array(layoutRT.coords)
-    pos[:, 1] = pos[:, 1] * tLInterval
+    pos[:, 1] = pos[:, 1] * dt
 
     ax = plt.gca()
     ax.invert_yaxis()
@@ -70,6 +86,9 @@ def create2DLineage(cellDfWP, tLInterval=1, attr=None):
         dy = [pos[source][1], pos[target][1]]
         color = colors[target]
         plot = plt.plot(dx, dy, c=color)
+
+    if savePath is not None:
+        plt.savefig(savePath)
 
     plt.show()
 

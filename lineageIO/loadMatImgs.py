@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 12 Dec 2018 00:06:28 +0900
+# Last modified: Tue, 19 Feb 2019 13:04:39 +0900
 import os
 from scipy import io
 
@@ -38,7 +38,7 @@ def loadMatImgs(matDirPath):
         elif 'LNsub' in matStruct.keys():
             imgs.append(matStruct['LNsub'])
         else:
-            print('Lc and LNsub do not exist in frame %d.' % matFileIdx)
+            print('Lc or LNsub do not exist in frame %d.' % matFileIdx)
 
     return imgs
 

@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Wed, 26 Dec 2018 00:06:48 +0900
+# Last modified: Thu, 31 Jan 2019 06:05:51 +0900
 import numpy as np
 
 
@@ -32,7 +32,12 @@ def extractArea(segImg, pixelSize=1.0):
         binaryCellMask = segImg == cellIdx
         areaList.append(np.sum(binaryCellMask))
 
-    return areaList
+    keys = cellIndices
+    values = areaList
+    areaDict = dict(zip(keys, values))
+
+    # return areaList
+    return areaDict
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Tue, 08 Jan 2019 21:27:20 +0900
+# Last modified: Thu, 31 Jan 2019 08:16:47 +0900
 import numpy as np
 
 from annotateLineageIdx import annotateLineageIdx
@@ -10,7 +10,7 @@ from loadMatImgs import loadMatImgs
 from createUniqueColorList import createUniqueColorList
 
 
-def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath):
+def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     '''
     visualizeTrackedCells
 
@@ -29,26 +29,30 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath):
                   image labeld with lineage index.
     '''
 
-    cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
+    cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame)
     uColList = createUniqueColorList(np.max(cellDfWPL['linIdx'] + 1))
 
     segImgs = loadMatImgs(segImgsPath)
     imgX, imgY = segImgs[0].shape
-    trackedImgs = [np.zeros((imgY, imgX, 3), dtype=np.uint8)
+    trackedImgs = [np.zeros((imgX, imgY, 3), dtype=np.uint8)
                    for i in range(len(segImgs))]
 
     cellDfWPL.sort_values(['Z', 'cellNo'])
 
-    print(cellDfWPL)
     for time in range(len(segImgs)):
         print(time + 1)
         timeSpecifiedDf = cellDfWPL[cellDfWPL['Z'] == time + 1]
-        for cellIdx in range(1, max(timeSpecifiedDf['cellNo']) + 2):
-            boolArr = timeSpecifiedDf['cellNo'] == cellIdx - 1
-            linIdxDf = timeSpecifiedDf[boolArr]
-            isolatedCellIdx = np.where(segImgs[time] == cellIdx)
-            color = np.array(uColList[linIdxDf['linIdx'].values[0]]) * 255
-            trackedImgs[time][isolatedCellIdx] = color
+        boolArrtmp = cellDfWPL['Z'] == time + 1
+        if boolArrtmp.any():
+            for cellIdx in range(1, max(timeSpecifiedDf['cellNo']) + 2):
+            # for cellIdx in timeSpecifiedDf['cellNo']:
+                boolArr = timeSpecifiedDf['cellNo'] == cellIdx - 1
+                # boolArr = timeSpecifiedDf['cellNo'] == cellIdx + 1
+                if boolArr.any():
+                    linIdxDf = timeSpecifiedDf[boolArr]
+                    isolatedCellIdx = np.where(segImgs[time] == cellIdx)
+                    color = np.array(uColList[linIdxDf['linIdx'].values[0]]) * 255
+                    trackedImgs[time][isolatedCellIdx] = color
 
     return trackedImgs
 

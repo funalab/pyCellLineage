@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 28 Jan 2019 17:17:04 +0900
+# Last modified: Sun, 03 Feb 2019 14:27:40 +0900
 import numpy as np
 from skimage import measure
 from skimage import morphology
@@ -14,7 +14,7 @@ from extractIntensity import extractIntensity
 from extractArea import extractArea
 
 
-def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
+def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     '''
     Measure phenotypes(such as cell area, fluorescence intensity) of each cell.
 
@@ -25,6 +25,8 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
                   were created by Schnitzcells
     rawImgsPath : A path to direcotry which include raw images
                   which were required for Schnitzcells
+    originFrame : numeric
+                  An index of origin frame.
 
     Returns
     -------
@@ -52,10 +54,17 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     areaList = list()
     intensityList = list()
     cellDfWP = cellDf.copy()
+    # for frameIdx in range(len(segImgsList)):
+    #     cellIndices = np.unique(segImgsList[frameIdx])
+    #     cellIndices = np.delete(cellIndices, 0)  # Ignore background
+    #     areaList.append(extractArea(segImgsList[frameIdx],
+    #                                 rawImgsList[frameIdx]))
+    #     intensityList.append(extractIntensity(segImgsList[frameIdx],
+    #                                           rawImgsList[frameIdx]))
+
     for frameIdx in range(len(segImgsList)):
         cellIndices = np.unique(segImgsList[frameIdx])
         cellIndices = np.delete(cellIndices, 0)  # Ignore background
-
         areaList.append(extractArea(segImgsList[frameIdx],
                                     rawImgsList[frameIdx]))
         intensityList.append(extractIntensity(segImgsList[frameIdx],
@@ -64,10 +73,10 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath):
     area = list()
     intens = list()
     for cellIdx in range(len(cellDf)):
-        timePoint = cellDf['Z'][cellIdx] - 1
+        timePoint = cellDf['Z'][cellIdx] - originFrame
         cellNo = cellDf['cellNo'][cellIdx]
-        area.append(areaList[timePoint][cellNo])
-        intens.append(intensityList[timePoint][cellNo])
+        area.append(areaList[timePoint][cellNo + 1])
+        intens.append(intensityList[timePoint][cellNo + 1])
 
     cellDfWP['intensity'] = intens
     cellDfWP['area'] = area  # [pixel ^ 2]

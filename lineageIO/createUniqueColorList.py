@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Thu, 29 Nov 2018 15:17:24 +0900
+# Last modified: Tue, 05 Feb 2019 22:36:03 +0900
 import math
 import colorsys
 

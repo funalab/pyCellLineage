@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Tue, 08 Jan 2019 21:03:02 +0900
+# Last modified: Tue, 19 Feb 2019 08:17:14 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -11,13 +11,16 @@ import os
 from createGraph import createGraph
 
 
-def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
+def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
+                    attrMin=0, xlabel='x', ylabel='y', zlabel='time (hours)',
+                    thetaTics=1, cmap='gnuplot'
+                    ):
     '''
     Draw 3D lineage.
 
     Parameters
     ----------
-    cellDfWP : pandas DataFrame
+    cellDfWP : pandas.core.frame.DataFrame
                A DataFrame which function named convertionMatToDf returns.
                This DataFrame include the result of cell tracking
                Schnitzcells carried out.
@@ -27,6 +30,13 @@ def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
     attr : string
     savePath : string
                A path in which the result images will be saved.
+    attrMax : numeric
+    attrMin : numeric
+    xlabel : string
+    ylabel : string
+    zlabel : string
+    thetaTics : numeric
+    cmap : string
 
     Returns
     -------
@@ -37,8 +47,13 @@ def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
     if attr is not None:
         minPhe = float(min(cellDfWP[attr]))
         maxPhe = float(max(cellDfWP[attr]) - minPhe)
-        colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
-                  for key, value in cellDfWP[attr].iteritems()}
+        if attrMax == 0 and attrMin == 0:
+            colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
+                      for key, value in cellDfWP[attr].iteritems()}
+        else:
+            colors = {key: plt.cm.gnuplot((float(value) - attrMin)/attrMax)
+                      for key, value in cellDfWP[attr].iteritems()}
+
     else:
         colors = {i: (0, 0, 0)
                   for i in range(len(cellDfWP))}
@@ -71,9 +86,10 @@ def create3DLineage(cellDfWP, dt, attr=None, savePath=None):
         z = np.array((pos[source][2], pos[target][2]))
         ax.plot(x, y, z, c=colors[target], lw=2, alpha=1)
 
-    ax.set_xlabel('x', fontsize=20, labelpad=18)
-    ax.set_ylabel('y', fontsize=20, labelpad=18)
-    ax.set_zlabel('t', fontsize=20, labelpad=18)
+    ax.zaxis.set_rotate_label(False)
+    ax.set_xlabel(xlabel, fontsize=20, labelpad=18)
+    ax.set_ylabel(ylabel, fontsize=20, labelpad=18)
+    ax.set_zlabel(zlabel, fontsize=20, labelpad=18, rotation=90)
     ax.xaxis.set_tick_params(labelsize=12)
     ax.yaxis.set_tick_params(labelsize=12)
     ax.zaxis.set_tick_params(labelsize=12)

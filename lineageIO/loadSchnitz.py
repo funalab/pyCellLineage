@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Fri, 30 Nov 2018 18:46:07 +0900
+# Last modified: Sat, 02 Feb 2019 13:55:21 +0900
 import numpy as np
 import pandas as pd
 from scipy import io
@@ -47,7 +47,7 @@ def loadSchnitz(matFilePath):
                 lenOfField = len(matFile[matInfo][rowIdx])
                 for fieldIdx in range(lenOfField):
                     flattened = flattenList(matFile[matInfo][rowIdx][fieldIdx])
-                    matFile[matInfo][rowIdx][fieldIdx] = flattened
+                    matFile[matInfo][rowIdx][fieldIdx] = np.array(flattened)
 
                 tmpList.append(matFile[matInfo][rowIdx])
 
@@ -74,59 +74,62 @@ def loadSchnitz(matFilePath):
     cellNo = list()
 
     for i in range(len(tmpDf)):
-        for j in range(len(tmpDf['frames'][i])):
-            ID.append(i)
-            uID.append(uCellNum)
-            uCellNum += 1
+        if len(tmpDf['N'][i]) != 0:
+            for j in range(tmpDf['N'][i]):
+                ID.append(i)
+                uID.append(uCellNum)
+                uCellNum += 1
 
     cellDf = pd.DataFrame({'ID': np.array(ID), 'uID': np.array(uID)})
 
     # IDを順に上から見ていく
+    # lineageIdx = no. of Schnitz
     for lineageIdx in range(len(tmpDf)):
         boolList = cellDf['ID'] == lineageIdx
         uIDList = cellDf['uID'][boolList].values
         # あるIDにふくまれるframesをみる
-        for timeInsideLin in range(tmpDf['N'][lineageIdx]):
-            # annotate motherID
-            if timeInsideLin == 0:  # 見ているUIDがIDの中で一番小さいものだった場合
-                boolList = cellDf['ID'] == tmpDf['P'][lineageIdx][0]
-                if boolList.any():
-                    listOfSomeUID = cellDf['uID'][boolList].values
-                    motherID.append(listOfSomeUID[-1])
+        if len(tmpDf['frames'][lineageIdx]) != 0:
+            for timeInsideLin in range(len(tmpDf['frames'][lineageIdx])):
+                # annotate motherID
+                if timeInsideLin == 0:  # 見ているUIDがIDの中で一番小さいものだった場合
+                    boolList = cellDf['ID'] == tmpDf['P'][lineageIdx][0]
+                    if boolList.any():
+                        listOfSomeUID = cellDf['uID'][boolList].values
+                        motherID.append(listOfSomeUID[-1])
+                    else:
+                        motherID.append(-1)
                 else:
-                    motherID.append(-1)
-            else:
-                motherID.append(uIDList[timeInsideLin] - 1)
+                    motherID.append(uIDList[timeInsideLin] - 1)
 
-            # annotate daughterIDs
-            # 見ているUIDがIDの中で最も大きいものだった場合
-            if timeInsideLin == tmpDf['N'][lineageIdx] - 1:
-                boolListD1 = cellDf['ID'] == tmpDf['D'][lineageIdx][0]
-                boolListD2 = cellDf['ID'] == tmpDf['E'][lineageIdx][0]
+                # annotate daughterIDs
+                # 見ているUIDがIDの中で最も大きいものだった場合
+                if timeInsideLin == tmpDf['N'][lineageIdx] - 1:
+                    boolListD1 = cellDf['ID'] == tmpDf['D'][lineageIdx][0]
+                    boolListD2 = cellDf['ID'] == tmpDf['E'][lineageIdx][0]
 
-                if boolListD1.any():
-                    listOfSomeUID = cellDf['uID'][boolListD1].values
-                    daughter1ID.append(listOfSomeUID[0])
+                    if boolListD1.any():
+                        listOfSomeUID = cellDf['uID'][boolListD1].values
+                        daughter1ID.append(listOfSomeUID[0])
+                    else:
+                        daughter1ID.append(-1)  # 最後のタイムポイント
+
+                    if boolListD2.any():
+                        listOfSomeUID = cellDf['uID'][boolListD2].values
+                        daughter2ID.append(listOfSomeUID[0])
+                    else:
+                        daughter2ID.append(-1)  # 最後のタイムポイント
+
                 else:
-                    daughter1ID.append(-1)  # 最後のタイムポイント
+                    daughter1ID.append(uIDList[timeInsideLin] + 1)
+                    daughter2ID.append(-2)
 
-                if boolListD2.any():
-                    listOfSomeUID = cellDf['uID'][boolListD2].values
-                    daughter2ID.append(listOfSomeUID[0])
-                else:
-                    daughter2ID.append(-1)  # 最後のタイムポイント
+                # annotate coordinates
+                cenX.append(tmpDf['cenx'][lineageIdx][timeInsideLin])
+                cenY.append(tmpDf['ceny'][lineageIdx][timeInsideLin])
+                Z.append(tmpDf['frames'][lineageIdx][timeInsideLin])
 
-            else:
-                daughter1ID.append(uIDList[timeInsideLin] + 1)
-                daughter2ID.append(-2)
-
-            # annotate coordinates
-            cenX.append(tmpDf['cenx'][lineageIdx][timeInsideLin])
-            cenY.append(tmpDf['ceny'][lineageIdx][timeInsideLin])
-            Z.append(tmpDf['frames'][lineageIdx][timeInsideLin])
-
-            # annotate cell no. within a frame
-            cellNo.append(tmpDf['cellno'][lineageIdx][timeInsideLin])
+                # annotate cell no. within a frame
+                cellNo.append(tmpDf['cellno'][lineageIdx][timeInsideLin])
 
     cellDf['motherID'] = motherID
     cellDf['daughter1ID'] = daughter1ID
