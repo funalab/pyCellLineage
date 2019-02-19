@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Tue, 19 Feb 2019 10:28:49 +0900
+# Last modified: Tue, 19 Feb 2019 13:30:12 +0900
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -64,9 +64,6 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
             colors = {key: plt.cm.gnuplot(
                       (float(value) - minAttr)/(float(maxAttr) - minAttr)
                       ) for key, value in cellDfWP[attr].iteritems()}
-        else:
-            colors = {key: plt.cm.gnuplot(
-                      (float(value) - attrMin
     else:
         colors = {i: (0, 0, 0)
                   for i in range(len(cellDfWP))}
