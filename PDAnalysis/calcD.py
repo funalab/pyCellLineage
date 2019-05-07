@@ -8,7 +8,7 @@
 def calcD(cellDf, dt):
     '''
     Calculate an estimator D(t).
-    D(t) refers the of cells that divided t and dt.
+    D(t) refers to the number of cells that divided t and dt.
 
     Parameters
     ----------
