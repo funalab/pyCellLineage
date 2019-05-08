@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 # -*- coding: utf-8 -*-
 #
-# Last modified: Mon, 10 Dec 2018 16:09:39 +0900
+# Last modified: Tue, 27 Nov 2018 00:45:31 +0900
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
     sourceDir = os.path.abspath(sys.argv[1])
     fileList = glob.glob(sourceDir + '/*.tif')
     baseName = os.path.basename(sourceDir)
-
+    
     if re.search('405', baseName):
         base = '405'
     elif re.search('488', baseName):
@@ -31,27 +31,30 @@ def main():
     elif re.search('Phase', baseName):
         base = 'Phase'
     else:
-        print('the name of directory does not contain an information about laser strength.')
+        print('the name of directory does not contain an information about laser wavelength.')
         sys.exit()
 
     parentDir = os.path.dirname(sourceDir)
     targetDir = os.path.join(parentDir, baseName + 'FS')
+    fileList = sorted(glob.glob(sourceDir + '/*.tif'))
 
     if not os.path.exists(targetDir):
         os.mkdir(targetDir)
-        for i in range(0, len(fileList)):
-            sourceNameRE = 'img_%09d_' % i + base
-            # sourceNameRE = '%05d' % i
-            for name in fileList:
-                if re.search(sourceNameRE, name):
-                    sourceName = name
-            sourceFile = os.path.join(sourceDir, sourceName)
-            if baseName == '405' or baseName == '488':
-                targetName = base + '-g-' + '%03d' % (i + 1) + '.tif'
-            else:
-                targetName = base + '-p-' + '%03d' % (i + 1) + '.tif'
+    for i in range(0, len(fileList)):
+        sourceName = fileList[i]
+        sourceFile = os.path.join(sourceDir, sourceName)
+        if (base == '405' or base == '488') and i != 0:
+            targetName = base + '-g-' + '%03d' % (i+1) + '.tif'
+        # modified to duplicate last 405 488 file
+        elif base == '405' or base == '488':
+            targetName = base + '-g-' + '%03d' % (i+1) + '.tif'
             targetFile = os.path.join(targetDir, targetName)
             shutil.copy2(sourceFile, targetFile)
+            targetName = base + '-p-' + '%03d' % i + '.tif'
+        else:
+            targetName = base + '-p-' + '%03d' % (i+1) + '.tif'
+        targetFile = os.path.join(targetDir, targetName)
+        shutil.copy2(sourceFile, targetFile)
 
 
 if __name__ == "__main__":
