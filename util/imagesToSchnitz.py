@@ -50,7 +50,7 @@ def main():
             targetName = base + '-g-' + '%03d' % (i+1) + '.tif'
             targetFile = os.path.join(targetDir, targetName)
             shutil.copy2(sourceFile, targetFile)
-            targetName = base + '-p-' + '%03d' % i + '.tif'
+            targetName = base + '-p-' + '%03d' % (i+1) + '.tif'
         else:
             targetName = base + '-p-' + '%03d' % (i+1) + '.tif'
         targetFile = os.path.join(targetDir, targetName)
