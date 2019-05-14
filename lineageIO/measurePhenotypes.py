@@ -23,7 +23,7 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     matFilePath : A path to MAT files which were created by Schnitzcells
     segImgsPath : A path to directory which include segmentated images which
                   were created by Schnitzcells
-    rawImgsPath : A path to direcotry which include raw images
+    rawImgsPath : A path to directory which include raw images
                   which were required for Schnitzcells
     originFrame : numeric
                   An index of origin frame.
