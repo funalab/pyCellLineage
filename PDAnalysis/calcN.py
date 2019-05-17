@@ -34,7 +34,7 @@ def calcN(cellDf):
     '''
     N = list()
 
-    for i in range(np.max(cellDf['Z'])):
+    for i in range(np.min(cellDf['Z']), np.max(cellDf['Z'])+1):
         existingCell = cellDf[cellDf['Z'] == i]
         N.append(len(existingCell))
 

@@ -41,7 +41,6 @@ def calcL(cellDf, dt):
 
     N = calcN(cellDf)
     D = calcD(cellDf, dt)
-
     for i in range(len(N)):
         denom = math.log(float(N[i] + D[i]) / float(N[i]))
         numer = float(dt)

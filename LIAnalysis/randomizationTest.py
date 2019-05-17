@@ -6,7 +6,7 @@
 import numpy as np
 
 from createNeighborMat import createNeighborMat
-from pyLineage.lineageIO.extractIntensity import extractIntensity
+from extractIntensity import extractIntensity
 
 
 def randomizationTest(segImg, rawImg):
