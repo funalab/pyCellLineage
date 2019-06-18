@@ -56,6 +56,12 @@ def main():
         targetFile = os.path.join(targetDir, targetName)
         shutil.copy2(sourceFile, targetFile)
 
+    saveimg_dir = os.path.join(sourceDir,"saveimg")
+    segimg_dir = os.path.join(sourceDir,"seg_img")
+    if not os.path.exists(saveimg_dir):
+        os.mkdir(saveimg_dir)
+    if not os.path.exists(segimg_dir):
+        os.mkdir(segimg_dir)
 
 if __name__ == "__main__":
     main()
