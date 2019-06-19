@@ -20,12 +20,20 @@ def main():
         file_name_sntz = "seg_img/"+str(file_num_sntz) + ".tif"
         if os.path.exists(file_name_405):
             shutil.copy2(file_name_405,"macro/405.tif")#405
+            if not os.path.exists("macro/405.tif"):
+                print "Couldn't move 405!\n"
         if os.path.exists(file_name_488):
             shutil.copy2(file_name_488,"macro/488.tif")#488
+            if not os.path.exists("macro/488.tif"):
+                print "Couldn't move 488!\n"
         if os.path.exists(file_name_sntz):
-            shutil.copy2(file_name_sntz,"macro/seg.tif")#seg  
+            shutil.copy2(file_name_sntz,"macro/seg.tif")#seg
+            if not os.path.exists("macro/seg.tif"):
+                print "Couldn't move segment file!\n"
         if os.path.exists("window.roi"):
             shutil.copy2("window.roi","macro/window.roi")#window.roi
+            if not os.path.exists("macro/window.roi"):
+                print "Couldn't move roi!\n"
         else:
             print "window.roi doesn't exist something went wrong!\n"                              
     else:
