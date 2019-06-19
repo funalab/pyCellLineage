@@ -8,7 +8,7 @@ import numpy as np
 from measurePhenotypes import measurePhenotypes
 
 
-def annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame=1):
+def annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     '''
     Annotate lineage indices accorting to the result of cell tracking.
 
