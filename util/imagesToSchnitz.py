@@ -5,7 +5,7 @@
 # Last modified: Tue, 27 Nov 2018 00:45:31 +0900
 
 
-def main():
+def main(strt=0):
     import os
     import sys
     import glob
@@ -40,19 +40,19 @@ def main():
 
     if not os.path.exists(targetDir):
         os.mkdir(targetDir)
-    for i in range(0, len(fileList)):
+    for i in range(strt, len(fileList)):
         sourceName = fileList[i]
         sourceFile = os.path.join(sourceDir, sourceName)
         if (base == '405' or base == '488') and i != 0:
-            targetName = base + '-g-' + '%03d' % (i+1) + '.tif'
+            targetName = base + '-g-' + '%03d' % (i) + '.tif'
         # modified to duplicate last 405 488 file
         elif base == '405' or base == '488':
-            targetName = base + '-g-' + '%03d' % (i+1) + '.tif'
+            targetName = base + '-g-' + '%03d' % (i) + '.tif'
             targetFile = os.path.join(targetDir, targetName)
             shutil.copy2(sourceFile, targetFile)
-            targetName = base + '-p-' + '%03d' % (i+1) + '.tif'
+            targetName = base + '-p-' + '%03d' % (i) + '.tif'
         else:
-            targetName = base + '-p-' + '%03d' % (i+1) + '.tif'
+            targetName = base + '-p-' + '%03d' % (i) + '.tif'
         targetFile = os.path.join(targetDir, targetName)
         shutil.copy2(sourceFile, targetFile)
 
