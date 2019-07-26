@@ -19,9 +19,18 @@ import scipy.ndimage as ndi
 
 '''
 Create result.csv that contains all frame numbers of equally spaced apart 
-frames that have been aproved by given csv dir
+frames that have been approved by given laser image dir
+approval is given using the gui and OK/NG buttons
+(No button for redo is set yet and each time the gui starts it erases all previous csv data)
 given csv should be 
  slide_num,status
+
+result.csv should be 
+ slide_num
+
+using result.csv the program copies the slides deemed good into a new directory good_slide_dir
+ 
+
 '''
 
 
