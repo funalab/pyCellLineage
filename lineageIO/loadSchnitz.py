@@ -13,7 +13,7 @@ from flattenList import flattenList
 def loadSchnitz(matFilePath):
     '''
     Load the result of tracking done by Schnitzcells and
-    convert it into human readble dataframe.
+    convert it into human readable dataframe.
 
     Parameters
     ----------
@@ -118,7 +118,6 @@ def loadSchnitz(matFilePath):
                         daughter2ID.append(listOfSomeUID[0])
                     else:
                         daughter2ID.append(-1)  # 最後のタイムポイント
-
                 else:
                     daughter1ID.append(uIDList[timeInsideLin] + 1)
                     daughter2ID.append(-2)
