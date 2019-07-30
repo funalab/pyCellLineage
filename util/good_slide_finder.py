@@ -162,7 +162,7 @@ class ImageCheckerApp(App):
         for image in new_imgs:
             index = self.get_file_num(image)
             sm.add_widget(MainScreen(sm=sm, idx=index, img=image, csv=self.csv, itr=self.itr))
-            sm.current = 'image' + str(0)
+        sm.current = 'image' + str(self.get_file_num(new_imgs[0]))
         return sm
 
     def get_file_num(self, string):
@@ -183,16 +183,10 @@ class ImageCheckerApp(App):
         images = self.img_dir
         org_image = os.path.basename(images[0])
         itr_image = os.path.basename(images[1])
-        if org_image == "img_%09d_%s_000.tif" % (0, self.basename):
-            i = 0
-            for a in itr_image:
-                if a is not org_image[i]:
-                    if 10 > int(a) > 0:
-                        return int(a)
-                    else:
-                        print "file name is wrong"
-                        exit()
-                i = i+1
+        org_image_num = self.get_file_num(org_image)
+        itr_image_num = self.get_file_num(itr_image)
+        if itr_image_num - org_image_num > 0:
+            return itr_image_num - org_image_num
         else:
             print "Two files with the same name exist in directory"
             exit()
