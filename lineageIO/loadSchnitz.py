@@ -62,6 +62,10 @@ def loadSchnitz(matFilePath):
     tmpDf['D'] = tmpDf['D'] - 1
     tmpDf['E'] = tmpDf['E'] - 1
 
+    # fix N values with actual length of frames
+    for i in range(len(tmpDf['N'])):
+        tmpDf['N'][i] = np.array([len(tmpDf['frames'][i])])
+
     uCellNum = 0
     uID = list()
     ID = list()
