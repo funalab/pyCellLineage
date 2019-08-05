@@ -25,16 +25,6 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=1)
             DF.loc[value, 'cenX'] = (d_ID_cen[0] + m_ID_cen[0]) / 2
             DF.loc[value, 'cenY'] = (d_ID_cen[1] + m_ID_cen[1]) / 2
             prv_mode = mode
-            mode = 2
-
-    if mode == 2:
-        if prv_mode is None:
-            DF = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame)
-        bad_child = DF[DF['daughter1ID'] == -1]
-        for value in bad_child['uID']:
-            if bad_child.loc[value, 'daughter2ID'] == -1:
-                DF.loc[value, 'daughter1ID'] = -2
-                DF.loc[value, 'daughter2ID'] = -2
     return DF
 
 
