@@ -10,12 +10,12 @@ from skimage import morphology
 
 def extractIntensity(segImg, rawImg):
     '''
-    Extract intensitiy of each cell.
+    Extract intensities of each cell.
 
     Parameters
     ----------
     segImg : numpy.ndarray
-             A segmented image whch include cell masks.
+             A segmented image which include cell masks.
     rawImg : numpy.ndarray
              A raw image corresponds to segImg.
 
@@ -39,7 +39,6 @@ def extractIntensity(segImg, rawImg):
             cellWidthList.append(a)
         else:
             cellWidthList.append(b)
-
 
     medianCellWidth = np.median(cellWidthList)
     erodeIter = int(medianCellWidth / 4)
