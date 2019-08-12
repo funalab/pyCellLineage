@@ -1,9 +1,17 @@
 from annotateLineageIdx import annotateLineageIdx
 from loadMatImgs import loadMatImgs
 import os
+from loadMatImgs import loadMatImgs
+from loadRawImgs import loadRawImgs
+from extractIntensity import extractIntensity
+from PIL import Image
+from skimage import measure
+from skimage import morphology
+import operator
+import collections
 
 
-def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=1):
+def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2):
     DF = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame)
     bad_place = DF[DF['cenX'] == 0]
     prv_mode = None
@@ -24,17 +32,40 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=1)
             d_ID_cen = (d_cell['cenX'].values[0], d_cell['cenY'].values[0])
             DF.loc[value, 'cenX'] = (d_ID_cen[0] + m_ID_cen[0]) / 2
             DF.loc[value, 'cenY'] = (d_ID_cen[1] + m_ID_cen[1]) / 2
-            prv_mode = mode
     if mode == 2:  # use images to find correct centroid
-        segImgsPath = os.path.join(segImgsPath, os.listdir(segImgsPath))
-        for time_frame in bad_place['Z']:
-            target = segImgsPath[time_frame - originFrame]
-            loadMatImgs()
-
-
-
-
-    return DF
+        for value in bad_place['uID']:
+            bad_cell = bad_place[bad_place['uID'] == value]
+            time_frame = bad_cell['Z'].values[0]
+            cellNo = bad_cell['cellNo'].values[0]
+            data = loadMatImgs(segImgsPath)
+            segImg = data[time_frame + originFrame]
+            data = loadRawImgs(rawImgsPath)
+            rawImg = data[time_frame + originFrame]
+            total = {}
+            added_total = 0
+            for i in range(max(DF['Z'])):
+                cell_count = len(DF[DF['Z'] == i])
+                added_total = cell_count + added_total
+                total[i] = added_total
+            meanIntDict = extractIntensity(segImg, rawImg)
+            Intensity_ranking = sorted(meanIntDict.items(), key=lambda x: x[1])
+            Intensity_ranking = collections.OrderedDict(Intensity_ranking)
+            i = 0
+            cellIdx = None
+            for Intensity in Intensity_ranking.values():
+                if i == cellNo:
+                    cellIdx = i
+                    break
+                i = i + 1
+            binaryCellMask = segImg == cellIdx
+            contour = measure.find_contours(binaryCellMask, 0)
+            EM = measure.EllipseModel()
+            EM.estimate(contour[0])
+            xc, yc, a, b, theta = EM.params
+            DF.loc[value, 'cenX'] = xc
+            DF.loc[value, 'cenY'] = yc
+    CellDFPWL = DF
+    return CellDFWPL
 
 
 if __name__ == "__main__":
