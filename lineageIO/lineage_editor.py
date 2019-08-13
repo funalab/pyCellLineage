@@ -9,6 +9,7 @@ from skimage import measure
 from skimage import morphology
 import operator
 import collections
+import numpy as np
 
 
 def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2):
@@ -32,6 +33,7 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2)
             d_ID_cen = (d_cell['cenX'].values[0], d_cell['cenY'].values[0])
             DF.loc[value, 'cenX'] = (d_ID_cen[0] + m_ID_cen[0]) / 2
             DF.loc[value, 'cenY'] = (d_ID_cen[1] + m_ID_cen[1]) / 2
+
     if mode == 2:  # use images to find correct centroid
         for value in bad_place['uID']:
             bad_cell = bad_place[bad_place['uID'] == value]
@@ -50,21 +52,33 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2)
             meanIntDict = extractIntensity(segImg, rawImg)
             Intensity_ranking = sorted(meanIntDict.items(), key=lambda x: x[1])
             Intensity_ranking = collections.OrderedDict(Intensity_ranking)
-            i = 0
             cellIdx = None
-            for Intensity in Intensity_ranking.values():
-                if i == cellNo:
-                    cellIdx = i
-                    break
-                i = i + 1
-            binaryCellMask = segImg == cellIdx
+            Intensity = Intensity_ranking[cellNo]
+
+            binaryCellMask = segImg == cellNo
             contour = measure.find_contours(binaryCellMask, 0)
             EM = measure.EllipseModel()
             EM.estimate(contour[0])
             xc, yc, a, b, theta = EM.params
-            DF.loc[value, 'cenX'] = xc
-            DF.loc[value, 'cenY'] = yc
-    CellDFPWL = DF
+            if a < b:
+                medianCellWidth = a
+            else:
+                medianCellWidth = b
+
+            erodeMask = segImg == cellNo
+            erodeIter = int(medianCellWidth / 4)
+            for i in range(erodeIter):
+                erodeMask = morphology.binary_erosion(erodeMask,
+                                                      selem=np.ones((3, 3)))
+            area = np.sum(erodeMask)
+            intensity = np.sum(rawImg * erodeMask)
+            if Intensity == intensity/area:
+                DF.loc[value, 'cenX'] = xc
+                DF.loc[value, 'cenY'] = yc
+            else:
+                print "Can't find one"
+                exit()
+    CellDFWPL = DF
     return CellDFWPL
 
 
