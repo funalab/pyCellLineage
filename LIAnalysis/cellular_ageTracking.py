@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 
 
+unk_age = -1
+
+
 def find_distancePair(gDaughters, CellDF, mode="closest", originID=None):
     coordinates = list()
     origin_Cellxy = None
@@ -49,24 +52,34 @@ def find_cell(uID, CellDF):
     return CellDF[CellDF['uID'] == uID]
 
 
-def find_grandDaughters(cell_slice, CellDF, t=None):
+def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     gDaughter1 = None
     gDaughter2 = None
     gDaughter3 = None
     gDaughter4 = None
     gDaughters = pd.DataFrame(columns=CellDF.columns.values)
+    daughters = pd.DataFrame(columns=CellDF.columns.values)
     daughter_cell = cell_slice
-    while daughter_cell['daughter1ID'].values[0] == -2 or daughter_cell['daughter2ID'].values[0] == -2:
+    while daughter_cell['daughter2ID'].values[0] == -2:
         daughter_cell = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
-
     daughter_cell1 = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
     daughter_cell2 = find_cell(daughter_cell['daughter2ID'].values[0], CellDF)
     if not daughter_cell1.empty:
+        while daughter_cell1['daughter2ID'].values[0] == -2:
+            daughter_cell1 = find_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
+        if mode == "daughter":
+            daughters = daughters.append(daughter_cell1)
         gDaughter1 = find_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
         gDaughter2 = find_cell(daughter_cell1['daughter2ID'].values[0], CellDF)
     if not daughter_cell2.empty:
+        while daughter_cell2['daughter2ID'].values[0] == -2:
+            daughter_cell2 = find_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
+        if mode == "daughter":
+            daughters = daughters.append(daughter_cell2)
         gDaughter3 = find_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
         gDaughter4 = find_cell(daughter_cell2['daughter2ID'].values[0], CellDF)
+    if mode == "daughter":
+        return daughters
 
     if t is None:
         if gDaughter1 is not None and gDaughter2 is not None:
@@ -80,79 +93,125 @@ def find_grandDaughters(cell_slice, CellDF, t=None):
             if not not gDaughter4.empty:
                 gDaughters = gDaughters.append(gDaughter4)
     else:
-        if gDaughter1['Z'] == t:
-            gDaughters = gDaughters.append(gDaughter1)
-        if gDaughter2['Z'] == t:
-            gDaughters = gDaughters.append(gDaughter2)
-        if gDaughter3['Z'] == t:
-            gDaughters = gDaughters.append(gDaughter3)
-        if gDaughter4['Z'] == t:
-            gDaughters = gDaughters.append(gDaughter4)
+        if gDaughter1 is not None and not gDaughter1.empty:
+            if gDaughter1['Z'].values[0] == t:
+                gDaughters = gDaughters.append(gDaughter1)
+        if gDaughter2 is not None and not gDaughter2.empty:
+            if gDaughter2['Z'].values[0] == t:
+                gDaughters = gDaughters.append(gDaughter2)
+        if gDaughter3 is not None and not gDaughter3.empty:
+            if gDaughter3['Z'].values[0] == t:
+                gDaughters = gDaughters.append(gDaughter3)
+        if gDaughter4 is not None and not gDaughter4.empty:
+            if gDaughter4['Z'].values[0] == t:
+                gDaughters = gDaughters.append(gDaughter4)
     return gDaughters
 
 
 def find_parent(cell_slice, CellDF):
-    uID = cell_slice['motherID'].values[0]
-    parent = CellDF[CellDF['uID'] == uID]
-    return parent
+    mother_cell = cell_slice
+    while mother_cell['daughter2ID'].values[0] == -2:
+        tmp_cell = find_cell(mother_cell['motherID'].values[0], CellDF)
+        if tmp_cell.empty:
+            break
+        else:
+            mother_cell = tmp_cell
+    uID = mother_cell['uID'].values[0]
+    return find_cell(uID, CellDF)
 
 
-def cellular_ageTracking(CellDF):
+def fill_newcell(uID, CellDF):
+    tmp_cell = find_cell(uID, CellDF)
+    if tmp_cell['daughter1ID'].values[0] != -2 and tmp_cell['daughter2ID'].values[0] != -2:
+        return
+    elif not tmp_cell.empty:
+        parent = find_parent(tmp_cell, CellDF)
+        if not parent.empty:
+            CellDF.loc[uID, 'Age'] = parent['Age'].values[0]
+            daughters = find_grandDaughters(tmp_cell, CellDF, mode="daughters")
+            for nuID in daughters['uID']:
+                fill_newcell(nuID, CellDF)
+        return
+    else:
+        return
+
+
+def check_overlap(closest_pair, farthest_pair):
+    for cuID in closest_pair['uID']:
+        for fuID in farthest_pair['uID']:
+            if cuID == fuID:
+                return False
+    else:
+        return True
+
+
+def fill_nan_cells(CellDF):
+    tmpDF = CellDF[CellDF['Age'].isnull()]
+    for uID in tmpDF['uID']:
+        CellDF.loc[uID, 'Age'] = 10
+    return CellDF
+
+
+def cellular_ageTracking(CellDF, origin_frame=0):
     CellDF['Age'] = pd.np.nan
-    for timeinLin in range(max(CellDF['Z'])):
+    for timeinLin in range(origin_frame, max(CellDF['Z'])):
         tmpDF = CellDF[CellDF['Z'] == timeinLin]
         if timeinLin == 0:
             for uID in tmpDF['uID']:
                 tmpCell = find_cell(uID, CellDF)
-                CellDF.loc[uID, 'Age'] = pd.np.nan
+                CellDF.loc[uID, 'Age'] = unk_age
                 gDaughters = find_grandDaughters(tmpCell, CellDF)
-                print gDaughters
-                cDaughters = find_distancePair(gDaughters, CellDF)
-                for cuID in cDaughters['uID']:
-                    CellDF.loc[cuID, 'Age'] = 1
+                if gDaughters.shape[0] > 2:
+                    cDaughters = find_distancePair(gDaughters, CellDF)
+                    for cuID in cDaughters['uID']:
+                        CellDF.loc[cuID, 'Age'] = 1
         else:
-            undecided_cells = tmpDF[tmpDF['Age'] == pd.np.nan]
-            if len(undecided_cells) != 0:
+            undecided_cells = tmpDF[tmpDF['Age'].isnull()]
+            grand_daughters = pd.DataFrame(columns=CellDF.columns.values)
+            if not undecided_cells.empty:
                 for uID in undecided_cells['uID']:
                     tmpcell = find_cell(uID, CellDF)
-                    parent_cell = find_parent(tmpcell, CellDF)
-                    gParent_cell = find_parent(parent_cell, CellDF)
-                    grand_daughters = find_grandDaughters(gParent_cell, CellDF, t=timeinLin)
-                    if len(grand_daughters) == 4:
+                    if not tmpcell.empty:
+                        parent_cell = find_parent(tmpcell, CellDF)
+                        if not parent_cell.empty:
+                            gParent_cell = find_parent(parent_cell, CellDF)
+                            if not gParent_cell.empty:
+                                grand_daughters = find_grandDaughters(gParent_cell, CellDF, t=timeinLin)
+                    if grand_daughters.shape[0] == 4:
                         closest_pair = find_distancePair(grand_daughters, CellDF)
                         farthest_pair = find_distancePair(grand_daughters, CellDF, mode="farthest")
-                        # add check if no overlaps later
-                        for cuID in closest_pair['uID']:
-                            CellDF.loc[cuID, 'Age'] = 1
-                        for fuID in farthest_pair['uID']:
-                            cell = CellDF[CellDF['uID'] == fuID]
-                            parent = find_parent(cell)
-                            parent_age = parent['Age'].values[0]
-                            if parent_age != pd.np.nan:
-                                CellDF.loc[fuID, 'Age'] = parent_age + 1
-                            else:
-                                CellDF.loc[fuID, 'Age'] = pd.np.nan
-                    else:
-                        mother = None
+                        if check_overlap(closest_pair, farthest_pair):
+                            for cuID in closest_pair['uID']:
+                                CellDF.loc[cuID, 'Age'] = 1
+                            for fuID in farthest_pair['uID']:
+                                this_cell = CellDF[CellDF['uID'] == fuID]
+                                parent = find_parent(this_cell, CellDF)
+                                parent_age = parent['Age'].values[0]
+                                if parent_age != pd.np.nan:
+                                    CellDF.loc[fuID, 'Age'] = parent_age + 1
+                                else:
+                                    CellDF.loc[fuID, 'Age'] = unk_age
+                    elif grand_daughters.shape[0] == 3:
+                        motherID = None
+                        main_cell = pd.DataFrame(columns=CellDF.columns.values)
                         for uID in grand_daughters['uID']:
                             cell = find_cell(uID, CellDF)
-                            if mother != cell['motherID'].values[0] and mother is not None:
+                            if motherID is not None and motherID != cell['motherID'].values[0]:
                                 mother = cell['motherID'].values[0]
                                 main_cell = find_cell(mother, CellDF)
                                 break
-                            mother = cell['motherID'].vaues[0]
+                            motherID = cell['motherID'].values[0]
+                        print motherID
                         closest_pair = find_distancePair(grand_daughters, CellDF, originID=main_cell['uID'].values[0])
                         for cuID in closest_pair['uID']:
                             tmp_cell = find_cell(cuID, CellDF)
                             if tmp_cell['uID'].values[0] != main_cell['uID'].values[0]:
                                 CellDF.loc[cuID, 'Age'] = 1
-
-        undecided_cells = tmpDF[tmpDF['Age'] == pd.np.nan]  # fill ages for unchanging cells
-        for uID in undecided_cells['uID']:
-            tmp_cell = find_cell(uID, CellDF)
-            while tmp_cell['daughter1ID'].values[0] == -2 or tmp_cell['daughter2ID'].values[0] == -2:
-                tmp_cell = find_parent(tmp_cell, CellDF)
-            CellDF.loc[uID, 'Age'] = tmp_cell['Age'].values[0]
+                    else:
+                        CellDF.loc[uID, 'Age'] = unk_age
+        decided_cells = tmpDF[tmpDF['Age'].isnull()]
+        for uID in decided_cells['uID']:
+            fill_newcell(uID, CellDF)
     return CellDF
 
 
