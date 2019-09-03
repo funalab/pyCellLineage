@@ -212,8 +212,6 @@ def cellular_ageTracking(CellDF, origin_frame=0):
                             grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timinLin, mode="daughter")
                     else:
                         grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timeinLin, mode="daughter")
-                if not grand_daughters.empty:
-                    print grand_daughters
             if grand_daughters.shape[0] == 4:
                 closest_pair = find_distancePair(grand_daughters, CellDF)
                 farthest_pair = find_distancePair(grand_daughters, CellDF, mode="farthest")
@@ -224,7 +222,7 @@ def cellular_ageTracking(CellDF, origin_frame=0):
                         this_cell = CellDF[CellDF['uID'] == fuID]
                         parent = find_parent(this_cell, CellDF)
                         parent_age = parent['Age'].values[0]
-                        if not np.isnan(parent_age):
+                        if not math.isnan(parent_age) and parent_age != unk_age:
                             CellDF.loc[fuID, 'Age'] = parent_age + 1
                         else:
                             CellDF.loc[fuID, 'Age'] = unk_age
@@ -243,7 +241,7 @@ def cellular_ageTracking(CellDF, origin_frame=0):
                     elif guID != main_cell['uID'].values[0]:
                         parent = find_parent(find_cell(guID, CellDF), CellDF)
                         parent_age = parent['Age'].values[0]
-                        if not parent.empty:
+                        if not parent.empty and parent_age != unk_age:
                             CellDF.loc[guID, 'Age'] = parent_age + 1
                         else:
                             CellDF.loc[guID, 'Age'] = unk_age
@@ -251,7 +249,6 @@ def cellular_ageTracking(CellDF, origin_frame=0):
             elif grand_daughters.shape[0] == 2:
                 CellDF.loc[uID, 'Age'] = unk_age
             CellDF = fill_newcell(CellDF)
-    CellDF = fill_nan_cells(CellDF)
     return CellDF
 
 
