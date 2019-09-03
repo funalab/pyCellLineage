@@ -101,7 +101,7 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
         if gDaughter3 is not None and gDaughter4 is not None:
             if not gDaughter3.empty:
                 gDaughters = gDaughters.append(gDaughter3)
-            if not not gDaughter4.empty:
+            if not gDaughter4.empty:
                 gDaughters = gDaughters.append(gDaughter4)
     else:
         if gDaughter1 is not None and not gDaughter1.empty:
@@ -136,7 +136,7 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
                         break
         if gDaughter4 is not None and not gDaughter4.empty:
             if gDaughter4['Z'].values[0] <= t:
-                while gDaughter3['Z'].values[0] != t:
+                while gDaughter4['Z'].values[0] != t:
                     gDaughter4 = find_cell(gDaughter4['daughter1ID'].values[0], CellDF)
                 gDaughters = gDaughters.append(gDaughter4)
             else:
@@ -238,7 +238,7 @@ def cellular_ageTracking(CellDF, origin_frame=0):
                         this_cell = CellDF[CellDF['uID'] == fuID]
                         parent = find_parent(this_cell, CellDF)
                         parent_age = parent['Age'].values[0]
-                        if np.isnan(parent_age):
+                        if not np.isnan(parent_age):
                             CellDF.loc[fuID, 'Age'] = parent_age + 1
                         else:
                             CellDF.loc[fuID, 'Age'] = unk_age
@@ -256,8 +256,11 @@ def cellular_ageTracking(CellDF, origin_frame=0):
                             CellDF.loc[guID, 'Age'] = 1
                     elif guID != main_cell['uID'].values[0]:
                         parent = find_parent(find_cell(guID, CellDF), CellDF)
+                        parent_age = parent['Age'].values[0]
                         if not parent.empty:
-                            CellDF.loc[guID, 'Age'] = parent['Age'].values[0] + 1
+                            CellDF.loc[guID, 'Age'] = parent_age + 1
+                        else:
+                            CellDF.loc[guID, 'Age'] = unk_age
 
             elif grand_daughters.shape[0] == 2:
                 CellDF.loc[uID, 'Age'] = unk_age
