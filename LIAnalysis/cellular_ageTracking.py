@@ -104,46 +104,39 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
             if not gDaughter4.empty:
                 gDaughters = gDaughters.append(gDaughter4)
     else:
+        t = int(t)
         if gDaughter1 is not None and not gDaughter1.empty:
-            if gDaughter1['Z'].values[0] <= t:
-                while gDaughter1['Z'].values[0] != t:
-                    gDaughter1 = find_cell(gDaughter1['daughter1ID'].values[0], CellDF)
-                gDaughters = gDaughters.append(gDaughter1)
-            else:
-                for uID in daughters['uID']:
-                    if uID != gDaughter1['motherID'].values[0] and uID not in gDaughters['uID'].values:
-                        gDaughters = gDaughters.append(find_cell(uID, CellDF))
-                        break
+            if gDaughter1['Z'].values[0] > t:
+                gDaughter1 = daughter_cell1
+                while gDaughter1['Z'].values[0] > t:
+                    gDaughter1 = find_cell(gDaughter1['motherID'].values[0], CellDF)
+
+            while gDaughter1['Z'].values[0] < t:
+                gDaughter1 = find_cell(gDaughter1['daughter1ID'].values[0], CellDF)
+            gDaughters = gDaughters.append(gDaughter1)
+
         if gDaughter2 is not None and not gDaughter2.empty:
             if gDaughter2['Z'].values[0] <= t:
-                while gDaughter2['Z'].values[0] != t:
+                while gDaughter2['Z'].values[0] < t:
                     gDaughter2 = find_cell(gDaughter2['daughter1ID'].values[0], CellDF)
                 gDaughters = gDaughters.append(gDaughter2)
-            else:
-                for uID in daughters['uID']:
-                    if uID != gDaughter2['motherID'].values[0] and uID not in gDaughters['uID'].values:
-                        gDaughters = gDaughters.append(find_Cell(uID, CellDF))
-                        break
+
         if gDaughter3 is not None and not gDaughter3.empty:
-            if gDaughter3['Z'].values[0] <= t:
-                while gDaughter3['Z'].values[0] != t:
-                    gDaughter3 = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
-                gDaughters = gDaughters.append(gDaughter3)
-            else:
-                for uID in daughters['uID']:
-                    if uID != gDaughters3['motherID'].values[0] and uID not in gDaughters['uID'].values:
-                        gDaughters = gDaughters.append(find_Cell(uID, CellDF))
-                        break
+            if gDaughter3['Z'].values[0] > t:
+                gDaughter3 = daughter_cell2
+                while gDaughter3['Z'].values[0] > t:
+                    gDaughter3 = find_cell(gDaughter3['motherID'].values[0], CellDF)
+
+            while gDaughter3['Z'].values[0] < t:
+                gDaughter3 = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
+            gDaughters = gDaughters.append(gDaughter3)
+
         if gDaughter4 is not None and not gDaughter4.empty:
             if gDaughter4['Z'].values[0] <= t:
-                while gDaughter4['Z'].values[0] != t:
+                while gDaughter4['Z'].values[0] < t:
                     gDaughter4 = find_cell(gDaughter4['daughter1ID'].values[0], CellDF)
                 gDaughters = gDaughters.append(gDaughter4)
-            else:
-                for uID in daughters['uID']:
-                    if uID != gDaughters4['motherID'].values[0] and uID not in gDaughters['uID'].values:
-                        gDaughters = gDaughters.append(find_Cell(uID, CellDF))
-                        break
+
     return gDaughters
 
 
