@@ -191,7 +191,7 @@ def all_mothers(DF,CellDF):
     return all_mothers
 
 
-def cellular_ageTracking(CellDF, origin_frame=0):
+def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
     CellDF['Age'] = pd.np.nan
     for timeinLin in range(origin_frame, max(CellDF['Z'])):
         tmpDF = CellDF[CellDF['Z'] == timeinLin]
@@ -249,6 +249,8 @@ def cellular_ageTracking(CellDF, origin_frame=0):
             elif grand_daughters.shape[0] == 2:
                 CellDF.loc[uID, 'Age'] = unk_age
             CellDF = fill_newcell(CellDF)
+    if mode == "debug":
+        CellDF = fill_nan_cells(CellDF)
     return CellDF
 
 
