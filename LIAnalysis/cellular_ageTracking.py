@@ -200,6 +200,7 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
             grand_daughters = pd.DataFrame(columns=CellDF.columns.values)
             if timeinLin == 0:
                 CellDF.loc[uID, 'Age'] = unk_age
+                grand_daughters = find_grandDaughters(find_cell(uID, CellDF), CellDF, mode="daughter")
             else:
                 tmpcell = find_cell(uID, CellDF)
                 if not tmpcell.empty:
