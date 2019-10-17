@@ -75,7 +75,10 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     for cellIdx in range(len(cellDf)):
         timePoint = cellDf['Z'][cellIdx] - originFrame
         cellNo = cellDf['cellNo'][cellIdx]
-        area.append(areaList[timePoint][cellNo + 1])
+        if areaList[timePoint][cellNo + 1] is not None:
+            area.append(areaList[timePoint][cellNo + 1])
+        else:
+            area.append(np.nan)
         intens.append(intensityList[timePoint][cellNo + 1])
 
     cellDfWP['intensity'] = intens

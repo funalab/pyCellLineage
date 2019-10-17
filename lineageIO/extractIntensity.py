@@ -33,13 +33,13 @@ def extractIntensity(segImg, rawImg):
         binaryCellMask = segImg == cellIdx
         contour = measure.find_contours(binaryCellMask, 0)
         EM = measure.EllipseModel()
-        EM.estimate(contour[0])
-        xc, yc, a, b, theta = EM.params
-        if a < b:
-            cellWidthList.append(a)
-        else:
-            cellWidthList.append(b)
-
+        if EM.estimate(contour[0]):
+            xc, ayc, a, b, theta = EM.params            
+            if a < b:
+                cellWidthList.append(a)
+            else:
+                cellWidthList.append(b)
+                
     medianCellWidth = np.median(cellWidthList)
     erodeIter = int(medianCellWidth / 4)
 
