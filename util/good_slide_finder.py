@@ -228,7 +228,7 @@ def good_slide_finder(good_slide_dir, dt=30, Td=100):
     min_slide = good_slide['slide_num'].min()
     final_slides = list()
     while init_len > i:
-        itr = good_itr_find(good_slide, min_slide)
+        itr = good_itr_find(good_slide, min_slide) # add a option where instead of automatically going on to the next iteration stay on the iteration and go to next frame.
         if (itr * dt) > Td:
             min_slide = min_slide + 1
             i = i + 1
