@@ -4,6 +4,7 @@
 #
 # Last modified: Sun, 03 Feb 2019 14:27:40 +0900
 import numpy as np
+import pandas as pd
 from skimage import measure
 from skimage import morphology
 
@@ -13,8 +14,22 @@ from loadRawImgs import loadRawImgs
 from extractIntensity import extractIntensity
 from extractArea import extractArea
 
+def atp(intens, atp_path):
+    atp = list()
+    atp_df = pd.read_csv(atp_path)
+    emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
+    d = float(atp_df[atp_df['parameter'] == 'd']['value'])
+    EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
+    for inten in intens:
+        if float(inten) < d:
+            atp.append(0)
+        elif float(inten) > emax:
+            atp.append(((emax-d)/emax*((EC50)**2))/(1-((emax-d)/emax))**0.5)
+        else:
+            atp.append((((float(inten)-d)/emax*((EC50)**2))/(1-((float(inten)-d)/emax)))**0.5)
+    return atp
 
-def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
+def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path="~/git/pyLineage/lineageIO/atp_calib.csv"):
     '''
     Measure phenotypes(such as cell area, fluorescence intensity) of each cell.
 
@@ -61,12 +76,10 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     #                                 rawImgsList[frameIdx]))
     #     intensityList.append(extractIntensity(segImgsList[frameIdx],
     #                                           rawImgsList[frameIdx]))
-
-    for frameIdx in range(len(segImgsList)):
+    for frameIdx in range(originFrame,len(segImgsList)):
         cellIndices = np.unique(segImgsList[frameIdx])
         cellIndices = np.delete(cellIndices, 0)  # Ignore background
-        areaList.append(extractArea(segImgsList[frameIdx],
-                                    rawImgsList[frameIdx]))
+        areaList.append(extractArea(segImgsList[frameIdx]))
         intensityList.append(extractIntensity(segImgsList[frameIdx],
                                               rawImgsList[frameIdx]))
 
@@ -75,16 +88,15 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     for cellIdx in range(len(cellDf)):
         timePoint = cellDf['Z'][cellIdx] - originFrame
         cellNo = cellDf['cellNo'][cellIdx]
-        if areaList[timePoint][cellNo + 1] is not None:
-            area.append(areaList[timePoint][cellNo + 1])
-        else:
-            area.append(np.nan)
-        intens.append(intensityList[timePoint][cellNo + 1])
+        area.append(areaList[timePoint][cellNo])
+        intens.append(intensityList[timePoint][cellNo])
 
     cellDfWP['intensity'] = intens
     cellDfWP['area'] = area  # [pixel ^ 2]
     # celDfWPhenotypes['area'] = area * 0.065 ** 2 [um ^ 2]
 
+    # add ATP column
+    cellDfWP['ATP'] = atp(intens,atp_path)
     return cellDfWP
 
 
