@@ -104,35 +104,51 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     else:
         t = int(t)
         if gDaughter1 is not None and not gDaughter1.empty:
-            if gDaughter1['Z'].values[0] > t:
+            if int(gDaughter1['Z']) > t:
                 gDaughter1 = daughter_cell1
-                while gDaughter1['Z'].values[0] > t:
+                while int(gDaughter1['Z']) > t:
                     gDaughter1 = find_cell(gDaughter1['motherID'].values[0], CellDF)
-
-            while gDaughter1['Z'].values[0] < t:
-                gDaughter1 = find_cell(gDaughter1['daughter1ID'].values[0], CellDF)
+            while int(gDaughter1['Z']) <= t:
+                tmp = find_cell(gDaughter1['daughter1ID'].values[0], CellDF)
+                if tmp is not None and not tmp.empty:
+                    gDaughter1 = tmp
+                else:
+                    break
             gDaughters = gDaughters.append(gDaughter1)
 
         if gDaughter2 is not None and not gDaughter2.empty:
             if gDaughter2['Z'].values[0] <= t:
-                while gDaughter2['Z'].values[0] < t:
-                    gDaughter2 = find_cell(gDaughter2['daughter1ID'].values[0], CellDF)
+                while int(gDaughter2['Z']) < t:
+                    tmp = find_cell(gDaughter2['daughter1ID'].values[0], CellDF)
+                    if tmp is not None and not tmp.empty:
+                        gDaughter2 = tmp
+                    else:
+                        break
                 gDaughters = gDaughters.append(gDaughter2)
 
         if gDaughter3 is not None and not gDaughter3.empty:
             if gDaughter3['Z'].values[0] > t:
                 gDaughter3 = daughter_cell2
-                while gDaughter3['Z'].values[0] > t:
+                while int(gDaughter3['Z']) > t:
                     gDaughter3 = find_cell(gDaughter3['motherID'].values[0], CellDF)
 
-            while gDaughter3['Z'].values[0] < t:
-                gDaughter3 = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
+
+            while int(gDaughter3['Z']) <= t:
+                tmp = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
+                if tmp is not None and not tmp.empty:
+                    gDaughter3 = tmp
+                else:
+                    break
             gDaughters = gDaughters.append(gDaughter3)
 
         if gDaughter4 is not None and not gDaughter4.empty:
             if gDaughter4['Z'].values[0] <= t:
-                while gDaughter4['Z'].values[0] < t:
-                    gDaughter4 = find_cell(gDaughter4['daughter1ID'].values[0], CellDF)
+                while int(gDaughter4['Z']) < t:
+                    tmp = find_cell(gDaughter4['daughter1ID'].values[0], CellDF)
+                    if tmp is not None and not tmp.empty:
+                        gDaughter4 = tmp
+                    else:
+                        break
                 gDaughters = gDaughters.append(gDaughter4)
 
     return gDaughters
