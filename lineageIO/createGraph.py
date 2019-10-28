@@ -25,9 +25,9 @@ def createGraph(cellDf, attr=None):
     graph.add_vertices(len(cellDf))
 
     for i in range(len(cellDf)):
-        if cellDf['daughter1ID'][i] > 0:
+        if cellDf['daughter1ID'][i] > 0 and graph.neighborhood_size(vertices=cellDf['daughter1ID'][i]) < 4:
             graph.add_edge(cellDf['uID'][i], cellDf['daughter1ID'][i])
-        if cellDf['daughter2ID'][i] > 0:
+        if cellDf['daughter2ID'][i] > 0 and graph.neighborhood_size(vertices=cellDf['daughter2ID'][i]) < 4:
             graph.add_edge(cellDf['uID'][i], cellDf['daughter2ID'][i])
 
     adjMat = np.array(list(graph.get_adjacency()))

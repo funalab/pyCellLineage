@@ -54,7 +54,8 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
     rootIdx = list()
     for i in range(len(cellDfWP)):
         motherID = cellDfWP['motherID'][i]
-        if motherID == -1:
+        z = cellDfWP['Z'][i]
+        if motherID == -1 and Z == 0:
             rootIdx.append(i)
 
     if attr is not None:
