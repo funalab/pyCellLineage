@@ -28,16 +28,21 @@ def getIndependentLineage(cellDfWPL):
 
     listOfLinIdx = np.unique(cellDfWPL[cellDfWPL['Z'] == np.max(cellDfWPL['Z'])]['cellNo'])
     listOfDf = list()
-
-    for i in tqdm.tqdm(range(len(listOfLinIdx))):
-        sCellDf = cellDfWPL[cellDfWPL['Z'] == np.max(cellDfWPL['Z'])][cellDfWPL['linIdx'] == i]
-        listOfDf.append(sCellDf)
-        mID = int(sCellDf['motherID'])
-        while mID >= 0:
-            sCellDf = cellDfWPL[cellDfWPL['uID'] == mID]
+    missed = 0
+    i = 0
+    lastCellDf = cellDfWPL[cellDfWPL['Z'] == np.max(cellDfWPL['Z'])]
+    for sCell_id in lastCellDf['uID']:
+        sCellDf = cellDfWPL[cellDfWPL['uID']==int(sCell_id)]
+        if sCellDf is not None:
+            listOfDf.append(sCellDf)
             mID = int(sCellDf['motherID'])
-            listOfDf[i] = pd.concat([sCellDf, listOfDf[i]])
-
+            while mID >= 0:
+                sCellDf = cellDfWPL[cellDfWPL['uID'] == mID]
+                mID = int(sCellDf['motherID'])
+                listOfDf[i-missed] = pd.concat([sCellDf, listOfDf[i-missed]])
+        else:
+            missed = missed + 1
+        i = i+1           
     return listOfDf
 
 
