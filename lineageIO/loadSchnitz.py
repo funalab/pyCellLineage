@@ -62,6 +62,8 @@ def loadSchnitz(matFilePath):
     tmpDf['D'] = tmpDf['D'] - 1
     tmpDf['E'] = tmpDf['E'] - 1
 
+    # use only approved frames
+    #tmpDf = tmpDf[tmpDf['approved']==1]
     # fix N values with actual length of frames
     for i in range(len(tmpDf['N'])):
         tmpDf['N'][i] = np.array([len(tmpDf['frames'][i])])
@@ -141,6 +143,7 @@ def loadSchnitz(matFilePath):
     cellDf['cenY'] = cenY
     cellDf['Z'] = Z
     cellDf['cellNo'] = cellNo
+    #cellDf=cellDf.sort_values('Z')
 
     return cellDf
 

@@ -8,7 +8,7 @@ from skimage import measure
 from skimage import morphology
 
 
-def extractIntensity(segImg, rawImg):
+def extractIntensity(segImg, rawImg, originFrame=0):
     '''
     Extract intensities of each cell.
 
@@ -47,7 +47,7 @@ def extractIntensity(segImg, rawImg):
     meanIntList = list()
     for cellIdx in cellIndices:
         erodeMask = segImg == cellIdx
-        # print(cellIdx, erodeMask.shape)
+        #  print(cellIdx, erodeMask.shape)
         for i in range(erodeIter):
             erodeMask = morphology.binary_erosion(erodeMask,
                                                   selem=np.ones((3, 3)))
@@ -55,7 +55,7 @@ def extractIntensity(segImg, rawImg):
         intensity = np.sum(rawImg * erodeMask)
         meanIntList.append(intensity / area)
 
-    keys = cellIndices
+    keys = cellIndices - 1
     values = meanIntList
     meanIntDict = dict(zip(keys, values))
 

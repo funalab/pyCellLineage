@@ -6,7 +6,7 @@
 import numpy as np
 
 
-def extractArea(segImg, pixelSize=1.0):
+def extractArea(segImg, pixelSize=1.0, originFrame=0):
     '''
     Extract area of each cell.
 
@@ -31,8 +31,9 @@ def extractArea(segImg, pixelSize=1.0):
     for cellIdx in cellIndices:
         binaryCellMask = segImg == cellIdx
         areaList.append(np.sum(binaryCellMask))
+        # print np.sum(binaryCellMask), cellIdx
 
-    keys = cellIndices
+    keys = cellIndices - 1 
     values = areaList
     areaDict = dict(zip(keys, values))
 
