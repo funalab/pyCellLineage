@@ -80,6 +80,66 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2,
             else:
                 print "Can't find one"
                 sys.exit()
+    if mode==3:
+        for value in DF['uID']:
+            cell = DF[DF['uID'] == value]
+            m_ID = cell['motherID'].values[0]
+            d_ID = cell['daughter1ID'].values[0]
+
+            d_cell = DF[DF['uID'] == d_ID]
+            if m_ID == -1:
+                m_cell = d_cell
+            else:
+                m_cell = DF[DF['uID'] == m_ID]
+                if d_ID == -2:
+                    d_cell = m_cell
+            m_ID_cen = (m_cell['cenX'].values[0], m_cell['cenY'].values[0])
+            d_ID_cen = (d_cell['cenX'].values[0], d_cell['cenY'].values[0])
+            if (DF.loc[value, 'cenX'] - (d_ID_cen[0] + m_ID_cen[0])/2) > 400 or DF.loc[value,'cenX'] == np.nan:
+                bad_cell = DF[DF['uID'] == value]
+                time_frame = bad_cell['Z'].values[0]
+                cellNo = bad_cell['cellNo'].values[0]
+                data = loadMatImgs(segImgsPath)
+                segImg = data[time_frame + originFrame]
+                data = loadRawImgs(rawImgsPath)
+                rawImg = data[time_frame + originFrame]
+                total = {}
+                added_total = 0
+                for i in range(max(DF['Z'])):
+                    cell_count = len(DF[DF['Z'] == i])
+                    added_total = cell_count + added_total
+                    total[i] = added_total
+                meanIntDict = extractIntensity(segImg, rawImg)
+                Intensity_ranking = sorted(meanIntDict.items(), key=lambda x: x[1])
+                Intensity_ranking = collections.OrderedDict(Intensity_ranking)
+                cellIdx = None
+                Intensity = Intensity_ranking[cellNo]
+                
+                binaryCellMask = segImg == cellNo
+                contour = measure.find_contours(binaryCellMask, 0)
+                EM = measure.EllipseModel()
+                EM.estimate(contour[0])
+                xc, yc, a, b, theta = EM.params
+                if a < b:
+                    medianCellWidth = a
+                else:
+                    medianCellWidth = b
+                    
+                erodeMask = segImg == cellNo
+                erodeIter = int(medianCellWidth / 4)
+                for i in range(erodeIter):
+                    erodeMask = morphology.binary_erosion(erodeMask,
+                                                          selem=np.ones((3, 3)))
+                area = np.sum(erodeMask)
+                intensity = np.sum(rawImg * erodeMask)
+                if Intensity == intensity/area:
+                    DF.loc[value, 'cenX'] = xc
+                    DF.loc[value, 'cenY'] = yc
+                else:
+                    print "Can't find one"
+                    sys.exit()
+            
+
     CellDFWPL = DF
     return CellDFWPL
 
