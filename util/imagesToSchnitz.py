@@ -30,6 +30,8 @@ def main(strt=0):
         base = 'BF'
     elif re.search('Phase', baseName):
         base = 'Phase'
+    elif re.search('Ratio',baseName):
+        base = '405'
     else:
         print('the name of directory does not contain an information about laser wavelength.')
         sys.exit()
