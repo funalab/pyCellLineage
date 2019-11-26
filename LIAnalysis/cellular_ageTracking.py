@@ -297,6 +297,4 @@ if __name__ == "__main__":
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
                    '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
     cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
-    cellular_ageTracking(cellDfWPL)
-
-
+    cellDfWPL = cellular_ageTracking(cellDfWPL)
