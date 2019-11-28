@@ -17,10 +17,10 @@ def short_lineage(Df,thr=3):
     for value in range(len(Df)):
         if value not in Df['uID'].unique():
             prevalue = value
-            print "pre-"+str(value)
+            #print "pre-"+str(value)
             while value not in Df['uID'].unique():
                 value = value+1
-            print "post-"+str(value)
+            #print "post-"+str(value)
             Df = Df.replace(to_replace=int(value),value=int(prevalue))
     Df = Df.reset_index(drop=True)
     return Df
