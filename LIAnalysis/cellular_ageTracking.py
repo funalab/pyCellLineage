@@ -3,16 +3,18 @@ import numpy as np
 import math
 
 unk_age = -1
+nan_age = 10
 
 
 def find_distancePair(gDaughters, CellDF, mode="closest", originID=None):
     coordinates = list()
     origin_Cellxy = list()
     for uID in gDaughters['uID']:
-        tmp_cell = find_cell(uID, CellDF)
-        coordinates.append((tmp_cell['uID'].values[0], tmp_cell['cenX'].values[0], tmp_cell['cenY'].values[0]))
+        if uID != unk_age:
+            tmp_cell = find_cell(uID, CellDF)
+            coordinates.append((tmp_cell['uID'].values[0], tmp_cell['cenX'].values[0], tmp_cell['cenY'].values[0]))
     least_distance = (-3, -3, float('inf'))
-    greatest_distance = (-3, -3, -1)
+    greatest_distance = (-3, -3, -float('inf'))
 
     if originID is not None:
         origin_cell = find_cell(originID, CellDF)
@@ -148,8 +150,6 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
                     else:
                         break
 
-
-
             while int(gDaughter3['Z']) <= t:
                 tmp = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
                 if tmp is not None and not tmp.empty:
@@ -187,11 +187,14 @@ def find_parent(cell_slice, CellDF):
 def fill_newcell(CellDF):
     for uID in CellDF['uID']:
         tmpCell = find_cell(uID, CellDF)
-        if not math.isnan(tmpCell['Age'].values[0]):
+        if not tmpCell.empty and not math.isnan(tmpCell['Age'].values[0]):
             while tmpCell['daughter2ID'].values[0] == -2:
                 duID = tmpCell['daughter1ID'].values[0]
-                CellDF.loc[duID, 'Age'] = tmpCell['Age'].values[0]
+                if duID != unk_age:
+                    CellDF.loc[duID, 'Age'] = tmpCell['Age'].values[0]
                 tmpCell = find_cell(duID, CellDF)
+                if tmpCell.empty:
+                    break
     return CellDF
 
 
@@ -207,7 +210,7 @@ def check_overlap(closest_pair, farthest_pair):
 def fill_nan_cells(CellDF):
     tmpDF = CellDF[CellDF['Age'].isnull()]
     for uID in tmpDF['uID']:
-        CellDF.loc[uID, 'Age'] = 10
+        CellDF.loc[uID, 'Age'] = nan_age
     return CellDF
 
 
@@ -232,7 +235,9 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
         for uID in tmpDF['uID']:
             grand_daughters = pd.DataFrame(columns=CellDF.columns.values)
             if timeinLin == 0:
-                CellDF.loc[uID, 'Age'] = unk_age
+                if uID != unk_age:
+                    #print uID
+                    CellDF.loc[uID, 'Age'] = unk_age
                 grand_daughters = find_grandDaughters(find_cell(uID, CellDF), CellDF, mode="daughter")
             else:
                 tmpcell = find_cell(uID, CellDF)
@@ -243,7 +248,7 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
                         if not gParent_cell.empty:
                             grand_daughters = find_grandDaughters(gParent_cell, CellDF, t=timeinLin)
                         else:
-                            grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timinLin, mode="daughter")
+                            grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timeinLin, mode="daughter")
                     else:
                         grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timeinLin, mode="daughter")
             if grand_daughters.shape[0] == 4:
@@ -258,7 +263,8 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
                         parent_age = parent['Age'].values[0]
                         if not math.isnan(parent_age) and parent_age != unk_age:
                             CellDF.loc[fuID, 'Age'] = parent_age + 1
-                        else:
+                        elif fuID != unk_age:
+                            #print fuID
                             CellDF.loc[fuID, 'Age'] = unk_age
 
             elif grand_daughters.shape[0] == 3:
@@ -277,10 +283,11 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
                         parent_age = parent['Age'].values[0]
                         if not parent.empty and parent_age != unk_age:
                             CellDF.loc[guID, 'Age'] = parent_age + 1
-                        else:
+                        elif guID != unk_age:
+                            #print guID
                             CellDF.loc[guID, 'Age'] = unk_age
 
-            elif grand_daughters.shape[0] == 2:
+            elif grand_daughters.shape[0] == 2 and uID != unk_age:
                 CellDF.loc[uID, 'Age'] = unk_age
             CellDF = fill_newcell(CellDF)
     if mode == "debug":
