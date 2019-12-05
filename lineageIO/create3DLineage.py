@@ -13,7 +13,8 @@ from createGraph import createGraph
 
 def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
                     attrMin=0, xlabel='x', ylabel='y', zlabel='time (hours)',
-                    thetaTics=1, cmap='gnuplot'
+                    thetaTics=1, cmap='gnuplot',
+                    lim=None
                     ):
     '''
     Draw 3D lineage.
@@ -37,6 +38,8 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     zlabel : string
     thetaTics : numeric
     cmap : string
+    lim : list
+     list with (x,y,z) coordinates
 
     Returns
     -------
@@ -93,6 +96,10 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     ax.xaxis.set_tick_params(labelsize=12)
     ax.yaxis.set_tick_params(labelsize=12)
     ax.zaxis.set_tick_params(labelsize=12)
+    if lim is not None and len(lim) == 3:
+        ax.set_xlim(0,lim[0])
+        ax.set_ylim(0,lim[1])
+        ax.set_zlim(0,lim[2])
 
     if savePath is not None:
         for angle in range(0, 360, 1):
