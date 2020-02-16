@@ -220,8 +220,17 @@ def good_itr_find(data, min_slide):
             i = min_slide
     return j
 
+def mode_skip(good_slide):
+    final_slides = list()
+    for i in range(len(good_slide['slide_num'])):
+        if good_slide.iloc[i]['status'] == 1:
+            final_slides.append(str(final_slides[-1]))
+        else:
+            final_slides.append(str(good_slide.iloc[i]['slide_num']))
+    return final_slides
 
-def good_slide_finder(good_slide_dir, dt=30, Td=100):
+def good_slide_finder(good_slide_dir, dt=30, Td=100,mode="skip"):
+    print "Started to find good slide..."
     good_slide = pd.read_csv(good_slide_dir)
     i = 0
     init_len = len(good_slide['slide_num'])
@@ -239,6 +248,8 @@ def good_slide_finder(good_slide_dir, dt=30, Td=100):
                 final_slides.append(str(good_slide.iloc[slide]['slide_num']))
                 slide = slide + x
             break
+    if mode == "skip":    
+        final_slides = mode_skip(good_slide)
     final_result = '\n'.join(final_slides)
     with open(path.join(str(path.split(good_slide_dir)[0]), 'result.csv'), 'w') as f:
         f.write('slide_num\n')
