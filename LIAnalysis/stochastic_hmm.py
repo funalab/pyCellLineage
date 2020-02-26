@@ -30,8 +30,12 @@ def write_Class(CellDF,target,save_dir):
         df.to_csv(os.path.join(save_dir,str(counter)+".csv"))
         counter = counter + 1
 
-def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None):
+def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=None):
     CellDF['ATP_Class'] = pd.np.nan
+    if hname == None:
+        hname = "high_atp"
+    if lname == None:
+        lname = "low_atp"
     if thr == None:
         avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
     else:
@@ -40,9 +44,9 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None):
     class_list = list()
     for uid in range(origin_frame,len(CellDF['ATP'])):
         if float(CellDF['ATP'][uid]) <= avg_atp:
-            class_list.append("low_atp")
+            class_list.append(lname)
         else:
-            class_list.append("high_atp")
+            class_list.append(hname)
     CellDF['ATP_Class'] = class_list
     if save_dir != None:
         write_Class(CellDF,'ATP_Class',save_dir)
