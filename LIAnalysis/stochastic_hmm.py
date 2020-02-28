@@ -1,8 +1,33 @@
 """
 Author: Joel Nakatani
 Overview:
+write_Class:
+ writes CellDF 'target' class in csv files ordered in numbers by lineage.
+ All csvs are created as '#.csv' with label ATP_Class.
+ Parameters:
+  CellDF: Cell Data Frame
+  target: target of Data Frame (ATP_Class,Rand_Class)
+  save_dir: save directory for created csvs.
 
-Parameters:
+hmm_prep:
+ sorts ATP DF into high low classes.
+ uses mean of lineage tree by default.
+ writes to ATP_Class.
+ Parameters:
+  CellDF: Cell Data Frame
+  save_dir: save directory if none write_class will not be used (default None)
+  origin_frame: start of frames (default 0) 
+  thr: threshold to separate ATP conc to two class if None the average of the whole tree will be used
+  hname: name of Class expressing higher than thr (default None)
+  lname: name of Class expressing lower than thr (default None)
+
+hmm_randomize:
+ randomize all ATP within lineage tree.
+ writes to Rand_Class.
+ Parameters:
+  CellDF: Cell Data Frame
+  save_dir: uses dir to save lineages using write_class creates random dir within given dir (default None)
+  origin_frame: start of frames (default 0) 
 """
 
 import scipy.signal as sp
