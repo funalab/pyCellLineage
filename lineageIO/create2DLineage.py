@@ -59,6 +59,27 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
             rootIdx.append(i)
 
     if attr is not None:
+        unique_attr = list(set(cellDfWP[attr]))
+        if type(unique_attr[1])==str :
+            conv_attr = "conv_" + str(attr)
+            cnt = 0
+            total_dict = dict()
+            legend = dict()
+            for unique in unique_attr:
+                print unique
+                uid_list = list(cellDfWP[cellDfWP[attr] == unique]['uID'])
+                total_dict.update(zip(uid_list,np.repeat(cnt,len(uid_list))))
+                cnt = cnt + 1
+                legend.update({unique:cnt})
+            print total_dict
+            cellDfWP[conv_attr]=list(total_dict.values())
+            if savePath is not None:
+                df = pd.DataFrame.from_dict(legend, orient="index")
+                df.to_csv(os.path.join(savePath,"legend.csv"))
+            else:
+                print legend
+                print cellDfWP
+            attr = conv_attr
         maxAttr = float(max(cellDfWP[attr]))
         minAttr = float(min(cellDfWP[attr]))
         colors = {key: plt.cm.gnuplot(

@@ -97,7 +97,30 @@ def hmm_randomize(CellDF, save_dir=None, origin_frame=0):
 #            lineage['Rand_Class'] = rand_class
     return CellDF
 
-
+def read_states(CellDF,read_dir):
+    file_names = sorted(os.path.dirlist(read_dir))
+    file_names = filter(lambda x: "csv" in x,file_names)
+    dict_fname = zip(range(len(file_names)),file_names)
+    i = 0
+    dict_states = dict()
+    for lineage in getIndependentLineage(CellDF):
+        hstates = list(pd.read_csv(dict_fname[i]))
+        ids = list(lineage['fuID'])
+        if len(hstates) == len(ids):
+            dict_states.update(zip(ids,hstates))
+        else:
+            print "Error"
+            exit()
+        i = i + 1
+    all_states = list(dict_states.values())
+    if len(all_states) == len(CellDF):
+        CellDF["States"] = all_states
+    else:
+        CellDF["States"] = pd.np.nan
+        print "Error in Total State size"
+        exit()
+    return CellDF
+        
 if __name__ == "__main__":
     from annotateLineageIdx import annotateLineageIdx
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
