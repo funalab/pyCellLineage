@@ -1,12 +1,16 @@
 # coding: utf-8
 import os
 from datetime import datetime
+"""
+Made to automatically print first line for schnitzcells
+copy and paste to matlab command line
+rootDir for schnitzcells is set to saveimg by default
+"""
 
-
-def initschnitz(present_path):
+def initschnitz(present_path,rootDirName="saveimg"):
     _405FS = os.path.join(present_path, "405FS")
     _488FS = os.path.join(present_path, "488FS")
-    saveimg = os.path.join(present_path, "saveimg")
+    saveimg = os.path.join(present_path, rootDir)
     if os.path.exists(_405FS) or os.path.exists(_488FS):
         if os.path.exists(_405FS):
             imageDir = os.path.abspath(_405FS)
