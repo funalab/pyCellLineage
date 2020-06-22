@@ -8,7 +8,7 @@ from skimage import measure
 from skimage import morphology
 
 
-def extractIntensity(segImg, rawImg, originFrame=0):
+def extractIntensity(segImg, rawImg, originFrame=0, erodeLen = 4):
     '''
     Extract intensities of each cell.
 
@@ -41,7 +41,7 @@ def extractIntensity(segImg, rawImg, originFrame=0):
                 cellWidthList.append(b)
                 
     medianCellWidth = np.median(cellWidthList)
-    erodeIter = int(medianCellWidth / 4)
+    erodeIter = int(medianCellWidth / erodeLen)
 
     # Extract mean fluorescent intensity only over the central area of the cell
     meanIntList = list()
