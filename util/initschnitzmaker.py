@@ -7,7 +7,7 @@ copy and paste to matlab command line
 rootDir for schnitzcells is set to saveimg by default
 """
 
-def initschnitz(present_path,rootDirName="saveimg"):
+def initschnitz(present_path,rootDir="saveimg"):
     _405FS = os.path.join(present_path, "405FS")
     _488FS = os.path.join(present_path, "488FS")
     saveimg = os.path.join(present_path, rootDir)
