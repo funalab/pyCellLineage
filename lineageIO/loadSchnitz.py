@@ -144,7 +144,11 @@ def loadSchnitz(matFilePath):
     cellDf['Z'] = Z
     cellDf['cellNo'] = cellNo
     #cellDf=cellDf.sort_values('Z')
-
+    #fixed bug in schnitzcells where cellNo is weird when there is a division on the last frame
+    last_cells = cellDf.loc[cellDf['Z']==max(cellDf['Z'])].loc[cellDf['daughter1ID']!=-1]['uID']
+    for uID in last_cells:
+            cellDf.loc[uID,'daughter1ID'] = -1
+            cellDf.loc[uID,'daughter2ID'] = -1
     return cellDf
 
 
