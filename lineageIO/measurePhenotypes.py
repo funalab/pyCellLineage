@@ -14,13 +14,13 @@ from loadRawImgs import loadRawImgs
 from extractIntensity import extractIntensity
 from extractArea import extractArea
 
-def atp(intens, atp_path):
+def atp(intenList, atp_path):
     atp = list()
     atp_df = pd.read_csv(atp_path)
     emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
     d = float(atp_df[atp_df['parameter'] == 'd']['value'])
     EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
-    for inten in intens:
+    for inten in intenList:
         if float(inten) < d:
             atp.append(0)
         elif float(inten) > emax:
@@ -29,7 +29,7 @@ def atp(intens, atp_path):
             atp.append((((float(inten)-d)/emax*((EC50)**2))/(1-((float(inten)-d)/emax)))**0.5)
     return atp
 
-def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path="~/git/pyLineage/lineageIO/atp_calib.csv"):
+def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path="./atp_calib.csv"):
     '''
     Measure phenotypes(such as cell area, fluorescence intensity) of each cell.
 
