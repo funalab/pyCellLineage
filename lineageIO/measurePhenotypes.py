@@ -8,27 +8,14 @@ import pandas as pd
 from skimage import measure
 from skimage import morphology
 
-from loadSchnitz import loadSchnitz
-from loadMatImgs import loadMatImgs
-from loadRawImgs import loadRawImgs
-from extractIntensity import extractIntensity
-from extractArea import extractArea
+from pyLineage.lineageIO.loadSchnitz import loadSchnitz
+from pyLineage.lineageIO.loadMatImgs import loadMatImgs
+from pyLineage.lineageIO.loadRawImgs import loadRawImgs
+from pyLineage.lineageIO.extractIntensity import extractIntensity
+from pyLineage.lineageIO.extractArea import extractArea
+from pyLineage.lineageIO.atpCalib import atpCalib
 
 
-def atp(intenList, atp_path):
-    atp = list()
-    atp_df = pd.read_csv(atp_path)
-    emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
-    d = float(atp_df[atp_df['parameter'] == 'd']['value'])
-    EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
-    for inten in intenList:
-        if float(inten) < d:
-            atp.append(0)
-        elif float(inten) > emax:
-            atp.append(((emax-d)/emax*((EC50)**2))/(1-((emax-d)/emax))**0.5)
-        else:
-            atp.append((((float(inten)-d)/emax*((EC50)**2))/(1-((float(inten)-d)/emax)))**0.5)
-    return atp
 
 def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path="~/git/pyLineage/lineageIO/atp_calib.csv"):
     '''
@@ -103,7 +90,19 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_p
     # celDfWPhenotypes['area'] = area * 0.065 ** 2 [um ^ 2]
 
     # add ATP column
-    cellDfWP['ATP'] = atp(intens,atp_path)
+    atp = list()
+    atp_df = pd.read_csv(atp_path)
+    emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
+    d = float(atp_df[atp_df['parameter'] == 'd']['value'])
+    EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
+    
+    for inten in intenList:
+        atp.append(atpCalib(inten,
+                            emax=emax,
+                            d=d,
+                            EC50=EC50))
+
+    cellDfWP['ATP'] = atp
     return cellDfWP
 
 
