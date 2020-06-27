@@ -31,7 +31,7 @@ def write_ATPChange(CellDF,save_dir):
         return
 
     
-def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=35):
+def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None):
     GPR_chg = pd.read_csv(csvPath, header=1)
     GPR_chg = GPR_chg.T[1:]
     GPR_chg.index = GPR_chg.index.astype(np.float64)
