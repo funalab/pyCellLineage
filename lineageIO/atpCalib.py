@@ -16,6 +16,6 @@ def atpCalib(intensity, emax=None, d=None, EC50=None, atp_path=None):
     if float(intensity) < d:
         return 0
     elif float(intensity) > emax:
-        return ((emax-d)/emax*((EC50)**2)) / (1-((emax-d)/emax))**0.5
+        return (((emax-d)/emax*((EC50)**2)) / (1-((emax-d)/emax)))**0.5
     else:
-        return ((float(intensity)-d)/emax*((EC50)**2))/(1-((float(intensity)-d)/emax)))**0.5
+        return (((float(intensity)-d)/emax*((EC50)**2))/(1-((float(intensity)-d)/emax)))**0.5
