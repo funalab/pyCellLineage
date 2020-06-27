@@ -10,7 +10,7 @@ from createGraph import createGraph
 
 
 def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
-                    attrMax=0, attrMin=0,
+                    attrMax=0, attrMin=0, ylim=None,
                     xlabel='', ylabel='time', cmap='gnuplot'):
     '''
     Draw 2D lineage.
@@ -94,6 +94,9 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
     pos = np.array(layoutRT.coords)
     pos[:, 1] = pos[:, 1] * dt
 
+    if ylim is not None:
+        plt.ylim(0,ylim)
+
     ax = plt.gca()
     ax.invert_yaxis()
 
@@ -104,7 +107,6 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
         dy = [pos[source][1], pos[target][1]]
         color = colors[target]
         plot = plt.plot(dx, dy, c=color)
-
     if savePath is not None:
         plt.savefig(savePath)
 
