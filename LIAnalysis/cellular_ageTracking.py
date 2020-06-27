@@ -1,10 +1,27 @@
 import pandas as pd
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 unk_age = -1
 nan_age = 10
 
+def drawAgeFig(CellDF,saveDir=None,ageMax=None,atpMax=None):
+    Age = CellDF[CellDF != pd.isnull(CellDF)][CellDF['Age']!= -1]
+    Age = Age[Age['Z']==max(Age['Z'])]
+    plt.scatter(Age['Age'],Age['ATP'])
+    plt.xlabel('Age')
+    plt.ylabel('ATP mM')
+    if ageMax is None:
+       ageMax =  max(Age['Age']) + 1
+    if atpMax is None:
+        atpMax = max(Age['ATP']) + 1
+    plt.xlim(0,ageMax)
+    plt.ylim(0,atpMax)
+    if saveDir != None:
+        plt.savefig(os.path.join(saveDir,"Age.png"))
+    else:
+        plt.show()
 
 def find_distancePair(gDaughters, CellDF, mode="closest", originID=None):
     coordinates = list()
