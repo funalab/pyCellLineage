@@ -64,7 +64,6 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
         lname = "low_atp"
     if thr == None:
         avgList = list()
-        print max(CellDF['Z'])
         for i in range(origin_frame,max(CellDF['Z'])+1):
             timeframeATP = CellDF[CellDF['Z']==i]['ATP'].dropna()
             avgList.append(sum(timeframeATP)/len(timeframeATP))
