@@ -96,7 +96,7 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_p
     d = float(atp_df[atp_df['parameter'] == 'd']['value'])
     EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
     
-    for inten in intenList:
+    for inten in intens:
         atp.append(atpCalib(inten,
                             emax=emax,
                             d=d,
