@@ -57,19 +57,29 @@ def write_Class(CellDF,target,save_dir):
 
 def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=None):
     CellDF['ATP_Class'] = pd.np.nan
+    avgList = None
     if hname == None:
         hname = "high_atp"
     if lname == None:
         lname = "low_atp"
     if thr == None:
+        avgList = list()
+        print max(CellDF['Z'])
+        for i in range(origin_frame,max(CellDF['Z'])+1):
+            timeframeATP = CellDF[CellDF['Z']==i]['ATP'].dropna()
+            avgList.append(sum(timeframeATP)/len(timeframeATP))
+    elif thr == 'All_avg':
         avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
-    if thr == 'Median':
+    elif thr == 'Median':
         avg_atp = CellDF['ATP'].median()
     else:
         avg_atp = thr
-        
+    
     class_list = list()
     for uid in range(origin_frame,len(CellDF['ATP'])):
+        if avgList != None:
+            time = int(CellDF[CellDF['uID']==uid]['Z']) - origin_frame
+            avg_atp = avgList[time]
         if float(CellDF['ATP'][uid]) <= avg_atp:
             class_list.append(lname)
         else:
