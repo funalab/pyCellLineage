@@ -63,6 +63,8 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
         lname = "low_atp"
     if thr == None:
         avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
+    if thr == 'Median':
+        avg_atp = CellDF['ATP'].median()
     else:
         avg_atp = thr
         
