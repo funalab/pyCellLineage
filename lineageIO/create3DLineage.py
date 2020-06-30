@@ -51,11 +51,27 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
         minPhe = float(min(cellDfWP[attr]))
         maxPhe = float(max(cellDfWP[attr]) - minPhe)
         if attrMax == 0 and attrMin == 0:
-            colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
-                      for key, value in cellDfWP[attr].iteritems()}
+            if cmap== 'gnuplot':
+                colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
+                          for key, value in cellDfWP[attr].iteritems()}
+            elif cmap == 'bwr':
+                colors = {key: plt.cm.bwr((float(value) - minPhe)/maxPhe)
+                          for key, value in cellDfWP[attr].iteritems()}
+            else:
+                print "add color map to code"
+                sys.exit(-1)
+
         else:
-            colors = {key: plt.cm.gnuplot((float(value) - attrMin)/attrMax)
+            if cmap == 'gnuplot':
+                colors = {key: plt.cm.gnuplot((float(value) - attrMin)/attrMax)
                       for key, value in cellDfWP[attr].iteritems()}
+            elif cmap == 'bwr':
+                colors = {key: plt.cm.bwr((float(value) - attrMin)/attrMax)
+                      for key, value in cellDfWP[attr].iteritems()}
+            else:
+                print "add color map to code"
+                sys.exit(-1)
+                
 
     else:
         colors = {i: (0, 0, 0)
@@ -102,6 +118,8 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
         ax.set_zlim(0,lim[2])
 
     if savePath is not None:
+        if not os.path.isdir(savePath):
+            os.mkdir(savePath)
         for angle in range(0, 360, 1):
             ax.view_init(30, angle)
             saveFile = os.path.join(savePath, str(angle)+'.tif')

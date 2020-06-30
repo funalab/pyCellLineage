@@ -4,6 +4,7 @@
 #
 # Last modified: Tue, 19 Feb 2019 13:32:52 +0900
 import numpy as np
+import sys
 import matplotlib.pyplot as plt
 
 from createGraph import createGraph
@@ -82,9 +83,18 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
             attr = conv_attr
         maxAttr = float(max(cellDfWP[attr]))
         minAttr = float(min(cellDfWP[attr]))
-        colors = {key: plt.cm.gnuplot(
-                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
-                 ) for key, value in cellDfWP[attr].iteritems()}
+        if cmap == 'bwr':
+            colors = {key: plt.cm.bwr(
+                (float(value) - minAttr)/(float(maxAttr) - minAttr)
+            ) for key, value in cellDfWP[attr].iteritems()}
+
+        elif cmap == 'gnuplot':
+            colors = {key: plt.cm.gnuplot(
+                (float(value) - minAttr)/(float(maxAttr) - minAttr)
+            ) for key, value in cellDfWP[attr].iteritems()}
+        else:
+            print "add color map to code"
+            sys.exit(-1)
     else:
         colors = {i: (0, 0, 0)
                   for i in range(len(cellDfWP))}
