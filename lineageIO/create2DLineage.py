@@ -11,7 +11,7 @@ from createGraph import createGraph
 
 
 def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
-                    attrMax=0, attrMin=0, ylim=None,
+                    attrMax=0, attrMin=0, ylim=None,show=True,
                     xlabel='', ylabel='time', cmap='gnuplot'):
     '''
     Draw 2D lineage.
@@ -119,8 +119,8 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
         plot = plt.plot(dx, dy, c=color)
     if savePath is not None:
         plt.savefig(savePath)
-
-    plt.show()
+    if show:
+        plt.show()
 
     return plot
 
