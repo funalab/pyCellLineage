@@ -63,10 +63,10 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
 
         else:
             if cmap == 'gnuplot':
-                colors = {key: plt.cm.gnuplot((float(value) - attrMin)/attrMax)
-                      for key, value in cellDfWP[attr].iteritems()}
+                colors = {key: plt.cm.gnuplot((float(value) - attrMin)/(float(attrMax)-attrMin))
+                          for key, value in cellDfWP[attr].iteritems()}
             elif cmap == 'bwr':
-                colors = {key: plt.cm.bwr((float(value) - attrMin)/attrMax)
+                colors = {key: plt.cm.bwr((float(value) - attrMin)/(float(attrMax)-attrMin))
                       for key, value in cellDfWP[attr].iteritems()}
             else:
                 print "add color map to code"
