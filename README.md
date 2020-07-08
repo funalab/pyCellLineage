@@ -2,18 +2,18 @@
 ***
 Used to create lineage of schnitzCell Data
 Has three Main directories,
-- LIAnalysis
+- LIAnalysis  
   Mainly used for analysing the lineage for cellular age and oscillation.
   It also prepares data for stochastic HMM Analysis and GPR.
   
-- PDAnalysis
+- PDAnalysis  
   Mainly used for analysis on doubling time and cell size.
 
-- lineageIO
+- lineageIO  
   Mainly used to create a custom Dataframe reading the schnitzcell lin.mat data.
   It can also load Ratio Imgs to calculate ATP concentration.
   Once the Dataframe has been created it can either plot 2D, 3D lineage renderations or create histograms of each time point.
-  Visualize Lineages also makes it possible for segmented images to show tracked information.
+  Visualize Lineages also makes it possible for segmented images to show tracked information.  
 
 The above main three directories are part of the pyLineage Module,
 but the util directory also contains python or zsh programs that are useful in extracting schnitzcell prepared images from raw images,
