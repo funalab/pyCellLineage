@@ -10,6 +10,7 @@ from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
 from pyLineage.LIAnalysis.fftAnalysis import write_ATPChange
 from pyLineage.LIAnalysis.cellular_ageTracking import cellular_ageTracking
 from pyLineage.lineageIO.createHist import createHistMovie
+from pyLineage.lineageIO.createHist import createHist
 from pyLineage.LIAnalysis.cellular_ageTracking import drawAgeFig
 from pyLineage.LIAnalysis.fftAnalysis import plot_IndiLine
 from pyLineage.lineageIO.lineage_editor import lineage_editor
@@ -25,29 +26,39 @@ import sys
 
 
 # Magic Numbers
-atpMax = 15
+atpMax = 10
 genMax = 35
-debug = True
+debug = False
 
-def Total_ATP():
-    totalDF = None
+def Total_ATP(cellDFWP,cond,num):
+    totalDF = cellDFWP
+    samples[cond][num] = False
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
-                if totalDF == None:
-                    totalDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])
-                else:
-                    CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
-                    totalDF = pd.concat([totalDF,CellDF])
+                paths = path_prep(samplePath[cond][num])
+                CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
+                totalDF = pd.concat([totalDF,CellDF])
     return totalDF
 
 
-def Analysis_all(path,mode,atpMax=None,genMax=None):
+def Analysis_all(path,cond,num,mode,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
     #parent of path
     saveDir = str('/'.join(os.path.abspath(path).split('/')[0:-1-0]))
+
+    #Make Hist    
+    if mode['Analysis']['hist']['normal']:
+        saveDir_hist = os.path.join(saveDir,'Hist/')
+        createHistMovie(cellDFWP,atpMax=atpMax,saveDir=saveDir_hist)
+    elif mode['Analysis']['hist']['totalATP']:
+        totalDF = Total_ATP(cellDFWP,cond,num)
+        saveDir_hist = os.path.join(saveDir,'totalATP_Hist/')
+        createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
+        sys.exit(0)
+    
     #make lineage
     if mode['lineage']['save']:
         savePathLin = os.path.join(saveDir,"lineage.pdf")
@@ -115,15 +126,6 @@ def Analysis_all(path,mode,atpMax=None,genMax=None):
             cellDFWP = pd.read_csv(savePath)
         drawAgeFig(cellDFWP,saveDir=saveDir,atpMax=atpMax)
         
-    #Make Hist    
-    if mode['Analysis']['hist']['normal']:
-        saveDir_hist = os.path.join(saveDir,'Hist/')
-        createHistMovie(cellDFWP,atpMax=atpMax,saveDir=saveDir_hist)
-    elif mode['Analysis']['hist']['totalATP']:
-        totalDF = totalATP()
-        saveDir_hist = os.path.join(saveDir,'totalATP_Hist/')
-        createHist(totalDFWP,atpMax=atpMax,saveDir=saveDir_hist)
-        sys.exit(0)
 
 
 # ## Default Params
@@ -162,9 +164,12 @@ if __name__ == "__main__":
         print windows.getMode()
         print windows.getSamples()
         sys.exit(0)
+    conditions = windows.getConditions()
+    samples = windows.getSamples()
+    mode = windows.getMode()
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
                 print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
-                Analysis_all(samplePath[cond][num],mode,atpMax=atpMax,genMax=genMax)
+                Analysis_all(samplePath[cond][num],cond,num,mode,atpMax=atpMax,genMax=genMax)
 

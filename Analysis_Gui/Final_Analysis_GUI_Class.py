@@ -157,7 +157,7 @@ class sampleButton(GridLayout):
         for cond in self.conditions:
             self.add_widget(Label(text=cond))
             counter = 0
-            for sample in self.samples[cond]:
+            for sample in sorted(self.samples[cond]):
                 if counter != 0:
                     self.add_widget(Label(text=""))
                 self.add_widget(Label(text=sample))
