@@ -22,13 +22,13 @@ def initschnitz(present_path,rootDir="saveimg"):
         if not os.path.exists(saveimg):
             os.mkdir(saveimg)
         rootDir = os.path.abspath(saveimg)
-        print "p = initschnitz(\'%s\',..." %(basename)
-        print "\'%s\',..."%(datetime.today().strftime('%Y-%m-%d'))
-        print "\'e.coli\',..."
-        print "\'rootDir\',\'%s\',..."%(rootDir)
-        print "\'imageDir\',\'%s\')"%(imageDir)
+        print("p = initschnitz(\'%s\',..." %(basename))
+        print("\'%s\',..."%(datetime.today().strftime('%Y-%m-%d')))
+        print("\'e.coli\',...")
+        print("\'rootDir\',\'%s\',..."%(rootDir))
+        print("\'imageDir\',\'%s\')"%(imageDir))
     else:
-        print "Go to Directory prepared for schnitz\n"
+        print("Go to Directory prepared for schnitz\n")
 
 
 if __name__ == "__main__":

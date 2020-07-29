@@ -5,8 +5,8 @@
 # Last modified: Sat, 01 Dec 2018 22:34:11 +0900
 import math
 
-from calcNa import calcNa
-from calcDa import calcDa
+from .calcNa import calcNa
+from .calcDa import calcDa
 
 
 def calcb(cellDfWPL, dt):

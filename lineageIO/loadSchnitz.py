@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from scipy import io
 
-from flattenList import flattenList
+from .flattenList import flattenList
 
 
 def loadSchnitz(matFilePath):

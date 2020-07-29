@@ -5,8 +5,8 @@
 # Last modified: Sat, 01 Dec 2018 13:47:56 +0900
 import math
 
-from calcN import calcN
-from calcD import calcD
+from .calcN import calcN
+from .calcD import calcD
 
 
 def calcL(cellDf, dt):

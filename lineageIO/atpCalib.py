@@ -6,10 +6,10 @@ import os
 def atpCalib(intensity, emax=None, d=None, EC50=None, atp_path=None):
     if emax is None or d is None or EC50 is None:
         if atp_path is None or not os.path.isfile(atp_path):
-            print "Must Provide correct Path to atp_calib.csv"
+            print("Must Provide correct Path to atp_calib.csv")
             sys.exit(-1)
         else:
-            print "reading from " + atp_path + "\n Extracting new values..."
+            print("reading from " + atp_path + "\n Extracting new values...")
             atp_df = pd.read_csv(atp_path)
             emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
             d = float(atp_df[atp_df['parameter'] == 'd']['value'])

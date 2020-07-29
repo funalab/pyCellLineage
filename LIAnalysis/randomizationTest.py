@@ -5,7 +5,7 @@
 # Last modified: Wed, 26 Dec 2018 17:31:50 +0900
 import numpy as np
 
-from createNeighborMat import createNeighborMat
+from .createNeighborMat import createNeighborMat
 from extractIntensity import extractIntensity
 
 

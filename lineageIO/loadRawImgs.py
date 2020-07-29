@@ -43,4 +43,4 @@ if __name__ == "__main__":
     micPath = '/Users/itabashi/Research/Experiment/microscope/'
     rawPath = '2018/08/28/ECTC_8/Pos0/forAnalysis/488'
     imgs = loadRawImgs(os.path.join(micPath, rawPath))
-    print(imgs[0])
+    print((imgs[0]))

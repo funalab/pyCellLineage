@@ -53,7 +53,7 @@ def createDTList(cellDfWPL):
 
 
 if __name__ == "__main__":
-    from annotateLineageIdx import annotateLineageIdx
+    from .annotateLineageIdx import annotateLineageIdx
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '9999-99-99/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'

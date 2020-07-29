@@ -5,7 +5,7 @@
 # Last modified: Mon, 18 Feb 2019 22:33:09 +0900
 import numpy as np
 
-from measurePhenotypes import measurePhenotypes
+from .measurePhenotypes import measurePhenotypes
 
 
 def annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame=0):

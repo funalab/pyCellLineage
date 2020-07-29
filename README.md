@@ -37,7 +37,7 @@ The last directory is used for GUI Analysis.
 
 
 ## requirements
-- python 2.7
+- python 3.7
 - numpy : 1.15.2
 - pandas : 0.23.4
 - matplotlib : 2.2.3

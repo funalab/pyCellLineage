@@ -5,7 +5,7 @@
 # Last modified: Sat, 01 Dec 2018 14:21:55 +0900
 import math
 
-from calcLp import calcLp
+from .calcLp import calcLp
 
 
 def calcTd(cellDf, dt):

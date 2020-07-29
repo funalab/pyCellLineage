@@ -77,9 +77,9 @@ class ButtonScreen(BoxLayout):
         good_slide_csv = self.csv_dir
         if self.img_index == 0:
             if not path.isfile(good_slide_csv):
-                print "created good_slide.csv"
+                print("created good_slide.csv")
             else:
-                print "Found good_slide.csv, Renewed it"
+                print("Found good_slide.csv, Renewed it")
             with open(good_slide_csv, mode='w') as f:
                 f.write('slide_num,status\n')
         # fill in missing slides with bad nums
@@ -87,9 +87,9 @@ class ButtonScreen(BoxLayout):
             csv = pd.read_csv(good_slide_csv)
             num_of_previous = csv['slide_num'].max()
             if self.img_index - num_of_previous > self.itr:
-                print "Adding status for missing image"
+                print("Adding status for missing image")
                 i = num_of_previous
-                print "\tfilling in " + str(i + self.itr)
+                print("\tfilling in " + str(i + self.itr))
                 while i + self.itr < self.img_index:
                     i = i + self.itr
                     with open(good_slide_csv, mode='a') as f:
@@ -153,7 +153,7 @@ class ImageCheckerApp(App):
             if path.isfile(abs_image_dir):
                 new_imgs.append(abs_image_dir)
         if len(new_imgs) == 0:
-            print "something went wrong can't find image "
+            print("something went wrong can't find image ")
             exit()
         self.csv = good_slide_csv
         self.img_dir = new_imgs
@@ -175,7 +175,7 @@ class ImageCheckerApp(App):
                         end_num = string[str_num:].index(b) + str_num
                         return int(string[str_num:end_num])
         else:
-            print "Wrong file name %s" % string
+            print("Wrong file name %s" % string)
             exit()
         return None
 
@@ -188,7 +188,7 @@ class ImageCheckerApp(App):
         if itr_image_num - org_image_num > 0:
             return itr_image_num - org_image_num
         else:
-            print "Two files with the same name exist in directory"
+            print("Two files with the same name exist in directory")
             exit()
         return None
 
@@ -203,7 +203,7 @@ def laser_dir_checker(present_path):
         if path.isdir(_488_dir):
             target_dir = _488_dir
         else:
-            print "Not image directory"
+            print("Not image directory")
             exit()
     return target_dir
 
@@ -230,7 +230,7 @@ def mode_skip(good_slide):
     return final_slides
 
 def good_slide_finder(good_slide_dir, dt=30, Td=100,mode="skip"):
-    print "Started to find good slide..."
+    print("Started to find good slide...")
     good_slide = pd.read_csv(good_slide_dir)
     i = 0
     init_len = len(good_slide['slide_num'])
@@ -254,7 +254,7 @@ def good_slide_finder(good_slide_dir, dt=30, Td=100,mode="skip"):
     with open(path.join(str(path.split(good_slide_dir)[0]), 'result.csv'), 'w') as f:
         f.write('slide_num\n')
         f.write(final_result)
-    print "created result.csv"
+    print("created result.csv")
 
 
 def csv_dir_finder(present_csv_dir):
@@ -265,12 +265,12 @@ def csv_dir_finder(present_csv_dir):
     if os.path.isfile(good_slide_csv):
         csv_list.append(good_slide_csv)
     else:
-        print "Oops Something went wrong, can't find csv(%s)\nNot too big of a problem though" % good_slide_csv
+        print("Oops Something went wrong, can't find csv(%s)\nNot too big of a problem though" % good_slide_csv)
         csv_list.append("Null")
     if os.path.isfile(result_slide_csv):
         csv_list.append(result_slide_csv)
     else:
-        print "Oops Something went wrong, can't find csv(%s)" % result_slide_csv
+        print("Oops Something went wrong, can't find csv(%s)" % result_slide_csv)
         exit()
     return csv_list
 
@@ -281,7 +281,7 @@ def makeid_list(csv_file, basename):
     if os.path.isfile(csv_file):
         df = pd.read_csv(csv_file)
     else:
-        print "Unable to find result.csv"
+        print("Unable to find result.csv")
         exit()
     for i in range(len(df)):
         id_name = "img_%09d_%s_000.tif" % (df['slide_num'][i], basename)
@@ -302,10 +302,10 @@ def good_slide_create(present):
         src = os.path.join(target_dir, id_name)
         dst = os.path.join(dest_dir, id_name)
         if os.path.isfile(src):
-            print "Found file!\nMoving %s" % src
+            print("Found file!\nMoving %s" % src)
             shutil.copy2(src, dst)
         else:
-            print "can't find src file %s" % src
+            print("can't find src file %s" % src)
 
 
 if __name__ == "__main__":

@@ -13,9 +13,9 @@ from pyLineage.lineageIO.createHist import createHistMovie
 from pyLineage.LIAnalysis.cellular_ageTracking import drawAgeFig
 from pyLineage.LIAnalysis.fftAnalysis import plot_IndiLine
 from pyLineage.lineageIO.lineage_editor import lineage_editor
-from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
-from pyLineage.Analysis_Gui.modeIO import modeIO
-from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
+from .Final_Analysis_GUI_Class import ModeScreens
+from .modeIO import modeIO
+from .path_prep import path_prep ## Works only for a specific directory structure(check examples)
 
 
 import os
@@ -159,12 +159,12 @@ if __name__ == "__main__":
     windows = ModeScreens()
     windows.run()
     if debug:
-        print windows.getMode()
-        print windows.getSamples()
+        print(windows.getMode())
+        print(windows.getSamples())
         sys.exit(0)
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
-                print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
+                print("Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num])
                 Analysis_all(samplePath[cond][num],mode,atpMax=atpMax,genMax=genMax)
 

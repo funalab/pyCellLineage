@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import os
 
-from createGraph import createGraph
+from .createGraph import createGraph
 
 
 def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
@@ -53,23 +53,23 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
         if attrMax == 0 and attrMin == 0:
             if cmap== 'gnuplot':
                 colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)
-                          for key, value in cellDfWP[attr].iteritems()}
+                          for key, value in cellDfWP[attr].items()}
             elif cmap == 'bwr':
                 colors = {key: plt.cm.bwr((float(value) - minPhe)/maxPhe)
-                          for key, value in cellDfWP[attr].iteritems()}
+                          for key, value in cellDfWP[attr].items()}
             else:
-                print "add color map to code"
+                print("add color map to code")
                 sys.exit(-1)
 
         else:
             if cmap == 'gnuplot':
                 colors = {key: plt.cm.gnuplot((float(value) - attrMin)/(float(attrMax)-attrMin))
-                          for key, value in cellDfWP[attr].iteritems()}
+                          for key, value in cellDfWP[attr].items()}
             elif cmap == 'bwr':
                 colors = {key: plt.cm.bwr((float(value) - attrMin)/(float(attrMax)-attrMin))
-                      for key, value in cellDfWP[attr].iteritems()}
+                      for key, value in cellDfWP[attr].items()}
             else:
-                print "add color map to code"
+                print("add color map to code")
                 sys.exit(-1)
                 
 
@@ -86,7 +86,7 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     fig = plt.figure(figsize=(8, 8))
     ax = Axes3D(fig)
 
-    for i, j in pos.iteritems():
+    for i, j in pos.items():
         xi = j[0]
         yi = j[1]
         zi = j[2]
@@ -129,7 +129,7 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
 
 
 if __name__ == "__main__":
-    from measurePhenotypes import measurePhenotypes
+    from .measurePhenotypes import measurePhenotypes
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '2018-08-28/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'

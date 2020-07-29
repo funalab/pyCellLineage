@@ -77,11 +77,11 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_p
         timePoint = cellDf['Z'][cellIdx] - originFrame
         cellNo = cellDf['cellNo'][cellIdx]
         if cellNo not in areaList[timePoint]:
-            print "Found faulty"
-            print cellNo
+            print("Found faulty")
+            print(cellNo)
         area.append(areaList[timePoint][cellNo])
         if cellNo not in intensityList[timePoint]:
-            print "Found faulty"
+            print("Found faulty")
             intensityList[timePoint][cellNo] = 0
         intens.append(intensityList[timePoint][cellNo])
 
