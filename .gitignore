@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+*.py.bak
 .DS_STORE
 #atp_caliberated parameters
 atp_calib.csv
