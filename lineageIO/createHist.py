@@ -25,7 +25,7 @@ def bootstrap(data,itr=10000):
     p = sum(i > orgSkew for i in skewList)/float(itr)
     return p
 
-def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,minCells=100):
+def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
     data = CellDf['ATP']
     fig = plt.figure()
     plt.hist(data.dropna())
@@ -39,12 +39,20 @@ def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,minCells=
             plt.ylim(0,freqMax)
 
     # plot depending on samples
-    if len(data) > minCells:
-        plt.title("t="+str(i)+"\n skewness="+str(data.skew())+"(p="+str(bootstrap(data))+")")
+    if z != None:
+        titleName = "t="+str(z)
     else:
-        plt.title("t="+str(i)+"\n skewness="+str(data.skew()))
+        titleName = "Histogram"
+
+    titleName = titleName + "\n skewness="+str(data.skew())
+    
+    if len(data) > minCells:
+        plt.title(titleName+"(p="+str(bootstrap(data))+")")
+    else:
+        plt.title(titleName)
+    
     if saveDir != None:
-        if not os.path.isdir(savePath):
+        if not os.path.isdir(saveDir):
             os.mkdir(saveDir)
         if fname == None:
             fname = "Hist.png"
@@ -56,10 +64,10 @@ def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,minCells=
 def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):
     for i in range(max(CellDf['Z'])):
         if saveDir != None:
-            if not os.path.isdir(savePath):
+            if not os.path.isdir(saveDir):
                 os.mkdir(saveDir)
             fname = str(i)+".png"
-        createHist(CellDf[CellDf['Z']==i],atpMax=atpMax,freqMax=freqMax,saveDir=saveDir,fname=fname,minCells=minCells)
+        createHist(CellDf[CellDf['Z']==i],atpMax=atpMax,freqMax=freqMax,saveDir=saveDir,fname=fname,z=i,minCells=minCells)
     return
 
 #if __name__ == "__main__":
