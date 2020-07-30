@@ -28,7 +28,7 @@ def bootstrap(data,itr=10000):
 def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
     data = CellDf['ATP']
     fig = plt.figure()
-    plt.hist(data.dropna())
+    plt.hist(data.dropna(),bins=20)
     # plot parameters
     if atpMax != None:
         plt.xlim(0,atpMax)
