@@ -229,10 +229,10 @@ class ModeScreens(App):
                 'normal':{
                     'mean':False,
                     'median':False
-                }
+                },
                 'totalATP':{
                     'mean':False
-                }
+                },
                 'class':{
                     '2d':False,
                     '3d':False
