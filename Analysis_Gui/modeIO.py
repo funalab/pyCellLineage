@@ -4,7 +4,7 @@ Overview:
 
 Parameters:
 """
-
+import json
 
 class modeIO():
     Names = list()
@@ -59,3 +59,13 @@ class modeIO():
                 self.modeSave(mode[modeName],depth + 1,name)
                 name = name[:depth]
         return
+
+    def modeRead(FileName="~/git/pyLineage/Analysis_Gui/.modeconfig"):
+        with open(FileName) as f:
+            df = json.load(f)
+        return df
+
+    def modeWrite(df,FileName="~/git/pyLineage/Analysis_Gui/.modeconfig"):
+        with open(FileName,'w') as f:
+            json.dump(df,f)
+        
