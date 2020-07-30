@@ -226,8 +226,13 @@ class ModeScreens(App):
                 'normal':False
             },
             'hmmPrep':{
-                'mean':False,
-                'median':False,
+                'normal':{
+                    'mean':False,
+                    'median':False
+                }
+                'totalATP':{
+                    'mean':False
+                }
                 'class':{
                     '2d':False,
                     '3d':False

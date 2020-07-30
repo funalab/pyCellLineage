@@ -42,7 +42,7 @@ def Total_ATP(cellDFWP,cond,num):
     return totalDF
 
 
-def Analysis_all(path,cond,num,mode,atpMax=None,genMax=None):
+def Analysis_all(path,cond,num,mode,totalAVG=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
@@ -74,12 +74,18 @@ def Analysis_all(path,cond,num,mode,atpMax=None,genMax=None):
     else:
         create2DLineage(cellDFWP,attr='ATP',attrMax=atpMax, ylim=genMax,show=False)
     #prepHmm
-    if mode['Analysis']['hmmPrep']['mean']:
+    if mode['Analysis']['hmmPrep']['normal']['mean']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCell/')
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,lname="low",hname="high")        
-    elif mode['Analysis']['hmmPrep']['median']:
+    elif mode['Analysis']['hmmPrep']['normal']['median']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCellMedian/')
         cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
+    elif mode['Analysis']['hmmPrep']['totalATP']['mean']:
+        if totalAVG is None:
+            totalDF = Total_ATP(cellDFWP,cond,num)
+            totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=totalAVG,lname="low",hname="high")        
+
         
     if mode['Analysis']['hmmPrep']['class']['2d']:
         saveDir_2dClass = os.path.join(saveDir,'Class_2dLin.pdf')
@@ -167,9 +173,14 @@ if __name__ == "__main__":
     conditions = windows.getConditions()
     samples = windows.getSamples()
     mode = windows.getMode()
+    totalAVG = None
+    if mode['Analysis']['hmmPrep']['totalATP']['mean']:
+        totalDF = Total_ATP(cellDFWP,cond,num)
+        totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
+
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
                 print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
-                Analysis_all(samplePath[cond][num],cond,num,mode,atpMax=atpMax,genMax=genMax)
+                Analysis_all(samplePath[cond][num],cond,num,mode,totalAVG=totalAVG,atpMax=atpMax,genMax=genMax)
 
