@@ -223,6 +223,8 @@ class ModeScreens(App):
         'Analysis':{
             'hist':{
                 'totalATP':False,
+                'totalRich':False,
+                'totalPoor':False,
                 'normal':False
             },
             'hmmPrep':{

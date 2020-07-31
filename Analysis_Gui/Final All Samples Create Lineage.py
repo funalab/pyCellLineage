@@ -29,20 +29,29 @@ import sys
 atpMax = 10
 genMax = 35
 debug = False
+sampleNum = ['sample1','sample2','sample3']
 
-def Total_ATP(cellDFWP,cond,num):
-    totalDF = cellDFWP
-    samples[cond][num] = False
+
+def Total_ATP(cellDFWP,samples,cond,num,glcRich=True,glcPoor=True):
+    totalDF = pd.DataFrame(columns=cellDFWP.columns)
+    tmp = samples
+    if not glcRich:
+        for key in sampleNum:
+            tmp['rich'][key] = False
+    if not glcPoor:
+        for key in sampleNum:
+            tmp['poor'][key] = False        
+    
     for cond in conditions:
         for num in sampleNum:
-            if samples[cond][num]:
+            if tmp[cond][num]:
                 paths = path_prep(samplePath[cond][num])
                 CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
                 totalDF = pd.concat([totalDF,CellDF])
     return totalDF
 
 
-def Analysis_all(path,cond,num,mode,totalAVG=None,atpMax=None,genMax=None):
+def Analysis_all(path,cond,num,mode,samples,totalAVG=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
@@ -54,11 +63,21 @@ def Analysis_all(path,cond,num,mode,totalAVG=None,atpMax=None,genMax=None):
         saveDir_hist = os.path.join(saveDir,'Hist/')
         createHistMovie(cellDFWP,atpMax=atpMax,saveDir=saveDir_hist)
     elif mode['Analysis']['hist']['totalATP']:
-        totalDF = Total_ATP(cellDFWP,cond,num)
+        totalDF = Total_ATP(cellDFWP,samples,cond,num)
         saveDir_hist = os.path.join(saveDir,'totalATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
-    
+    elif mode['Analysis']['hist']['totalRich']:
+        totalDF = Total_ATP(cellDFWP,samples,cond,num,glcPoor=False)
+        saveDir_hist = os.path.join(saveDir,'totalRichATP_Hist/')
+        createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
+        sys.exit(0)
+    elif mode['Analysis']['hist']['totalPoor']:
+        totalDF = Total_ATP(cellDFWP,samples,cond,num,glcRich=False)
+        saveDir_hist = os.path.join(saveDir,'totalPoorATP_Hist/')
+        createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
+        sys.exit(0)
+        
     #make lineage
     if mode['lineage']['save']:
         savePathLin = os.path.join(saveDir,"lineage.pdf")
@@ -82,7 +101,7 @@ def Analysis_all(path,cond,num,mode,totalAVG=None,atpMax=None,genMax=None):
         cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
     elif mode['Analysis']['hmmPrep']['totalATP']['mean']:
         if totalAVG is None:
-            totalDF = Total_ATP(cellDFWP,cond,num)
+            totalDF = Total_ATP(cellDFWP,samples,cond,num)
             totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=totalAVG,lname="low",hname="high")        
 
@@ -159,7 +178,6 @@ rich_sample_2='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample
 rich_sample_3='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_3_1203_E1/Pos0'
 '''
 
-sampleNum = ['sample1','sample2','sample3']
 
 
 
@@ -175,12 +193,12 @@ if __name__ == "__main__":
     mode = windows.getMode()
     totalAVG = None
     if mode['Analysis']['hmmPrep']['totalATP']['mean']:
-        totalDF = Total_ATP(cellDFWP,cond,num)
+        totalDF = Total_ATP(cellDFWP,samples,cond,num)
         totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
 
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
                 print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
-                Analysis_all(samplePath[cond][num],cond,num,mode,totalAVG=totalAVG,atpMax=atpMax,genMax=genMax)
+                Analysis_all(samplePath[cond][num],cond,num,mode,samples,totalAVG=totalAVG,atpMax=atpMax,genMax=genMax)
 
