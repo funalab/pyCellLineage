@@ -5,12 +5,15 @@ Overview:
 Parameters:
 """
 import json
+import os
+import pyLineage.AnalysisGui as myPackage
 
 class modeIO():
     Names = list()
     mode = dict()
     output = False
     dictList = dict()
+    defaultPath = str()
 
 
     def __init__(self,mode):
@@ -18,6 +21,7 @@ class modeIO():
         if self.output:
             self.modeOutput(self.mode,0)
         self.modeSave(self.mode,0,list())
+        self.defaultPath = os.path.join(os.path.dirname(myPackage.__file__),".modeconfig")
 
     def setOutputBool(self,Bool):
         self.output = Bool
@@ -60,12 +64,16 @@ class modeIO():
                 name = name[:depth]
         return
 
-    def modeRead(FileName="~/git/pyLineage/Analysis_Gui/.modeconfig"):
-        with open(FileName) as f:
-            df = json.load(f)
+    def modeRead(FileName=self.DefaultPath):
+        if os.path.isfile(FileName):
+            with open(FileName) as f:
+                df = json.load(f)
+        else:
+            print "Can't find File"
+            df = None
         return df
 
-    def modeWrite(df,FileName="~/git/pyLineage/Analysis_Gui/.modeconfig"):
+    def modeWrite(df,FileName=self.DefaultPath):
         with open(FileName,'w') as f:
             json.dump(df,f)
         
