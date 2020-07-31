@@ -16,7 +16,7 @@ Has three Main directories,
   Visualize Lineages also makes it possible for segmented images to show tracked information.
 
 An optional GUI is also provided,  
-- Analysis_Gui
+- Analysis_Gui  
   Very Simple GUI to select which Samples you would like to Analyze and allows you to select Analysis Modes.  
   To start GUI enter;  
   ```zsh
