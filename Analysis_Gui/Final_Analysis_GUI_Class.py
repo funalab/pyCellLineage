@@ -233,9 +233,9 @@ class ModeScreens(App):
                     'median':False
                 },
                 'totalATP':{
-                    'mean':False
+                    'mean':False,
+                    '95ATP':False
                 },
-                '95ATP':False,
                 'class':{
                     '2d':False,
                     '3d':False
