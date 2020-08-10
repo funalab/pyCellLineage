@@ -5,6 +5,7 @@
 # Last modified: Sun, 03 Feb 2019 14:27:40 +0900
 import numpy as np
 import pandas as pd
+import os
 from skimage import measure
 from skimage import morphology
 
@@ -51,8 +52,8 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_p
                Mean fluorescent intensity of each cell
                - area
     '''
-    if atpPath is None:
-        atpPath = os.path.join(os.path.dirname(myPackage.__file__),"atp_calib.csv")
+    if atp_path == None:
+        atp_path = os.path.join(os.path.dirname(myPackage.__file__),"atp_calib.csv")
     cellDf = loadSchnitz(matFilePath)
     segImgsList = loadMatImgs(segImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
