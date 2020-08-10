@@ -18,7 +18,7 @@ from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
 from pyLineage.Analysis_Gui.modeIO import modeIO
 from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
 
-
+import numpy as np
 import os
 import pandas as pd
 import sys
@@ -50,8 +50,11 @@ def Total_ATP(cellDFWP,samples,cond,num,glcRich=True,glcPoor=True):
                 totalDF = pd.concat([totalDF,CellDF])
     return totalDF
 
+def nineFivePercentile(cellDFWP,attr='ATP'):
+    dataset = np.array(cellDFWP[attr])
+    return np.percentile(dataset,95)
 
-def Analysis_all(path,cond,num,mode,samples,totalAVG=None,atpMax=None,genMax=None):
+def Analysis_all(path,cond,num,mode,samples,thr=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
@@ -100,10 +103,15 @@ def Analysis_all(path,cond,num,mode,samples,totalAVG=None,atpMax=None,genMax=Non
         saveDir_Indi = os.path.join(saveDir, 'IndiCellMedian/')
         cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
     elif mode['Analysis']['hmmPrep']['totalATP']['mean']:
-        if totalAVG is None:
+        if thr is None:
             totalDF = Total_ATP(cellDFWP,samples,cond,num)
-            totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
-        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=totalAVG,lname="low",hname="high")        
+            thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
+    elif mode['Analysis']['hmmPrep']['95ATP']:
+        if thr is None:
+            totalDF = Total_ATP(cellDFWP,samples,cond,num)
+            thr = nineFivePercentile(totalDF)
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
 
         
     if mode['Analysis']['hmmPrep']['class']['2d']:
@@ -191,14 +199,17 @@ if __name__ == "__main__":
     conditions = windows.getConditions()
     samples = windows.getSamples()
     mode = windows.getMode()
-    totalAVG = None
+    thr = None
     if mode['Analysis']['hmmPrep']['totalATP']['mean']:
         totalDF = Total_ATP(cellDFWP,samples,cond,num)
-        totalAVG = sum(totalDF['ATP'])/len(totalDF['ATP'])
+        thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
+    elif mode['Analysis']['hmmPrep']['95ATP']:
+        totalDF = Total_ATP(cellDFWP,samples,cond,num)
+        thr = nineFivePercentile(totalDF)
 
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
                 print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
-                Analysis_all(samplePath[cond][num],cond,num,mode,samples,totalAVG=totalAVG,atpMax=atpMax,genMax=genMax)
+                Analysis_all(samplePath[cond][num],cond,num,mode,samples,thr=thr,atpMax=atpMax,genMax=genMax)
 
