@@ -6,7 +6,7 @@ Parameters:
 """
 import json
 import os
-import pyLineage.AnalysisGui as myPackage
+import pyLineage.Analysis_Gui as myPackage
 
 class modeIO():
     Names = list()
@@ -64,7 +64,9 @@ class modeIO():
                 name = name[:depth]
         return
 
-    def modeRead(FileName=self.DefaultPath):
+    def modeRead(self,FileName=None):
+        if FileName == None:
+            FileName = self.DefaultPath
         if os.path.isfile(FileName):
             with open(FileName) as f:
                 df = json.load(f)
@@ -73,7 +75,9 @@ class modeIO():
             df = None
         return df
 
-    def modeWrite(df,FileName=self.DefaultPath):
+    def modeWrite(self,df,FileName=None):
+        if FileName == None:
+            FileName = self.DefaultPath
         with open(FileName,'w') as f:
             json.dump(df,f)
         
