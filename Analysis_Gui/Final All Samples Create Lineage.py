@@ -32,21 +32,28 @@ debug = False
 sampleNum = ['sample1','sample2','sample3']
 
 
-def Total_ATP(samples,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True):
+def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True):
     if cellDFWP != None:
         totalDF = pd.DataFrame(columns=cellDFWP.columns)
     else:
         totalDF = None
-    tmp = samples
+        
+    if instMode == None:
+        default = ModeScreens()
+        if samples == None:
+            tmp = default.getSamples()
+        else:
+            tmp = samples
+        if conditions == None:
+            conditions = default.getConditions()
+            
     if not glcRich:
         for key in sampleNum:
             tmp['rich'][key] = False
     if not glcPoor:
         for key in sampleNum:
             tmp['poor'][key] = False        
-    if conditions == None:
-        default = ModeScreens()
-        conditions = default.getConditions()
+
     for cond in conditions:
         for num in sampleNum:
             if tmp[cond][num]:
@@ -59,11 +66,13 @@ def nineFivePercentile(cellDFWP,attr='ATP'):
     dataset = np.array(cellDFWP[attr].dropna())
     return np.percentile(dataset,95)
 
-def Analysis_all(path,mode,samples,thr=None,atpMax=None,genMax=None):
+def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
     #parent of path
+    mode = instMode.getMode()
+    
     saveDir = str('/'.join(os.path.abspath(path).split('/')[0:-1-0]))
 
     #Make Hist    
@@ -71,17 +80,17 @@ def Analysis_all(path,mode,samples,thr=None,atpMax=None,genMax=None):
         saveDir_hist = os.path.join(saveDir,'Hist/')
         createHistMovie(cellDFWP,atpMax=atpMax,saveDir=saveDir_hist)
     elif mode['Analysis']['hist']['totalATP']:
-        totalDF = Total_ATP(samples)
+        totalDF = Total_ATP(instMode=instMode)
         saveDir_hist = os.path.join(saveDir,'totalATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
     elif mode['Analysis']['hist']['totalRich']:
-        totalDF = Total_ATP(samples,glcPoor=False)
+        totalDF = Total_ATP(instMode=instMode,glcPoor=False)
         saveDir_hist = os.path.join(saveDir,'totalRichATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
     elif mode['Analysis']['hist']['totalPoor']:
-        totalDF = Total_ATP(samples,glcRich=False)
+        totalDF = Total_ATP(instMode=instMode,glcRich=False)
         saveDir_hist = os.path.join(saveDir,'totalPoorATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
@@ -109,13 +118,13 @@ def Analysis_all(path,mode,samples,thr=None,atpMax=None,genMax=None):
         cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
     elif mode['Analysis']['hmmPrep']['totalATP']['mean']:
         if thr == None:
-            totalDF = Total_ATP(samples)
+            totalDF = Total_ATP(instMode=instMode)
             thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
     elif mode['Analysis']['hmmPrep']['totalATP']['95ATP']:
         if thr == None:
-            totalDF = Total_ATP(samples)
+            totalDF = Total_ATP(instMode=instMode)
             thr = nineFivePercentile(totalDF)
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
@@ -208,15 +217,15 @@ if __name__ == "__main__":
     mode = windows.getMode()
     thr = None
     if mode['Analysis']['hmmPrep']['totalATP']['mean']:
-        totalDF = Total_ATP(samples)
+        totalDF = Total_ATP(instMode=windows)
         thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
     elif mode['Analysis']['hmmPrep']['totalATP']['95ATP']:
-        totalDF = Total_ATP(samples)
+        totalDF = Total_ATP(instMode=windows)
         thr = nineFivePercentile(totalDF)
 
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
                 print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
-                Analysis_all(samplePath[cond][num],mode,samples,thr=thr,atpMax=atpMax,genMax=genMax)
+                Analysis_all(samplePath[cond][num],windows,thr=thr,atpMax=atpMax,genMax=genMax)
 
