@@ -17,6 +17,9 @@ from pyLineage.lineageIO.lineage_editor import lineage_editor
 from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
 from pyLineage.Analysis_Gui.modeIO import modeIO
 from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
+from pyLineage.lineageIO.Total_ATP import Total_ATP
+from pyLineage.PDAnalysis.nineFivePercentile import nineFivePercentile
+from pyLineage.Analysis_Gui.pathParms import pathParms
 
 import numpy as np
 import os
@@ -29,42 +32,7 @@ import sys
 atpMax = 10
 genMax = 35
 debug = False
-sampleNum = ['sample1','sample2','sample3']
 
-
-def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True):
-    if cellDFWP != None:
-        totalDF = pd.DataFrame(columns=cellDFWP.columns)
-    else:
-        totalDF = None
-        
-    if instMode == None:
-        default = ModeScreens()
-        if samples == None:
-            tmp = default.getSamples()
-        else:
-            tmp = samples
-        if conditions == None:
-            conditions = default.getConditions()
-            
-    if not glcRich:
-        for key in sampleNum:
-            tmp['rich'][key] = False
-    if not glcPoor:
-        for key in sampleNum:
-            tmp['poor'][key] = False        
-
-    for cond in conditions:
-        for num in sampleNum:
-            if tmp[cond][num]:
-                paths = path_prep(samplePath[cond][num])
-                CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
-                totalDF = pd.concat([totalDF,CellDF])
-    return totalDF
-
-def nineFivePercentile(cellDFWP,attr='ATP'):
-    dataset = np.array(cellDFWP[attr].dropna())
-    return np.percentile(dataset,95)
 
 def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     hmmCellDF = None
@@ -122,9 +90,15 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
             thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
-    elif mode['Analysis']['hmmPrep']['totalATP']['95ATP']:
+    elif mode['Analysis']['hmmPrep']['95ATP']['both']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
+            thr = nineFivePercentile(totalDF)
+        saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
+    elif mode['Analysis']['hmmPrep']['95ATP']['control']:
+        if thr == None:
+            totalDF = Total_ATP(instMode=instMode,glcPoor=False)
             thr = nineFivePercentile(totalDF)
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
@@ -174,38 +148,12 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         else:
             cellDFWP = pd.read_csv(savePath)
         drawAgeFig(cellDFWP,saveDir=saveDir,atpMax=atpMax)
-        
-
-
-# ## Default Params
-
-samplePath = {
-    'poor':{
-        'sample1':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_1_1009_E1/Pos0',
-        'sample2':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_2_1223_E3/Pos0',
-        'sample3':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_3_1230_E6/Pos0'
-         },
-    'rich':{
-        'sample1':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_1_1016_2_E1/Pos0',
-        'sample2':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_2_1126_E4/Pos0',
-        'sample3':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_3_1203_E1/Pos0'
-    }
-}
-
-'''
-Paths for samples
-poor_sample_1='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_1_1009_E1/Pos0'
-poor_sample_2='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_2_1223_E3/Pos0'
-poor_sample_3='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample_3_1230_E6/Pos0'
-rich_sample_1='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_1_1016_2_E1/Pos0'
-rich_sample_2='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_2_1126_E4/Pos0'
-rich_sample_3='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_3_1203_E1/Pos0'
-'''
-
-
 
 
 if __name__ == "__main__":
+    sampleNum = ['sample1','sample2','sample3']
+    samplePath = pathParms().getSamplePath()
+    
     windows = ModeScreens()
     windows.run()
     if debug:
@@ -219,7 +167,7 @@ if __name__ == "__main__":
     if mode['Analysis']['hmmPrep']['totalATP']['mean']:
         totalDF = Total_ATP(instMode=windows)
         thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
-    elif mode['Analysis']['hmmPrep']['totalATP']['95ATP']:
+    elif mode['Analysis']['hmmPrep']['95ATP']['both'] or mode['Analysis']['hmmPrep']['95ATP']['control']:
         totalDF = Total_ATP(instMode=windows)
         thr = nineFivePercentile(totalDF)
 
