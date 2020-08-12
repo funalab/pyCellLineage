@@ -26,7 +26,7 @@ An optional GUI is also provided,
   The results that are created by these analyses are saved in the directory of the sample.  
   
 Warnings:  
-   For Experiments Analysis_Gui uses paths that are hardcoded in Analysis_Gui/Final\ All\ Samples\ Create\ Lineage.py  
+   For Experiments Analysis_Gui uses paths that are hardcoded in pyLineage/Analysis_Gui/pathParms.py
    Also all functions depend on a certain directory structure. (See Sample Data Structure for details)  
 
 The first three directories are part of the pyLineage Module,  
