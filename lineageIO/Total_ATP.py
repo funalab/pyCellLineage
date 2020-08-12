@@ -15,7 +15,7 @@ from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
 from pyLineage.Analysis_Gui.modeIO import modeIO
 from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
 from pyLineage.Analysis_Gui.pathParms import pathParms
-
+from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import *
 
 import numpy as np
 import os
@@ -32,9 +32,9 @@ def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=T
         totalDF = None
         
     if instMode == None:
-        default = instMode
-    else:
         default = ModeScreens()
+    else:
+        default = instMode
         
     if samples == None:
         tmp = default.getSamples()
