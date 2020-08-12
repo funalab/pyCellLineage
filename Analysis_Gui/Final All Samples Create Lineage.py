@@ -20,6 +20,7 @@ from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a speci
 from pyLineage.lineageIO.Total_ATP import Total_ATP
 from pyLineage.PDAnalysis.nineFivePercentile import nineFivePercentile
 from pyLineage.Analysis_Gui.pathParms import pathParms
+from pyLineage.PDAnalysis.findBestBIC import findBestBIC
 
 import numpy as np
 import os
@@ -39,7 +40,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     paths = path_prep(path)
     cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
     #parent of path
-    mode = instMode.getMode()
+    mode = dict(instMode.getMode())
     
     saveDir = str('/'.join(os.path.abspath(path).split('/')[0:-1-0]))
 
@@ -89,7 +90,13 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
             totalDF = Total_ATP(instMode=instMode)
             thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
-        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
+    elif mode['Analysis']['hmmPrep']['totalATP']['gmmPoor']:
+        if thr == None:
+            totalDF = Total_ATP(instMode=windows,glcRich=False)
+            thr = findBestBIC(totalDF['ATP'])
+        saveDir_Indi = os.path.join(saveDir, 'IndiCellGMM/')            
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
     elif mode['Analysis']['hmmPrep']['95ATP']['both']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
@@ -161,8 +168,8 @@ if __name__ == "__main__":
         print windows.getSamples()
         sys.exit(0)
     conditions = windows.getConditions()
-    samples = windows.getSamples()
-    mode = windows.getMode()
+    samples = dict(windows.getSamples())
+    mode = dict(windows.getMode())
     thr = None
     if mode['Analysis']['hmmPrep']['totalATP']['mean']:
         totalDF = Total_ATP(instMode=windows)
@@ -170,6 +177,9 @@ if __name__ == "__main__":
     elif mode['Analysis']['hmmPrep']['95ATP']['both'] or mode['Analysis']['hmmPrep']['95ATP']['control']:
         totalDF = Total_ATP(instMode=windows)
         thr = nineFivePercentile(totalDF)
+    elif mode['Analysis']['hmmPrep']['totalATP']['gmmPoor']:
+        totalDF = Total_ATP(instMode=windows,glcRich=False)
+        thr = findBestBIC(totalDF['ATP'])
 
     for cond in conditions:
         for num in sampleNum:

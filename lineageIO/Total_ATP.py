@@ -21,10 +21,11 @@ import numpy as np
 import os
 import pandas as pd
 import sys
+import copy
 
 def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True):
     sampleNum = ['sample1','sample2','sample3']
-    samplePath = pathParms().getSamplePath()
+    samplePath = dict(pathParms().getSamplePath())
 
     if cellDFWP != None:
         totalDF = pd.DataFrame(columns=cellDFWP.columns)
@@ -37,9 +38,9 @@ def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=T
         default = instMode
         
     if samples == None:
-        tmp = default.getSamples()
-    else:
-        tmp = samples
+        samples = dict(default.getSamples())
+
+    tmp = copy.deepcopy(samples)
     if conditions == None:
         conditions = default.getConditions()
             

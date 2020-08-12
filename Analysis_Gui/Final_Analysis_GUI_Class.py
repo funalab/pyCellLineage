@@ -234,6 +234,7 @@ class ModeScreens(App):
                 },
                 'totalATP':{
                     'mean':False,
+                    'gmmPoor':False
                 },
                 '95ATP':{
                     'both':False,
