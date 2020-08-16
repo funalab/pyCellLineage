@@ -56,10 +56,11 @@ def createRatioFS(path,atp_path=None):
         atpImg = np.zeros(img.shape)
         for i in range(img.shape[0]):
             for j in range(img.shape[1]):
-                if np.isnan(img[i,j]) or np.isinf(img[i,j]):
+                tmp = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
+                if np.isnan(tmp) or np.isinf(tmp):
                     atpImg[i,j] = 0
                 else:
-                    atpImg[i,j] = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
+                     atpImg[i,j] = tmp
                                         
                     
         atpImg = atpImg.astype(np.float32)
