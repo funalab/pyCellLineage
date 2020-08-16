@@ -43,7 +43,8 @@ The last directory is used for GUI Analysis.
 - matplotlib : 2.2.3
 - scipy : 1.1.0
 - scikit-image : 0.14.2_1
-- networkx : 2.2  
+- networkx : 2.2
+- opencv : 3.4.10
 
 ## Additional requirements for GUI  
 - kivy : 1.10.1_0
