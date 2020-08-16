@@ -49,22 +49,23 @@ def createRatioFS(path,atp_path=None):
             
     for i in range(dirLen):
         Imgs['Ratio'].append(np.divide(Imgs['405'][i],Imgs['488'][i]))
-        counter=0
-        for img in Imgs['Ratio']:
-            fname = "405-g-"+str(counter).zfill(3)+".tif"
-            print "Doing image " + fname + " in RatioFS\n"
-            atpImg = np.zeros(img.shape)
-            for i in range(img.shape[0]):
-                for j in range(img.shape[1]):
-                    if not np.isnan(img[i,j]) or not np.isinf(img[i,j]):
-                        atpImg[i,j] = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
-                    else:
-                        atpImg[i,j] = 0
-
-            atpImg = atpImg.astype(np.float32)
-            savePath =os.path.join(saveDir,fname)
-            cv.imwrite(savePath,atpImg)
-            counter = counter + 1
+    counter = 0
+    for img in Imgs['Ratio']:
+        fname = "405-g-"+str(counter).zfill(3)+".tif"
+        print "Doing image " + fname + " in RatioFS\n"
+        atpImg = np.zeros(img.shape)
+        for i in range(img.shape[0]):
+            for j in range(img.shape[1]):
+                if np.isnan(img[i,j]) or np.isinf(img[i,j]):
+                    atpImg[i,j] = 0
+                else:
+                    atpImg[i,j] = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
+                                        
+                    
+        atpImg = atpImg.astype(np.float32)
+        savePath =os.path.join(saveDir,fname)
+        cv.imwrite(savePath,atpImg)
+        counter = counter + 1
 
 
 if __name__ == "__main__":
