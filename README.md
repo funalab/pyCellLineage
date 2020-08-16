@@ -11,7 +11,7 @@ Has three Main directories,
 
 - lineageIO  
   Mainly used to create a custom Dataframe reading the schnitzcell lin.mat data.
-  It can also load Ratio Imgs to calculate ATP concentration.
+  It can also load Ratio Imgs to calculate ATP concentration. (Look at below warnings)  
   Once the Dataframe has been created it can either plot 2D, 3D lineage renderations or create histograms of each time point.
   Visualize Lineages also makes it possible for segmented images to show tracked information.
 
@@ -27,7 +27,17 @@ An optional GUI is also provided,
   
 Warnings:  
    For Experiments Analysis_Gui uses paths that are hardcoded in pyLineage/Analysis_Gui/pathParms.py
-   Also all functions depend on a certain directory structure. (See Sample Data Structure for details)  
+   Also all functions depend on a certain directory structure. (See Sample Data Structure for details)
+
+   Another point to keep in mind is that when calculating atp concentration pyLineage looks for a file named "atp_calib.csv" in the lineageIO directory. It is a simple CSV file with the below contents. Please updated the file on your own whenever you redraw the caliburation curve.  
+   
+   ```
+   parameter,value
+   Emax,4.9474
+   EC50,5.8325
+   d,0.6521
+
+   ```
 
 The first three directories are part of the pyLineage Module,  
 but the util directory also contains python or zsh programs that are useful in extracting schnitzcell prepared images from raw images,  
