@@ -11,9 +11,13 @@ import cv2 as cv
 from pyLineage.lineageIO.atpCalib import atpCalib
 import numpy as np
 import pandas as pd
+import pyLineage.lineageIO as myPackage
 
-def createRatioFS(path):
-    atp_df = pd.read_csv("/Users/nakatani/git/pyLineage/lineageIO/atp_calib.csv")
+def createRatioFS(path,atp_path=None):
+    if atp_path == None:
+        atp_path = os.path.join(os.path.dirname(myPackage.__file__),"atp_calib.csv")
+
+    atp_df = pd.read_csv(atp_path)
     emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
     d = float(atp_df[atp_df['parameter'] == 'd']['value'])
     EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
