@@ -1,6 +1,7 @@
 import pandas as pd
 import sys
 import os
+import numpy as np
 
 
 def atpCalib(intensity, emax=None, d=None, EC50=None, atp_path=None):
@@ -14,9 +15,11 @@ def atpCalib(intensity, emax=None, d=None, EC50=None, atp_path=None):
             emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
             d = float(atp_df[atp_df['parameter'] == 'd']['value'])
             EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
-    if float(intensity) < d:
+    if float(intensity) < d or float(intensity) == float('inf'):
         return 0
-#    elif float(intensity) > emax:
-#        return (((emax-d)/emax*((EC50)**2)) / (1-((emax-d)/emax)))**0.5
+    elif float(intensity) > emax:
+        #print "[Warning]: Exceeds max intensity capable of measuring(Ratio:"+str(intensity)+")\n"
+        return np.nan
     else:
         return (((float(intensity)-d)/emax*((EC50)**2))/(1-((float(intensity)-d)/emax)))**0.5
+
