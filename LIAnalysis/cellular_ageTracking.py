@@ -2,16 +2,25 @@ import pandas as pd
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+from scipy import stats
+import os
 
 unk_age = -1
 nan_age = 10
 
 def drawAgeFig(CellDF,saveDir=None,ageMax=None,atpMax=None):
+    plt.cla()
+    plt.clf()
     Age = CellDF[CellDF != pd.isnull(CellDF)][CellDF['Age']!= -1]
     Age = Age[Age['Z']==max(Age['Z'])]
+    Age = Age.dropna()
     plt.scatter(Age['Age'],Age['ATP'])
     plt.xlabel('Age')
     plt.ylabel('ATP mM')
+    r, p = stats.spearmanr(Age['Age'], Age['ATP'])
+    print('r : ', r)
+    print('p : ', p)
+    plt.title("R = " + str(r))
     if ageMax is None:
        ageMax =  max(Age['Age']) + 1
     if atpMax is None:
