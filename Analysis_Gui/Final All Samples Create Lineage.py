@@ -45,20 +45,20 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     saveDir = str('/'.join(os.path.abspath(path).split('/')[0:-1-0]))
 
     #Make Hist    
-    if mode['Analysis']['hist']['normal']:
+    if mode['hist']['normal']:
         saveDir_hist = os.path.join(saveDir,'Hist/')
         createHistMovie(cellDFWP,atpMax=atpMax,saveDir=saveDir_hist)
-    elif mode['Analysis']['hist']['totalATP']:
+    elif mode['hist']['totalATP']:
         totalDF = Total_ATP(instMode=instMode)
         saveDir_hist = os.path.join(saveDir,'totalATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
-    elif mode['Analysis']['hist']['totalRich']:
+    elif mode['hist']['totalRich']:
         totalDF = Total_ATP(instMode=instMode,glcPoor=False)
         saveDir_hist = os.path.join(saveDir,'totalRichATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
-    elif mode['Analysis']['hist']['totalPoor']:
+    elif mode['hist']['totalPoor']:
         totalDF = Total_ATP(instMode=instMode,glcRich=False)
         saveDir_hist = os.path.join(saveDir,'totalPoorATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
@@ -79,31 +79,31 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     else:
         create2DLineage(cellDFWP,attr='ATP',attrMax=atpMax, ylim=genMax,show=False)
     #prepHmm
-    if mode['Analysis']['hmmPrep']['normal']['mean']:
+    if mode['hmmPrep']['normal']['mean']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCell/')
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,lname="low",hname="high")        
-    elif mode['Analysis']['hmmPrep']['normal']['median']:
+    elif mode['hmmPrep']['normal']['median']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCellMedian/')
         cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
-    elif mode['Analysis']['hmmPrep']['totalATP']['mean']:
+    elif mode['hmmPrep']['totalATP']['mean']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
             thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
-    elif mode['Analysis']['hmmPrep']['totalATP']['gmmPoor']:
+    elif mode['hmmPrep']['totalATP']['gmmPoor']:
         if thr == None:
             totalDF = Total_ATP(instMode=windows,glcRich=False)
             thr = findBestBIC(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellGMM/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
-    elif mode['Analysis']['hmmPrep']['95ATP']['both']:
+    elif mode['hmmPrep']['95ATP']['both']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
             thr = nineFivePercentile(totalDF)
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
-    elif mode['Analysis']['hmmPrep']['95ATP']['control']:
+    elif mode['hmmPrep']['95ATP']['control']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode,glcPoor=False)
             thr = nineFivePercentile(totalDF)
@@ -111,7 +111,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
 
         
-    if mode['Analysis']['hmmPrep']['class']['2d']:
+    if mode['hmmPrep']['class']['2d']:
         saveDir_2dClass = os.path.join(saveDir,'Class_2dLin.pdf')
         hmmCellDF = hmm_prep(cellDFWP,lname=1,hname=2)
         create2DLineage(hmmCellDF,
@@ -120,7 +120,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
                         attrMax=2,
                         savePath=saveDir_2dClass,
                         cmap='bwr')
-    elif mode['Analysis']['hmmPrep']['class']['3d']:        
+    elif mode['hmmPrep']['class']['3d']:        
         saveDir_3dClass = os.path.join(saveDir,'Class_3dLin/')
         if hmmCellDF == None:
             hmmCellDF = hmm_prep(cellDFWP,lname=1,hname=3)
@@ -137,19 +137,20 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         
     #save CellDF    
     if mode['cellDf']['save']:
-        saveDir_CellDF = os.path.join(saveDir,'CellDf/CellDf.csv')
+        saveDir_CellDF = os.path.join(saveDir,'CellDf.csv')
         cellDFWP.to_csv(saveDir_CellDF)
     #Prep oscillation
-    if mode['Analysis']['oscillation']['prep']:
+    if mode['oscillation']['prep']:
         saveDir_ATPIndi = os.path.join(saveDir, 'ATP_IndiCell/')
         write_ATPChange(cellDFWP,saveDir_ATPIndi)
-    elif mode['Analysis']['oscillation']['fft']:
+    elif mode['oscillation']['fft']:
         csvPath = os.path.join(saveDir,"gprRes.csv")
         plot_IndiLine(csvPath,saveDir=saveDir,xlim=genMax)
-    #Age   
-    if mode['Analysis']['cellAge']:
-        savePath = os.path.join(saveDir),'CellDf/CellDf_wAge.csv'
+    #Age
+    if mode['cellAge']['save']:
+        savePath = os.path.join(saveDir,'CellDf_wAge.csv')
         if not os.path.isfile(savePath):
+            print "Couldn't find csv("+savePath+")\n Creating a New One\n\t This may take a while...\n"
             cellDFWP = cellular_ageTracking(cellDFWP)
             cellDFWP.to_csv(savePath)
         else:
@@ -171,15 +172,16 @@ if __name__ == "__main__":
     samples = dict(windows.getSamples())
     mode = dict(windows.getMode())
     thr = None
-    if mode['Analysis']['hmmPrep']['totalATP']['mean']:
+    if mode['hmmPrep']['totalATP']['mean']:
         totalDF = Total_ATP(instMode=windows)
         thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
-    elif mode['Analysis']['hmmPrep']['95ATP']['both'] or mode['Analysis']['hmmPrep']['95ATP']['control']:
+    elif mode['hmmPrep']['95ATP']['both'] or mode['hmmPrep']['95ATP']['control']:
         totalDF = Total_ATP(instMode=windows)
         thr = nineFivePercentile(totalDF)
-    elif mode['Analysis']['hmmPrep']['totalATP']['gmmPoor']:
-        totalDF = Total_ATP(instMode=windows,glcRich=False)
+    elif mode['hmmPrep']['totalATP']['gmmPoor']:
+        totalDF = Total_ATP(glcRich=False)
         thr = findBestBIC(totalDF['ATP'])
+        print "Found GMM thr to be " + str(thr) + "\n"
 
     for cond in conditions:
         for num in sampleNum:

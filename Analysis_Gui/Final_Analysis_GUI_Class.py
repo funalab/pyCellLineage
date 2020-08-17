@@ -220,38 +220,39 @@ class ModeScreens(App):
         'cellDf':{
             'save':False
         },
-        'Analysis':{
-            'hist':{
-                'totalATP':False,
-                'totalRich':False,
-                'totalPoor':False,
-                'normal':False
+        'cellAge':{
+            'save':False
+        },
+        'oscillation':{
+            'prep':False,
+            'fft':False
+        },
+        'hist':{
+            'totalATP':False,
+            'totalRich':False,
+            'totalPoor':False,
+            'normal':False
+        },
+        'hmmPrep':{
+            'normal':{
+                'mean':False,
+                'median':False
             },
-            'hmmPrep':{
-                'normal':{
-                    'mean':False,
-                    'median':False
-                },
-                'totalATP':{
-                    'mean':False,
-                    'gmmPoor':False
-                },
-                '95ATP':{
-                    'both':False,
-                    'control':False
-                },
-                'class':{
-                    '2d':False,
-                    '3d':False
-                }
+            'totalATP':{
+                'mean':False,
+                'gmmPoor':False
             },
-            'cellAge':False,
-            'oscillation':{
-                'prep':False,
-                'fft':False
+            '95ATP':{
+                'both':False,
+                'control':False
+            },
+            'class':{
+                '2d':False,
+                '3d':False
             }
         }
     }
+    
 
     samples = {
         'poor':{
@@ -288,7 +289,7 @@ class ModeScreens(App):
         sm.current = "Sample Choice"
         return sm
     
-    def getMode(self):    
+    def getMode(self):
         return self.mode
 
     def getSamples(self):

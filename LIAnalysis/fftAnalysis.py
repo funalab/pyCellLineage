@@ -32,6 +32,8 @@ def write_ATPChange(CellDF,save_dir):
 
     
 def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None):
+    plt.cla()
+    plt.clf()
     GPR_chg = pd.read_csv(csvPath, header=1)
     GPR_chg = GPR_chg.T[1:]
     GPR_chg.index = GPR_chg.index.astype(np.float64)
@@ -98,6 +100,7 @@ def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8):
     r, p = stats.spearmanr(maxFreq, lastATP)
     print('r : ', r)
     print('p : ', p)
+    plt.title("R = " + str(r))
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"atpFreq.png"))
     plt.show()
