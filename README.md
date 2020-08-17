@@ -1,6 +1,6 @@
 # pyLineage
 ***
-Used to create lineage of schnitzCell Data
+Used to create lineage of schnitzCell Data.  
 Has three Main directories,
 - LIAnalysis  
   Mainly used for analysing the lineage for cellular age and oscillation.
