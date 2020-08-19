@@ -45,6 +45,8 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     -------
     fig : matplotlib.figure.Figure
     '''
+    plt.cla()
+    plt.clf()
     graph, adjMat = createGraph(cellDfWP, attr)
 
     if attr is not None:

@@ -52,6 +52,8 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
     plot : list
            A list of matplotlib.lines.Line2D.
     '''
+    plt.cla()
+    plt.clf()
     rootIdx = list()
     for i in range(len(cellDfWP)):
         motherID = cellDfWP['motherID'][i]
