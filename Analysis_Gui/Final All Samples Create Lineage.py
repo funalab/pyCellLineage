@@ -84,7 +84,8 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,lname="low",hname="high")        
     elif mode['hmmPrep']['normal']['median']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCellMedian/')
-        cellDFWP = hmm_prep(cellDFWP,thr='median',save_dir=saveDir_Indi,lname="low",hname="high")
+        thr = 'median'
+        cellDFWP = hmm_prep(cellDFWP,thr=thr,save_dir=saveDir_Indi,lname="low",hname="high")
     elif mode['hmmPrep']['totalATP']['mean']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
@@ -93,7 +94,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
     elif mode['hmmPrep']['totalATP']['gmmPoor']:
         if thr == None:
-            totalDF = Total_ATP(instMode=windows,glcRich=False)
+            totalDF = Total_ATP(glcRich=False)
             thr = findBestBIC(totalDF['ATP'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellGMM/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
@@ -113,7 +114,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         
     if mode['hmmPrep']['class']['2d']:
         saveDir_2dClass = os.path.join(saveDir,'Class_2dLin.pdf')
-        hmmCellDF = hmm_prep(cellDFWP,lname=1,hname=2)
+        hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname=1,hname=2)
         create2DLineage(hmmCellDF,
                         attr='ATP_Class',
                         ylim=genMax,
@@ -123,7 +124,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     elif mode['hmmPrep']['class']['3d']:        
         saveDir_3dClass = os.path.join(saveDir,'Class_3dLin/')
         if hmmCellDF == None:
-            hmmCellDF = hmm_prep(cellDFWP,lname=1,hname=3)
+            hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname=1,hname=3)
         hmmCellDF = lineage_editor(None,None,None,DF=hmmCellDF,mode=1)
         create3DLineage(hmmCellDF,
                         attr='ATP_Class',
