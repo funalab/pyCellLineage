@@ -9,21 +9,7 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 from scipy.stats import skew
-
-def bootstrap(data,itr=10000):
-    data = data.dropna()
-    orgSkew = data.skew()
-    mean = float(data.mean())
-    std = float(data.std())
-    leng = len(data)
-    skewList = list()
-    for i in range(itr):
-        #print mean,std,leng
-        tmpData = np.random.normal(mean,std,leng)
-        skewList.append(skew(tmpData))
-
-    p = sum(i > orgSkew for i in skewList)/float(itr)
-    return p
+from pyLineage.lineageIO.bootstrap import bootstrap
 
 def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
     data = CellDf['ATP']
@@ -47,7 +33,7 @@ def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,mi
     titleName = titleName + "\n skewness="+str(data.skew())
     
     if len(data) > minCells:
-        plt.title(titleName+"(p="+str(bootstrap(data))+")")
+        plt.title(titleName+"(p="+str(bootstrap(CellDf['ATP']))+")")
     else:
         plt.title(titleName)
     
