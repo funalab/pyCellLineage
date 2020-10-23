@@ -8,18 +8,26 @@ Parameters:
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+import pandas as pd
 from scipy.stats import skew
 from pyLineage.lineageIO.bootstrap import bootstrap
 
-def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
-    data = CellDf['ATP']
+def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
+    if CellDf is not None:
+        data = CellDf['ATP']
+    else:
+        if data is not None and type(data) is list:
+            data = pd.Series(data)
+        else:
+            print "Error: input data(frame) in createHist"
+            exit(-1)
     fig = plt.figure()
     plt.hist(data.dropna(),bins=20)
     # plot parameters
     if atpMax != None:
         plt.xlim(0,atpMax)
     else:
-        plt.xlim(0,max(CellDf['ATP'])+1)
+        plt.xlim(0,max(data)+1)
         
     if freqMax != None:
             plt.ylim(0,freqMax)
@@ -33,7 +41,7 @@ def createHist(CellDf,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,mi
     titleName = titleName + "\n skewness="+str(data.skew())
     
     if len(data) > minCells:
-        plt.title(titleName+"(p="+str(bootstrap(CellDf['ATP']))+")")
+        plt.title(titleName+"(p="+str(bootstrap(data))+")")
     else:
         plt.title(titleName)
     
@@ -57,4 +65,14 @@ def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):
     return
 
 #if __name__ == "__main__":
+if __name__ == "__main__":
+    from annotateLineageIdx import annotateLineageIdx
+    matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
+                   '9999-99-99/488/data/488_lin.mat')
+    segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
+                   '9999-99-99/488/segmentation/')
+    rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
+                   '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
+    cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath)
+    createHist(cellDfWPL)
     
