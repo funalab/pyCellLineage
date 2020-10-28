@@ -1,6 +1,18 @@
 """
 Author: Joel Nakatani
 Overview:
+makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None)
+ makes hist from given rawImgsPath and matImgsPath. uses rawimage and matlab segmentation
+
+createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100)
+make Hist from data list or CellDf.
+You can set atpMax,freqMax,saveDir and filename.
+Also by giving a Z it would be included in the title.
+minCells are set to 100. If less than that Hist will not be created.
+
+createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100)
+makes movie from one CellDf using time frame.
+each hist represents one time frame. parms are the same as above.
 
 Parameters:
 """
@@ -11,7 +23,27 @@ import numpy as np
 import pandas as pd
 from scipy.stats import skew
 from pyLineage.lineageIO.bootstrap import bootstrap
+from pyLineage.lineageIO.extractIntensity import extractIntensity
+from pyLineage.lineageIO.loadRawImgs import loadRawImgs
+from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
+
+def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None):
+    segImgsList = loadMatImgs(matImgsPath)
+    rawImgsList = loadRawImgs(rawImgsPath)
+    intensityList = list()
+    for frameIdx in range(0,len(segImgsList)):
+        cellIndices = np.unique(segImgsList[frameIdx])
+        cellIndices = np.delete(cellIndices,0)
+        intensityList.append(extractIntensity(segImgsList[frameIdx],rawImgsList[frameIdx]))
+    
+    allIntens = list()
+    for intens in intensityList:
+        allIntens = allIntens + intens.values()
+    print allIntens
+    createHist(data=[i for i in allIntens if i > 0],saveDir=savePath)
+
+    
 def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
     if CellDf is not None:
         data = CellDf['ATP']
