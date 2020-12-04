@@ -10,7 +10,7 @@ You can set atpMax,freqMax,saveDir and filename.
 Also by giving a Z it would be included in the title.
 minCells are set to 100. If less than that Hist will not be created.
 
-createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100)
+createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=50)
 makes movie from one CellDf using time frame.
 each hist represents one time frame. parms are the same as above.
 
@@ -28,7 +28,7 @@ from pyLineage.lineageIO.loadRawImgs import loadRawImgs
 from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
 
-def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None):
+def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None,minInten=0.):
     segImgsList = loadMatImgs(matImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
     intensityList = list()
@@ -40,11 +40,10 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None):
     allIntens = list()
     for intens in intensityList:
         allIntens = allIntens + intens.values()
-    print allIntens
-    createHist(data=[i for i in allIntens if i > 0],saveDir=savePath)
+    createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath)
 
     
-def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=100):
+def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50):
     if CellDf is not None:
         data = CellDf['ATP']
     else:
