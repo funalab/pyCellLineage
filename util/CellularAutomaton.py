@@ -19,8 +19,8 @@ def cellAutomaton(simSize=20,patch = 3,rememberence=4):
         for res in result:
             if len(res) == 3 and len(res[0]) == 3:
                 j,k = findIndexes(a,res)
-                if sum(np.delete(res,5)) < 4:
-                    b[j+1,k+1] = 0
+                if sum(np.delete(res,5)) > 4:
+                    b[j+1,k+1] = 1
                 # elif sum(np.delete(res,5)) != 4:
                 #     b[j+1,k+1] = 0
         for array in remList:
@@ -64,7 +64,7 @@ if __name__ == "__main__":
     fig.savefig("Heatmap.pdf")
     plt.cla()
     plt.clf()
-    p, phenoList= randomizationTest(a,measureSamePheno(a))
+    p, phenoList= randomizationTest(a,measureSamePheno(a),iterations=1000)
     print "P-value,ExpValue"
     print p, measureSamePheno(a)
     print "Randomized Values"
