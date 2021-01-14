@@ -19,10 +19,10 @@ def cellAutomaton(simSize=20,patch = 3,rememberence=4):
         for res in result:
             if len(res) == 3 and len(res[0]) == 3:
                 j,k = findIndexes(a,res)
-                if sum(np.delete(res,5)) > 4:
-                    b[j+1,k+1] = 1
-                elif sum(np.delete(res,5)) != 4:
+                if sum(np.delete(res,5)) < 4:
                     b[j+1,k+1] = 0
+                # elif sum(np.delete(res,5)) != 4:
+                #     b[j+1,k+1] = 0
         for array in remList:
             if np.array_equal(b,array):
                 return b
@@ -48,7 +48,7 @@ def measureSamePheno(a,patch=3):
                 phenoList.append(sum(np.delete(res,5)) / float(8))
     return sum(phenoList)/len(phenoList)
 
-def randomizationTest(a,expValue,iterations = 10000):
+def randomizationTest(a,expValue,iterations = 1000):
     randPhenoList = list()
     for itr in range(iterations):
         b = np.copy(a)
