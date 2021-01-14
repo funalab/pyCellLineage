@@ -60,12 +60,14 @@ if __name__ == "__main__":
     a = cellAutomaton(simSize=40)
     print a
     fig = plt.figure()
-    plt.imshow(a)
+    plt.imshow(a,cmap='hot',interpolation='none')
     fig.savefig("Heatmap.pdf")
     plt.cla()
     plt.clf()
     p, phenoList= randomizationTest(a,measureSamePheno(a))
+    print "P-value,ExpValue"
     print p, measureSamePheno(a)
+    print "Randomized Values"
     print phenoList
     
     fig = plt.figure()
