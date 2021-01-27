@@ -28,7 +28,7 @@ from pyLineage.lineageIO.loadRawImgs import loadRawImgs
 from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
 
-def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None,minInten=0.):
+def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.):
     segImgsList = loadMatImgs(matImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
     intensityList = list()
@@ -38,7 +38,13 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,savePath=None,minInten=0.):
         intensityList.append(extractIntensity(segImgsList[frameIdx],rawImgsList[frameIdx]))
     
     allIntens = list()
+    if timelapse:
+        atpMax=max(intensityList)
+        count = 0
     for intens in intensityList:
+        if timelapse:
+            count += 1
+            createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".png",saveDir=savePath)
         allIntens = allIntens + intens.values()
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath)
 
