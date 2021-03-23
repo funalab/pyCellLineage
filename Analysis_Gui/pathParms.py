@@ -1,4 +1,8 @@
 # ## Default Params
+'''
+Hardwired parameters, path to samples
+'''
+
 class pathParms():
     '''
     Paths for samples

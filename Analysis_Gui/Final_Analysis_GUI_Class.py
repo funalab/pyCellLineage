@@ -1,6 +1,8 @@
 """
 Author: Joel Nakatani
 Overview:
+GUI format for Analysis Selection
+Creates GUI window
 
 Parameters:
 """

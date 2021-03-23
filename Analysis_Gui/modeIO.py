@@ -1,6 +1,8 @@
 """
 Author: Joel Nakatani
 Overview:
+Class for Mode Input and Output
+Reads from files, and saves Mode settings for Analysis
 
 Parameters:
 """

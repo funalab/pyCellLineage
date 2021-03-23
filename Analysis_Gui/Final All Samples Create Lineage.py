@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
 # In[1]:
 from pyLineage.lineageIO.measurePhenotypes import measurePhenotypes
 from pyLineage.lineageIO.create3DLineage import create3DLineage
@@ -27,6 +26,11 @@ import os
 import pandas as pd
 import sys
 
+'''
+Author: Ryo Nakatani
+Runs Analysis based on GUI selected modes 
+Can analyze based on cellular age, FFT(Uses R for GPR), Stochastic Analysis(Uses R for HMM), and Spacial Correlation(Uses Matlab).
+'''
 
 
 # Magic Numbers
