@@ -63,6 +63,8 @@ def plot_frequency(atpChange,saveDir=None,pltshow=None):
         F = np.fft.fft(f)
         Amp = np.abs(F)
         freq = np.linspace(0, 1.0/dt, len(atpChange[i]))
+        plt.cla()
+        plt.clf()
         plt.plot(freq, Amp)
         plt.xlabel('Frequency')
         plt.ylabel('|F(k)|')
@@ -77,12 +79,15 @@ def plot_frequency(atpChange,saveDir=None,pltshow=None):
     plot_atpFreq(atpChange,maxFreq, saveDir=saveDir)
     return
 
-def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8):
+def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8,xlim=25):
+    plt.cla()
+    plt.clf()
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns))]
     plt.scatter(maxAmp, lastATP)
     plt.xlabel('maximum Amplitude')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
+    plt.xlim((0,xlim))
     pc = np.polyfit(x = maxAmp, y = lastATP, deg = 1)
     r, p = stats.spearmanr(maxAmp, lastATP)
     print('r : ', r)
@@ -93,12 +98,15 @@ def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8):
     plt.show()
     return
         
-def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8):
+def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8,xlim=25):
+    plt.cla()
+    plt.clf()
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns)) ]
     plt.scatter(maxFreq, lastATP)
     plt.xlabel('maximum Frequency ($h^{-1}$)')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
+    plt.xlim((0,xlim))
     r, p = stats.spearmanr(maxFreq, lastATP)
     print('r : ', r)
     print('p : ', p)
