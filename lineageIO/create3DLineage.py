@@ -11,9 +11,31 @@ import os
 from createGraph import createGraph
 
 
+def cutoffMaker(CellDF,cutoff):
+    CellDF = CellDF[CellDF['Z'] <= cutoff]
+    CellDF.at[(CellDF['Z'] == cutoff),'daughter1ID'] = -1
+    CellDF.at[(CellDF['Z'] == cutoff),'daughter2ID'] = -1
+    CellDF = CellDF.reset_index()
+    countup = 0
+    keys = list()
+    values = list()
+    for uID in CellDF.uID:
+        if countup != uID:
+            keys.append(uID)
+            values.append(countup)
+        countup = countup + 1
+    IDerror = zip(keys,values)
+    print IDerror
+    for errorID,NewID in IDerror:
+        CellDF.at[(CellDF['daughter1ID'] == errorID),'daughter1ID'] = NewID
+        CellDF.at[(CellDF['daughter2ID'] == errorID),'daughter2ID'] = NewID
+    CellDF['uID'] = range(len(CellDF['uID']))
+    return CellDF
+            
+
 def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
                     attrMin=0, xlabel='x', ylabel='y', zlabel='time (hours)',
-                    thetaTics=1, cmap='gnuplot',
+                    thetaTics=1, cmap='gnuplot', cutoff=None,
                     lim=None
                     ):
     '''
@@ -47,6 +69,8 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     '''
     plt.cla()
     plt.clf()
+    if cutoff != None:
+        cellDfWP = cutoffMaker(cellDfWP,cutoff)
     graph, adjMat = createGraph(cellDfWP, attr)
 
     if attr is not None:
@@ -140,3 +164,4 @@ if __name__ == "__main__":
                    '2018/08/28/ECTC_8/Pos0/forAnalysis/488FS/')
     cellDfWP = measurePhenotypes(matFilePath, segImgsPath, rawImgsPath)
     create3DLineage(cellDfWP, 10, '/Users/itabashi/Desktop/tmp3', 'area')
+
