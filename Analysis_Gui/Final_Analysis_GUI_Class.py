@@ -1,6 +1,8 @@
 """
 Author: Joel Nakatani
 Overview:
+GUI format for Analysis Selection
+Creates GUI window
 
 Parameters:
 """
@@ -157,7 +159,7 @@ class sampleButton(GridLayout):
         for cond in self.conditions:
             self.add_widget(Label(text=cond))
             counter = 0
-            for sample in self.samples[cond]:
+            for sample in sorted(self.samples[cond]):
                 if counter != 0:
                     self.add_widget(Label(text=""))
                 self.add_widget(Label(text=sample))
@@ -220,26 +222,39 @@ class ModeScreens(App):
         'cellDf':{
             'save':False
         },
-        'Analysis':{
-            'hist':{
-                'totalATP':False,
-                'normal':False
-            },
-            'hmmPrep':{
+        'cellAge':{
+            'save':False
+        },
+        'oscillation':{
+            'prep':False,
+            'fft':False
+        },
+        'hist':{
+            'totalATP':False,
+            'totalRich':False,
+            'totalPoor':False,
+            'normal':False
+        },
+        'hmmPrep':{
+            'normal':{
                 'mean':False,
-                'median':False,
-                'class':{
-                    '2d':False,
-                    '3d':False
-                }
+                'median':False
             },
-            'cellAge':False,
-            'oscillation':{
-                'prep':False,
-                'fft':False
+            'totalATP':{
+                'mean':False,
+                'gmmPoor':False
+            },
+            '95ATP':{
+                'both':False,
+                'control':False
+            },
+            'class':{
+                '2d':False,
+                '3d':False
             }
         }
     }
+    
 
     samples = {
         'poor':{
@@ -276,7 +291,7 @@ class ModeScreens(App):
         sm.current = "Sample Choice"
         return sm
     
-    def getMode(self):    
+    def getMode(self):
         return self.mode
 
     def getSamples(self):

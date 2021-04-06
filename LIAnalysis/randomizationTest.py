@@ -5,8 +5,8 @@
 # Last modified: Wed, 26 Dec 2018 17:31:50 +0900
 import numpy as np
 
-from .createNeighborMat import createNeighborMat
-from extractIntensity import extractIntensity
+from pyLineage.LIAnalysis.createNeighborMat import createNeighborMat
+from pyLineage.lineageIO.extractIntensity import extractIntensity
 
 
 def randomizationTest(segImg, rawImg):

@@ -2,6 +2,19 @@ import os
 import glob
 import datetime
 
+'''
+Sets needed directory paths from root dir; must have certain structure as below
+
+root
+- raw imgs
+- saveimg(Schnitzcells root directory)
+  - (laser base name)
+    - segmentation
+    - data
+      - (laser base name)_lin.mat
+
+'''
+
 def path_prep (Dir):
         prep_paths = {}
         actual_dir = os.path.join(Dir,'saveimg')

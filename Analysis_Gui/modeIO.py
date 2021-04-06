@@ -1,16 +1,21 @@
 """
 Author: Joel Nakatani
 Overview:
+Class for Mode Input and Output
+Reads from files, and saves Mode settings for Analysis
 
 Parameters:
 """
-
+import json
+import os
+import pyLineage.Analysis_Gui as myPackage
 
 class modeIO():
     Names = list()
     mode = dict()
     output = False
     dictList = dict()
+    defaultPath = str()
 
 
     def __init__(self,mode):
@@ -18,6 +23,7 @@ class modeIO():
         if self.output:
             self.modeOutput(self.mode,0)
         self.modeSave(self.mode,0,list())
+        self.defaultPath = os.path.join(os.path.dirname(myPackage.__file__),".modeconfig")
 
     def setOutputBool(self,Bool):
         self.output = Bool
@@ -59,3 +65,21 @@ class modeIO():
                 self.modeSave(mode[modeName],depth + 1,name)
                 name = name[:depth]
         return
+
+    def modeRead(self,FileName=None):
+        if FileName == None:
+            FileName = self.DefaultPath
+        if os.path.isfile(FileName):
+            with open(FileName) as f:
+                df = json.load(f)
+        else:
+            print "Can't find File"
+            df = None
+        return df
+
+    def modeWrite(self,df,FileName=None):
+        if FileName == None:
+            FileName = self.DefaultPath
+        with open(FileName,'w') as f:
+            json.dump(df,f)
+        

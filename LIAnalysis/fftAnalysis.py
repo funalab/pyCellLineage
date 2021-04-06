@@ -31,7 +31,9 @@ def write_ATPChange(CellDF,save_dir):
         return
 
     
-def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None):
+def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None,pltshow=None):
+    plt.cla()
+    plt.clf()
     GPR_chg = pd.read_csv(csvPath, header=1)
     GPR_chg = GPR_chg.T[1:]
     GPR_chg.index = GPR_chg.index.astype(np.float64)
@@ -46,11 +48,12 @@ def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None):
             plt.xlim((0,xlim))
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"indi.png"))
-    plt.show()
+    if pltshow != None:
+        plt.show()
     plot_frequency(atpChange,saveDir=saveDir)
     return
 
-def plot_frequency(atpChange,saveDir=None):
+def plot_frequency(atpChange,saveDir=None,pltshow=None):
     maxAmp = list()
     maxFreq = list()
     dt = float(atpChange.index[-1]) / 1000
@@ -60,6 +63,8 @@ def plot_frequency(atpChange,saveDir=None):
         F = np.fft.fft(f)
         Amp = np.abs(F)
         freq = np.linspace(0, 1.0/dt, len(atpChange[i]))
+        plt.cla()
+        plt.clf()
         plt.plot(freq, Amp)
         plt.xlabel('Frequency')
         plt.ylabel('|F(k)|')
@@ -68,17 +73,21 @@ def plot_frequency(atpChange,saveDir=None):
         maxFreq.append(freq[index[0][0] + 1])
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"freq.png"))
-    plt.show()
+    if pltshow != None:
+        plt.show()
     plot_atpAmp(atpChange,maxAmp,saveDir=saveDir)
     plot_atpFreq(atpChange,maxFreq, saveDir=saveDir)
     return
 
-def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8):
+def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8,xlim=25):
+    plt.cla()
+    plt.clf()
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns))]
     plt.scatter(maxAmp, lastATP)
     plt.xlabel('maximum Amplitude')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
+    plt.xlim((0,xlim))
     pc = np.polyfit(x = maxAmp, y = lastATP, deg = 1)
     r, p = stats.spearmanr(maxAmp, lastATP)
     print(('r : ', r))
@@ -89,15 +98,19 @@ def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8):
     plt.show()
     return
         
-def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8):
+def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8,xlim=25):
+    plt.cla()
+    plt.clf()
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns)) ]
     plt.scatter(maxFreq, lastATP)
     plt.xlabel('maximum Frequency ($h^{-1}$)')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
+    plt.xlim((0,xlim))
     r, p = stats.spearmanr(maxFreq, lastATP)
-    print(('r : ', r))
-    print(('p : ', p))
+    print('r : ', r)
+    print('p : ', p)
+    plt.title("R = " + str(r))
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"atpFreq.png"))
     plt.show()

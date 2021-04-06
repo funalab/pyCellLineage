@@ -4,3 +4,4 @@ __pycache__/
 .DS_STORE
 #atp_caliberated parameters
 atp_calib.csv
+.modeconfig

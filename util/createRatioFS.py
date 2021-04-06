@@ -11,9 +11,13 @@ import cv2 as cv
 from pyLineage.lineageIO.atpCalib import atpCalib
 import numpy as np
 import pandas as pd
+import pyLineage.lineageIO as myPackage
 
-def createRatioFS(path):
-    atp_df = pd.read_csv("/Users/nakatani/git/pyLineage/lineageIO/atp_calib.csv")
+def createRatioFS(path,atp_path=None):
+    if atp_path == None:
+        atp_path = os.path.join(os.path.dirname(myPackage.__file__),"atp_calib.csv")
+
+    atp_df = pd.read_csv(atp_path)
     emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
     d = float(atp_df[atp_df['parameter'] == 'd']['value'])
     EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
@@ -44,23 +48,25 @@ def createRatioFS(path):
                 Imgs[basename].append(tmpImg)
             
     for i in range(dirLen):
-        Imgs['Ratio'].append(Imgs['405'][i] / Imgs['488'][i])
-        
-        counter=0
-        for img in Imgs['Ratio']:
-            fname = "405-g-"+str(counter).zfill(3)+".tif"
-            atpImg = np.zeros(img.shape)
-            for i in range(img.shape[0]):
-                for j in range(img.shape[1]):
-                    if not pd.isna(img[i,j]):
-                        atpImg[i,j] = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
-                    else:
-                        atpImg[i,j] = 0
-
-            atpImg = atpImg.astype(np.float32)
-            savePath =os.path.join(saveDir,fname)
-            cv.imwrite(savePath,atpImg)
-            counter = counter + 1
+        Imgs['Ratio'].append(np.divide(Imgs['405'][i],Imgs['488'][i]))
+    counter = 0
+    for img in Imgs['Ratio']:
+        fname = "405-g-"+str(counter).zfill(3)+".tif"
+        print "Doing image " + fname + " in RatioFS\n"
+        atpImg = np.zeros(img.shape)
+        for i in range(img.shape[0]):
+            for j in range(img.shape[1]):
+                tmp = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
+                if np.isnan(tmp) or np.isinf(tmp):
+                    atpImg[i,j] = 0
+                else:
+                     atpImg[i,j] = tmp
+                                        
+                    
+        atpImg = atpImg.astype(np.float32)
+        savePath =os.path.join(saveDir,fname)
+        cv.imwrite(savePath,atpImg)
+        counter = counter + 1
 
 
 if __name__ == "__main__":

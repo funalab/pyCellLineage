@@ -67,10 +67,11 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
         for i in range(origin_frame,max(CellDF['Z'])+1):
             timeframeATP = CellDF[CellDF['Z']==i]['ATP'].dropna()
             avgList.append(sum(timeframeATP)/len(timeframeATP))
-    elif thr == 'All_avg':
-        avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
-    elif thr == 'Median':
-        avg_atp = CellDF['ATP'].median()
+    elif type(thr) is str:
+        if thr == 'All_avg':
+            avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
+        elif thr == 'Median':
+            avg_atp = CellDF['ATP'].median()
     else:
         avg_atp = thr
     
@@ -114,6 +115,7 @@ def read_states(CellDF,read_dir):
     dict_fname = list(zip(list(range(len(file_names))),file_names))
     i = 0
     dict_states = dict()
+    
     for lineage in getIndependentLineage(CellDF):
         hstates = list(pd.read_csv(dict_fname[i]))
         ids = list(lineage['fuID'])
