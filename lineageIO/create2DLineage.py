@@ -88,12 +88,12 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
         if cmap == 'bwr':
             colors = {key: plt.cm.bwr(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
-            ) for key, value in cellDfWP[attr].items()}
+            ) for key, value in list(cellDfWP[attr].items())}
 
         elif cmap == 'gnuplot':
             colors = {key: plt.cm.gnuplot(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
-            ) for key, value in cellDfWP[attr].items()}
+            ) for key, value in list(cellDfWP[attr].items())}
         else:
             print("add color map to code")
             sys.exit(-1)

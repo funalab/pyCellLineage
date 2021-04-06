@@ -35,7 +35,7 @@ class modeIO():
     def modeOutput(self,mode,depth):
         for modeName in list(mode.keys()):
             space = "\t" * depth
-            print(space + modeName)
+            print((space + modeName))
             if type(mode[modeName]) is not type(True):
                 self.modeOutput(mode[modeName],depth + 1)
         return
@@ -73,7 +73,7 @@ class modeIO():
             with open(FileName) as f:
                 df = json.load(f)
         else:
-            print "Can't find File"
+            print("Can't find File")
             df = None
         return df
 

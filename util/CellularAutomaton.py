@@ -97,10 +97,10 @@ if __name__ == "__main__":
     simSize=40
     rem = cellAutomaton(simSize=simSize,patch=3,saveAll=True,rule2Rate=1)
     p, phenoList= randomizationTest(rem,measureSamePheno(rem),iterations=1000)
-    print "P-value,ExpValue"
-    print p, measureSamePheno(rem)
-    print "Randomized Values"
-    print phenoList
+    print("P-value,ExpValue")
+    print(p, measureSamePheno(rem))
+    print("Randomized Values")
+    print(phenoList)
     
     fig = plt.figure()
     plt.hist(phenoList)

@@ -45,7 +45,7 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
         if timelapse:
             count += 1
             createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".png",saveDir=savePath)
-        allIntens = allIntens + intens.values()
+        allIntens = allIntens + list(intens.values())
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath)
 
     
@@ -56,7 +56,7 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
         if data is not None and type(data) is list:
             data = pd.Series(data)
         else:
-            print "Error: input data(frame) in createHist"
+            print("Error: input data(frame) in createHist")
             exit(-1)
     fig = plt.figure()
     plt.hist(data.dropna(),bins=20)
@@ -103,7 +103,7 @@ def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):
 
 #if __name__ == "__main__":
 if __name__ == "__main__":
-    from annotateLineageIdx import annotateLineageIdx
+    from .annotateLineageIdx import annotateLineageIdx
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '9999-99-99/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
