@@ -4,15 +4,17 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 import os
+from pyLineage.lineageIO.create2DLineage import create2DLineage
 
 unk_age = -1
 nan_age = 10
 
-def drawAgeFig(CellDF,saveDir=None,ageMax=None,atpMax=None):
+def drawAgeFig(CellDF,saveDir=None,ageMax=8,atpMax=None,Z=None):
     plt.cla()
     plt.clf()
     Age = CellDF[CellDF != pd.isnull(CellDF)][CellDF['Age']!= -1]
-    Age = Age[Age['Z']==max(Age['Z'])]
+    if Z != None:
+        Age = Age[Age['Z']==Z]
     Age = Age.dropna()
     plt.scatter(Age['Age'],Age['ATP'])
     plt.xlabel('Age')
@@ -25,8 +27,8 @@ def drawAgeFig(CellDF,saveDir=None,ageMax=None,atpMax=None):
        ageMax =  max(Age['Age']) + 1
     if atpMax is None:
         atpMax = max(Age['ATP']) + 1
-    plt.xlim(0,ageMax)
-    plt.ylim(0,atpMax)
+    plt.xlim((0,ageMax))
+    plt.ylim((0,atpMax))
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"Age.png"))
     else:
@@ -78,6 +80,31 @@ def find_distancePair(gDaughters, CellDF, mode="closest", originID=None):
 def find_cell(uID, CellDF):
     return CellDF[CellDF['uID'] == uID]
 
+def daughter_timeMatch(gDaughter,CellDF,t):
+    if int(gDaughter['Z']) >= t:
+        while int(gDaughter['Z']) >= t:
+            if int(gDaughter['Z']) == t:
+                return gDaughter
+            tmp = find_cell(gDaughter['motherID'].values[0], CellDF)
+            if tmp is not None and not tmp.empty:
+                gDaughter = tmp
+    elif int(gDaughter['Z']) < t:
+        while int(gDaughter['Z']) < t and int(gDaughter['daughter2ID']) == -2:
+            tmp = find_cell(gDaughter['daughter1ID'].values[0], CellDF)
+            if tmp is not None and not tmp.empty:
+                gDaughter = tmp
+                if int(gDaughter['Z']) == t:
+                    return gDaughter
+    return None
+
+def findDaughter(daughter_cell,CellDF):
+    while int(daughter_cell['daughter2ID']) == -2:
+        tmp = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
+        if tmp is not None and not tmp.empty:
+            daughter_cell = tmp
+        else:
+            return None
+    return daughter_cell
 
 def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     gDaughter1 = None
@@ -87,40 +114,19 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     gDaughters = pd.DataFrame(columns=CellDF.columns.values)
     daughters = pd.DataFrame(columns=CellDF.columns.values)
     daughter_cell = cell_slice
-    while daughter_cell['daughter2ID'].values[0] == -2:
-        daughter_cell = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
+    daughter_cell = findDaughter(daughter_cell,CellDF)
     daughter_cell1 = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
     daughter_cell2 = find_cell(daughter_cell['daughter2ID'].values[0], CellDF)
-    if not daughter_cell1.empty:
-        if mode == "daughter":
-            if t is not None and daughter_cell1['Z'].values[0] <= t:
-                while daughter_cell1['Z'].values[0] != t:
-                    daughter_cell1 = fing_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
-            daughters = daughters.append(daughter_cell1)
-        while True:
-            tmp = find_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
-            if tmp is not None and not tmp.empty:
-                daughter_cell1 = tmp
-            else:
-                break
-            if int(daughter_cell1['daughter2ID']) != -2:
-                break
+
+
+    if daughter_cell1 is not None and not daughter_cell1.empty:
+        daughters = daughters.append(daughter_timeMatch(daughter_cell1,CellDF,t))
+        daughter_cell1 = findDaughter(daughter_cell1,CellDF)
         gDaughter1 = find_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
         gDaughter2 = find_cell(daughter_cell1['daughter2ID'].values[0], CellDF)
-    if not daughter_cell2.empty:
-        if mode == "daughter":
-            if t is not None and daughter_cell2['Z'].values[0] <= t:
-                while daughter_cell2['Z'].values[0] != t:
-                    daughter_cell2 = fing_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
-            daughters = daughters.append(daughter_cell2)
-        while True:
-            tmp = find_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
-            if tmp is not None and not tmp.empty:
-                daughter_cell2 = tmp
-            else:
-                break
-            if int(daughter_cell2['daughter2ID']) != -2:
-                break
+    if daughter_cell2 is not None and not daughter_cell2.empty:
+        daughters = daughters.append(daughter_timeMatch(daughter_cell2,CellDF,t))
+        daughter_cell2 = findDaughter(daughter_cell2,CellDF)
         gDaughter3 = find_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
         gDaughter4 = find_cell(daughter_cell2['daughter2ID'].values[0], CellDF)
     if mode == "daughter":
@@ -140,60 +146,18 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     else:
         t = int(t)
         if gDaughter1 is not None and not gDaughter1.empty:
-            if int(gDaughter1['Z']) > t:
-                gDaughter1 = daughter_cell1
-                while int(gDaughter1['Z']) > t:
-                    tmp = find_cell(gDaughter1['motherID'].values[0], CellDF)
-                    if tmp is not None and not tmp.empty:
-                        gDaughter1 = tmp
-                    else:
-                        break
-            while int(gDaughter1['Z']) <= t:
-                tmp = find_cell(gDaughter1['daughter1ID'].values[0], CellDF)
-                if tmp is not None and not tmp.empty:
-                    gDaughter1 = tmp
-                else:
-                    break
-            gDaughters = gDaughters.append(gDaughter1)
+            gDaughters = gDaughters.append(daughter_timeMatch(gDaughter1,CellDF,t))
 
         if gDaughter2 is not None and not gDaughter2.empty:
-            if gDaughter2['Z'].values[0] <= t:
-                while int(gDaughter2['Z']) < t:
-                    tmp = find_cell(gDaughter2['daughter1ID'].values[0], CellDF)
-                    if tmp is not None and not tmp.empty:
-                        gDaughter2 = tmp
-                    else:
-                        break
-                gDaughters = gDaughters.append(gDaughter2)
+            gDaughters = gDaughters.append(daughter_timeMatch(gDaughter2,CellDF,t))
 
         if gDaughter3 is not None and not gDaughter3.empty:
-            if gDaughter3['Z'].values[0] > t:
-                gDaughter3 = daughter_cell2
-                while int(gDaughter3['Z']) > t:
-                    tmp = find_cell(gDaughter3['motherID'].values[0], CellDF)
-                    if tmp is not None and not tmp.empty:
-                        gDaughter3 = tmp
-                    else:
-                        break
-
-            while int(gDaughter3['Z']) <= t:
-                tmp = find_cell(gDaughter3['daughter1ID'].values[0], CellDF)
-                if tmp is not None and not tmp.empty:
-                    gDaughter3 = tmp
-                else:
-                    break
-            gDaughters = gDaughters.append(gDaughter3)
-
+            gDaughters = gDaughters.append(daughter_timeMatch(gDaughter3,CellDF,t))
+            
         if gDaughter4 is not None and not gDaughter4.empty:
-            if gDaughter4['Z'].values[0] <= t:
-                while int(gDaughter4['Z']) < t:
-                    tmp = find_cell(gDaughter4['daughter1ID'].values[0], CellDF)
-                    if tmp is not None and not tmp.empty:
-                        gDaughter4 = tmp
-                    else:
-                        break
-                gDaughters = gDaughters.append(gDaughter4)
+            gDaughters = gDaughters.append(daughter_timeMatch(gDaughter4,CellDF,t))
 
+            
     return gDaughters
 
 
@@ -201,13 +165,13 @@ def find_parent(cell_slice, CellDF):
     mother_cell = cell_slice
     while True:
         tmp_cell = find_cell(mother_cell['motherID'].values[0], CellDF)
-        if not tmp_cell.empty:
+        if tmp_cell is not None and not tmp_cell.empty:
             mother_cell = tmp_cell
         else:
             break
         if mother_cell['daughter2ID'].values[0] != -2:
-            break
-    return mother_cell
+            return mother_cell
+    return None
 
 
 def fill_newcell(CellDF):
@@ -233,10 +197,16 @@ def check_overlap(closest_pair, farthest_pair):
         return True
 
 
-def fill_nan_cells(CellDF):
-    tmpDF = CellDF[CellDF['Age'].isnull()]
-    for uID in tmpDF['uID']:
-        CellDF.loc[uID, 'Age'] = nan_age
+def fill_nan_cells(CellDF,fill=True):
+    if fill:
+        tmpDF = CellDF[CellDF['Age'].isnull()]
+        for uID in tmpDF['uID']:
+            CellDF.loc[uID, 'Age'] = nan_age
+    else:
+        tmpDF = CellDF[CellDF['Age'].isnull()]
+        for uID in tmpDF['uID']:
+            CellDF.at[(CellDF['Age'] == nan_age),'Age'] = pd.np.nan
+            
     return CellDF
 
 
@@ -256,27 +226,24 @@ def all_mothers(DF,CellDF):
 def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
     CellDF['Age'] = pd.np.nan
     for timeinLin in range(origin_frame, max(CellDF['Z'])):
+        # print "Time:" + str(timeinLin)
         tmpDF = CellDF[CellDF['Z'] == timeinLin]
         tmpDF = tmpDF[tmpDF['Age'].isnull()]
         for uID in tmpDF['uID']:
             grand_daughters = pd.DataFrame(columns=CellDF.columns.values)
             if timeinLin == 0:
-                if uID != unk_age:
-                    #print uID
-                    CellDF.loc[uID, 'Age'] = unk_age
-                grand_daughters = find_grandDaughters(find_cell(uID, CellDF), CellDF, mode="daughter")
+                CellDF.loc[uID, 'Age'] = unk_age
+                #grand_daughters = find_grandDaughters(find_cell(uID, CellDF), CellDF, mode="daughter")
             else:
                 tmpcell = find_cell(uID, CellDF)
                 if not tmpcell.empty:
                     parent_cell = find_parent(tmpcell, CellDF)
-                    if not parent_cell.empty:
+                    if parent_cell is not None and not parent_cell.empty:
                         gParent_cell = find_parent(parent_cell, CellDF)
-                        if not gParent_cell.empty:
+                        if gParent_cell is not None and not gParent_cell.empty:
                             grand_daughters = find_grandDaughters(gParent_cell, CellDF, t=timeinLin)
                         else:
-                            grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timeinLin, mode="daughter")
-                    else:
-                        grand_daughters = find_grandDaughters(parent_cell, CellDF, t=timeinLin, mode="daughter")
+                            CellDF.loc[uID, 'Age'] = unk_age
             if grand_daughters.shape[0] == 4:
                 closest_pair = find_distancePair(grand_daughters, CellDF)
                 farthest_pair = find_distancePair(grand_daughters, CellDF, mode="farthest")
@@ -316,9 +283,10 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
             elif grand_daughters.shape[0] == 2 and uID != unk_age:
                 CellDF.loc[uID, 'Age'] = unk_age
             CellDF = fill_newcell(CellDF)
-    if mode == "debug":
-        CellDF = fill_nan_cells(CellDF)
-    return CellDF
+            if mode == "debug":
+                tmpDF = CellDF.copy()
+                create2DLineage(fill_nan_cells(tmpDF),attr='Age')
+    return fill_nan_cells(CellDF)
 
 
 if __name__ == "__main__":
