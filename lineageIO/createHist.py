@@ -28,7 +28,7 @@ from pyLineage.lineageIO.loadRawImgs import loadRawImgs
 from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
 
-def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None):
+def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None,fname=None):
     segImgsList = loadMatImgs(matImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
     intensityList = list()
@@ -46,7 +46,7 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
             count += 1
             createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".png",saveDir=savePath)
         allIntens = allIntens + list(intens.values())
-    createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten)
+    createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
 
     
 def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50):
@@ -81,6 +81,8 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
         plt.title(titleName+"(p="+str(bootstrap(data))+")")
     else:
         plt.title(titleName)
+    plt.xlabel("[ATP] mM")
+    plt.ylabel("Frequency")
     
     if saveDir != None:
         if not os.path.isdir(saveDir):
