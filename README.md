@@ -48,15 +48,12 @@ pyLineage27 has been removed from the main branch
 
 
 ## requirements  
-- python 2.7
+- python 3.7
 - numpy : 1.15.2
 - pandas : 0.23.4
 - matplotlib : 2.2.3
 - scipy : 1.1.0
 - scikit-image : 0.14.2_1
 - networkx : 2.2
-- opencv : 3.4.10
-
-## Additional requirements for GUI  
-- kivy : 1.10.1_0
+- opencv : 3.4.10  
 

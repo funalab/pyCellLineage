@@ -33,9 +33,9 @@ class modeIO():
         return self.Names
 
     def modeOutput(self,mode,depth):
-        for modeName in mode.keys():
+        for modeName in list(mode.keys()):
             space = "\t" * depth
-            print space + modeName
+            print((space + modeName))
             if type(mode[modeName]) is not type(True):
                 self.modeOutput(mode[modeName],depth + 1)
         return
@@ -60,7 +60,7 @@ class modeIO():
         if type(mode) == type(True):
             self.Names.append(name)
         else:
-            for modeName in mode.keys():
+            for modeName in list(mode.keys()):
                 name.append(modeName)
                 self.modeSave(mode[modeName],depth + 1,name)
                 name = name[:depth]
@@ -73,7 +73,7 @@ class modeIO():
             with open(FileName) as f:
                 df = json.load(f)
         else:
-            print "Can't find File"
+            print("Can't find File")
             df = None
         return df
 

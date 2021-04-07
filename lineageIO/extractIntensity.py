@@ -57,15 +57,15 @@ def extractIntensity(segImg, rawImg, originFrame=0, erodeLen = 4):
 
     keys = cellIndices - 1
     values = meanIntList
-    meanIntDict = dict(zip(keys, values))
+    meanIntDict = dict(list(zip(keys, values)))
 
     return meanIntDict
     # return meanIntList
 
 
 if __name__ == "__main__":
-    from loadMatImgs import loadMatImgs
-    from loadRawImgs import loadRawImgs
+    from .loadMatImgs import loadMatImgs
+    from .loadRawImgs import loadRawImgs
     segImgsPath = '/Users/itabashi/Research/Analysis/Schnitzcells/2018-11-10/488/segmentation/'
     rawImgsPath = '/Users/itabashi/Research/Experiment/microscope/2018/11/10/ECTC/488FS'
     segImgs = loadMatImgs(segImgsPath)

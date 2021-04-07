@@ -20,8 +20,8 @@ def drawAgeFig(CellDF,saveDir=None,ageMax=8,atpMax=None,Z=None):
     plt.xlabel('Age')
     plt.ylabel('ATP mM')
     r, p = stats.spearmanr(Age['Age'], Age['ATP'])
-    print('r : ', r)
-    print('p : ', p)
+    print(('r : ', r))
+    print(('p : ', p))
     plt.title("R = " + str(r))
     if ageMax is None:
        ageMax =  max(Age['Age']) + 1

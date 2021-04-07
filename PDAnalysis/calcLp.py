@@ -5,7 +5,7 @@
 # Last modified: Sat, 01 Dec 2018 13:55:03 +0900
 import numpy as np
 
-from calcL import calcL
+from .calcL import calcL
 
 
 def calcLp(cellDf, dt):

@@ -7,7 +7,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 
-from createGraph import createGraph
+from .createGraph import createGraph
 
 
 def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
@@ -69,33 +69,33 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
             total_dict = dict()
             legend = dict()
             for unique in unique_attr:
-                print unique
+                print(unique)
                 uid_list = list(cellDfWP[cellDfWP[attr] == unique]['uID'])
-                total_dict.update(zip(uid_list,np.repeat(cnt,len(uid_list))))
+                total_dict.update(list(zip(uid_list,np.repeat(cnt,len(uid_list)))))
                 cnt = cnt + 1
                 legend.update({unique:cnt})
-            print total_dict
+            print(total_dict)
             cellDfWP[conv_attr]=list(total_dict.values())
             if savePath is not None:
                 df = pd.DataFrame.from_dict(legend, orient="index")
                 df.to_csv(os.path.join(savePath,"legend.csv"))
             else:
-                print legend
-                print cellDfWP
+                print(legend)
+                print(cellDfWP)
             attr = conv_attr
         maxAttr = float(max(cellDfWP[attr]))
         minAttr = float(min(cellDfWP[attr]))
         if cmap == 'bwr':
             colors = {key: plt.cm.bwr(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
-            ) for key, value in cellDfWP[attr].iteritems()}
+            ) for key, value in list(cellDfWP[attr].items())}
 
         elif cmap == 'gnuplot':
             colors = {key: plt.cm.gnuplot(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
-            ) for key, value in cellDfWP[attr].iteritems()}
+            ) for key, value in list(cellDfWP[attr].items())}
         else:
-            print "add color map to code"
+            print("add color map to code")
             sys.exit(-1)
     else:
         colors = {i: (0, 0, 0)
@@ -129,7 +129,7 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
 
 
 if __name__ == "__main__":
-    from annotateLineageIdx import annotateLineageIdx
+    from .annotateLineageIdx import annotateLineageIdx
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '9999-99-99/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'

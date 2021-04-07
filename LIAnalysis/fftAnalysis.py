@@ -38,7 +38,7 @@ def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None,pltshow=None):
     GPR_chg = GPR_chg.T[1:]
     GPR_chg.index = GPR_chg.index.astype(np.float64)
     atpChange = GPR_chg
-    for i in tqdm(range(len(atpChange.columns))):
+    for i in tqdm(list(range(len(atpChange.columns)))):
         if len(atpChange[i].unique()) > len(atpChange[i])/2:
             plt.plot(atpChange.index, atpChange[i])
             plt.xlabel('time (hours)')
@@ -90,8 +90,8 @@ def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8,xlim=25):
     plt.xlim((0,xlim))
     pc = np.polyfit(x = maxAmp, y = lastATP, deg = 1)
     r, p = stats.spearmanr(maxAmp, lastATP)
-    print('r : ', r)
-    print('p : ', p)
+    print(('r : ', r))
+    print(('p : ', p))
     print(pc)
     if saveDir != None:
         plt.savefig(os.path.join(saveDir,"atpAmp.png"))

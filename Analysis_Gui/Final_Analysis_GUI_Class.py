@@ -278,7 +278,7 @@ class ModeScreens(App):
         defaultModes = modeIO(self.mode)
         modeLabels = defaultModes.splitModeNames()
         sm = ScreenManager(transition=NoTransition())
-        Labels = modeLabels.keys()
+        Labels = list(modeLabels.keys())
 
         scrn = sampleScreen(self.samples,self.conditions,Labels[0],sm)
         sm.add_widget(scrn)

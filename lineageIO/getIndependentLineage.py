@@ -76,7 +76,7 @@ def getIndependentLineage(cellDfWPL,mode=None):
 
 
 if __name__ == "__main__":
-    from annotateLineageIdx import annotateLineageIdx
+    from .annotateLineageIdx import annotateLineageIdx
     matFilePath = '/Users/itabashi/Research/Analysis/Schnitzcells/2019-01-02/488/data/488_lin.mat'
     segImgsPath = '/Users/itabashi/Research/Analysis/Schnitzcells/2019-01-02/488/segmentation/'
     rawImgsPath = '/Users/itabashi/Research/Experiment/microscope/2019/01/02/ECTC/Pos0/488'

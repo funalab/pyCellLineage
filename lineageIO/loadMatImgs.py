@@ -33,12 +33,12 @@ def loadMatImgs(matDirPath):
 
     for matFileIdx in range(len(matFiles)):
         matStruct = io.loadmat(os.path.join(matDirPath, matFiles[matFileIdx]))
-        if 'Lc' in matStruct.keys():
+        if 'Lc' in list(matStruct.keys()):
             imgs.append(matStruct['Lc'])
-        elif 'LNsub' in matStruct.keys():
+        elif 'LNsub' in list(matStruct.keys()):
             imgs.append(matStruct['LNsub'])
         else:
-            print('Lc or LNsub do not exist in frame %d.' % matFileIdx)
+            print(('Lc or LNsub do not exist in frame %d.' % matFileIdx))
 
     return imgs
 
@@ -49,4 +49,4 @@ if __name__ == "__main__":
     matPath = 'Schnitzcells/9999-99-99/488/segmentation'
     imgs = loadMatImgs(os.path.join(anaPath, matPath))
     # skimage.io.imshow(imgs[0])
-    print(imgs[0])
+    print((imgs[0]))

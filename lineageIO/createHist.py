@@ -28,7 +28,7 @@ from pyLineage.lineageIO.loadRawImgs import loadRawImgs
 from pyLineage.lineageIO.loadMatImgs import loadMatImgs
 
 
-def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.):
+def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None,fname=None):
     segImgsList = loadMatImgs(matImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
     intensityList = list()
@@ -45,8 +45,8 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
         if timelapse:
             count += 1
             createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".png",saveDir=savePath)
-        allIntens = allIntens + intens.values()
-    createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath)
+        allIntens = allIntens + list(intens.values())
+    createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
 
     
 def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50):
@@ -56,7 +56,7 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
         if data is not None and type(data) is list:
             data = pd.Series(data)
         else:
-            print "Error: input data(frame) in createHist"
+            print("Error: input data(frame) in createHist")
             exit(-1)
     fig = plt.figure()
     plt.hist(data.dropna(),bins=20)
@@ -81,6 +81,8 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
         plt.title(titleName+"(p="+str(bootstrap(data))+")")
     else:
         plt.title(titleName)
+    plt.xlabel("[ATP] mM")
+    plt.ylabel("Frequency")
     
     if saveDir != None:
         if not os.path.isdir(saveDir):
@@ -103,7 +105,7 @@ def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):
 
 #if __name__ == "__main__":
 if __name__ == "__main__":
-    from annotateLineageIdx import annotateLineageIdx
+    from .annotateLineageIdx import annotateLineageIdx
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '9999-99-99/488/data/488_lin.mat')
     segImgsPath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'

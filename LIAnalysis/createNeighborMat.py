@@ -86,4 +86,4 @@ if __name__ == "__main__":
                    '2018-11-10/488/segmentation/')
     rawImgsPath = ('/Users/itabashi/Research/Experiment/microscope/'
                    '2018/11/10/ECTC/488FS/')
-    print(createNeighborMat(segImgsPath))
+    print((createNeighborMat(segImgsPath)))

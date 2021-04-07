@@ -35,15 +35,15 @@ def extractArea(segImg, pixelSize=1.0, originFrame=0):
 
     keys = cellIndices - 1 
     values = areaList
-    areaDict = dict(zip(keys, values))
+    areaDict = dict(list(zip(keys, values)))
 
     # return areaList
     return areaDict
 
 
 if __name__ == "__main__":
-    from loadMatImgs import loadMatImgs
-    from loadRawImgs import loadRawImgs
+    from .loadMatImgs import loadMatImgs
+    from .loadRawImgs import loadRawImgs
     segImgsPath = '/Users/itabashi/Research/Analysis/Schnitzcells/2018-11-10/488/segmentation/'
     rawImgsPath = '/Users/itabashi/Research/Experiment/microscope/2018/11/10/ECTC/488FS'
     segImgs = loadMatImgs(segImgsPath)

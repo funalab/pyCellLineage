@@ -170,8 +170,8 @@ if __name__ == "__main__":
     windows = ModeScreens()
     windows.run()
     if debug:
-        print windows.getMode()
-        print windows.getSamples()
+        print(windows.getMode())
+        print(windows.getSamples())
         sys.exit(0)
     conditions = windows.getConditions()
     samples = dict(windows.getSamples())

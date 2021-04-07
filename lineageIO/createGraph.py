@@ -39,7 +39,7 @@ def createGraph(cellDf, attr=None):
 
 
 if __name__ == "__main__":
-    from loadSchnitz import loadSchnitz
+    from .loadSchnitz import loadSchnitz
     matFilePath = ('/Users/itabashi/Research/Analysis/Schnitzcells/'
                    '9999-99-99/488/data/488_lin.mat')
     cellDf = loadSchnitz(matFilePath)

@@ -52,7 +52,7 @@ def createRatioFS(path,atp_path=None):
     counter = 0
     for img in Imgs['Ratio']:
         fname = "405-g-"+str(counter).zfill(3)+".tif"
-        print "Doing image " + fname + " in RatioFS\n"
+        print("Doing image " + fname + " in RatioFS\n")
         atpImg = np.zeros(img.shape)
         for i in range(img.shape[0]):
             for j in range(img.shape[1]):

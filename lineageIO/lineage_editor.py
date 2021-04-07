@@ -1,9 +1,9 @@
-from annotateLineageIdx import annotateLineageIdx
-from loadMatImgs import loadMatImgs
+from .annotateLineageIdx import annotateLineageIdx
+from .loadMatImgs import loadMatImgs
 import os
-from loadMatImgs import loadMatImgs
-from loadRawImgs import loadRawImgs
-from extractIntensity import extractIntensity
+from .loadMatImgs import loadMatImgs
+from .loadRawImgs import loadRawImgs
+from .extractIntensity import extractIntensity
 from PIL import Image
 from skimage import measure
 from skimage import morphology
@@ -52,7 +52,7 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2,
                 added_total = cell_count + added_total
                 total[i] = added_total
             meanIntDict = extractIntensity(segImg, rawImg)
-            Intensity_ranking = sorted(meanIntDict.items(), key=lambda x: x[1])
+            Intensity_ranking = sorted(list(meanIntDict.items()), key=lambda x: x[1])
             Intensity_ranking = collections.OrderedDict(Intensity_ranking)
             cellIdx = None
             Intensity = Intensity_ranking[cellNo]
@@ -78,7 +78,7 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2,
                 DF.loc[value, 'cenX'] = xc
                 DF.loc[value, 'cenY'] = yc
             else:
-                print "Can't find one"
+                print("Can't find one")
                 sys.exit()
     if mode==3:
         for value in DF['uID']:
@@ -110,7 +110,7 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2,
                     added_total = cell_count + added_total
                     total[i] = added_total
                 meanIntDict = extractIntensity(segImg, rawImg)
-                Intensity_ranking = sorted(meanIntDict.items(), key=lambda x: x[1])
+                Intensity_ranking = sorted(list(meanIntDict.items()), key=lambda x: x[1])
                 Intensity_ranking = collections.OrderedDict(Intensity_ranking)
                 cellIdx = None
                 Intensity = Intensity_ranking[cellNo]
@@ -136,7 +136,7 @@ def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2,
                     DF.loc[value, 'cenX'] = xc
                     DF.loc[value, 'cenY'] = yc
                 else:
-                    print "Can't find one"
+                    print("Can't find one")
                     sys.exit()
             
 

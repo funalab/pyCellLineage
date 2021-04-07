@@ -5,9 +5,9 @@
 # Last modified: Thu, 31 Jan 2019 08:16:47 +0900
 import numpy as np
 
-from annotateLineageIdx import annotateLineageIdx
-from loadMatImgs import loadMatImgs
-from createUniqueColorList import createUniqueColorList
+from .annotateLineageIdx import annotateLineageIdx
+from .loadMatImgs import loadMatImgs
+from .createUniqueColorList import createUniqueColorList
 
 
 def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
@@ -40,7 +40,7 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
     cellDfWPL.sort_values(['Z', 'cellNo'])
 
     for time in range(len(segImgs)):
-        print(time + 1)
+        print((time + 1))
         timeSpecifiedDf = cellDfWPL[cellDfWPL['Z'] == time + 1]
         boolArrtmp = cellDfWPL['Z'] == time + 1
         if boolArrtmp.any():

@@ -92,7 +92,7 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
 def hmm_randomize(CellDF, save_dir=None, origin_frame=0):
     CellDF['Rand_Class'] = pd.np.nan
     if len(CellDF['ATP_Class']) == 0:
-        print "Make ATP_Class zone first"
+        print("Make ATP_Class zone first")
         exit()
     else:
         lin_len = len(CellDF)
@@ -111,8 +111,8 @@ def hmm_randomize(CellDF, save_dir=None, origin_frame=0):
 
 def read_states(CellDF,read_dir):
     file_names = sorted(os.path.dirlist(read_dir))
-    file_names = filter(lambda x: "csv" in x,file_names)
-    dict_fname = zip(range(len(file_names)),file_names)
+    file_names = [x for x in file_names if "csv" in x]
+    dict_fname = list(zip(list(range(len(file_names))),file_names))
     i = 0
     dict_states = dict()
     
@@ -120,9 +120,9 @@ def read_states(CellDF,read_dir):
         hstates = list(pd.read_csv(dict_fname[i]))
         ids = list(lineage['fuID'])
         if len(hstates) == len(ids):
-            dict_states.update(zip(ids,hstates))
+            dict_states.update(list(zip(ids,hstates)))
         else:
-            print "Error"
+            print("Error")
             exit()
         i = i + 1
     all_states = list(dict_states.values())
@@ -130,7 +130,7 @@ def read_states(CellDF,read_dir):
         CellDF["States"] = all_states
     else:
         CellDF["States"] = pd.np.nan
-        print "Error in Total State size"
+        print("Error in Total State size")
         exit()
     return CellDF
         
