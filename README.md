@@ -43,7 +43,8 @@ The first three directories are part of the pyLineage Module,
 but the util directory also contains python or zsh programs that are useful in extracting schnitzcell prepared images from raw images,  
 creating an automatic initSchnitz command unique to the experiment for MatLab and also creating Ratio images from the raw images.  
 
-The last directory is used for GUI Analysis.  
+The last directory is used for GUI Analysis.
+pyLineage27 has been removed from the main branch
 
 
 ## requirements  
