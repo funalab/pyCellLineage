@@ -155,7 +155,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     if mode['cellAge']['save']:
         savePath = os.path.join(saveDir,'CellDf_wAge.csv')
         if not os.path.isfile(savePath):
-            print "Couldn't find csv("+savePath+")\n Creating a New One\n\t This may take a while...\n"
+            print ("Couldn't find csv("+savePath+")\n Creating a New One\n\t This may take a while...\n")
             cellDFWP = cellular_ageTracking(cellDFWP)
             cellDFWP.to_csv(savePath)
         else:
@@ -186,11 +186,11 @@ if __name__ == "__main__":
     elif mode['hmmPrep']['totalATP']['gmmPoor']:
         totalDF = Total_ATP(glcRich=False)
         thr = findBestBIC(totalDF['ATP'])
-        print "Found GMM thr to be " + str(thr) + "\n"
+        print ("Found GMM thr to be " + str(thr) + "\n")
 
     for cond in conditions:
         for num in sampleNum:
             if samples[cond][num]:
-                print "Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num]
+                print ("Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num])
                 Analysis_all(samplePath[cond][num],windows,thr=thr,atpMax=atpMax,genMax=genMax)
 

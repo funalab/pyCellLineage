@@ -12,11 +12,11 @@ from pyLineage.LIAnalysis.cellular_ageTracking import drawAgeFig
 from pyLineage.LIAnalysis.fftAnalysis import plot_IndiLine
 from pyLineage.lineageIO.lineage_editor import lineage_editor
 
-# from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
-# from pyLineage.Analysis_Gui.modeIO import modeIO
-# from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
-# from pyLineage.Analysis_Gui.pathParms import pathParms
-# from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import *
+from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
+from pyLineage.Analysis_Gui.modeIO import modeIO
+from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
+from pyLineage.Analysis_Gui.pathParms import pathParms
+from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import *
 
 import numpy as np
 import os

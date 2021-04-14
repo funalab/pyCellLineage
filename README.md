@@ -57,3 +57,5 @@ pyLineage27 has been removed from the main branch
 - networkx : 2.2
 - opencv : 3.4.10  
 
+## Additional GUI
+- kivy 2.0.0

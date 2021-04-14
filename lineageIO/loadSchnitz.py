@@ -81,7 +81,7 @@ def loadSchnitz(matFilePath):
 
     for i in range(len(tmpDf)):
         if len(tmpDf['N'][i]) != 0:
-            for j in range(tmpDf['N'][i]):
+            for j in range(int(tmpDf['N'][i])):
                 ID.append(i)
                 uID.append(uCellNum)
                 uCellNum += 1
