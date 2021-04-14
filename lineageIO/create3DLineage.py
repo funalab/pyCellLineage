@@ -110,7 +110,9 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
            for i in range(len(cellDfWP))}
 
     fig = plt.figure(figsize=(8, 8))
-    ax = Axes3D(fig)
+    ax = Axes3D(fig,auto_add_to_figure=False)
+    fig.add_axes(ax)
+
 
     for i, j in list(pos.items()):
         xi = j[0]
@@ -118,10 +120,10 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
         zi = j[2]
         if zi == max(cellDfWP['Z']) * dt:
             ax.scatter(xi, yi, zi, s=100,
-                       c=colors[i], alpha=1, cmap=plt.cm.gnuplot)
+                       color=colors[i], alpha=1, cmap=plt.cm.gnuplot)
         else:
             ax.scatter(xi, yi, zi, s=1,
-                       c=colors[i], alpha=0, cmap=plt.cm.gnuplot)
+                       color=colors[i], alpha=0, cmap=plt.cm.gnuplot)
 
     for edge in graph.es:
         source = edge.source
