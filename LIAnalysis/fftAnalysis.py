@@ -10,7 +10,12 @@ from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
 import scipy.signal as sp
 from scipy import stats
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+
+from pyLineage.util.isNotebook import isnotebook
+if isnotebook():
+    from tqdm.notebook import tqdm
+else:
+    from tqdm import tqdm
 
 def write_ATPChange(CellDF,save_dir):
     counter = int(0)
