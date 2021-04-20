@@ -44,7 +44,7 @@ but the util directory also contains python or zsh programs that are useful in e
 creating an automatic initSchnitz command unique to the experiment for MatLab and also creating Ratio images from the raw images.  
 
 The last directory is used for GUI Analysis.
-pyLineage27 has been removed from the main branch
+pyLineage27 has been removed from the main branch and is no longer supported.
 
 
 ## requirements  
