@@ -83,8 +83,17 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
                 print(legend)
                 print(cellDfWP)
             attr = conv_attr
-        maxAttr = float(max(cellDfWP[attr]))
-        minAttr = float(min(cellDfWP[attr]))
+
+        if attrMax is None:
+            maxAttr = float(max(cellDfWP[attr]))
+        else:
+            maxAttr = attrMax
+
+        if attrMin is None:
+            minAttr = float(min(cellDfWP[attr]))
+        else:
+            minAttr = attrMin
+            
         if cmap == 'bwr':
             colors = {key: plt.cm.bwr(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
