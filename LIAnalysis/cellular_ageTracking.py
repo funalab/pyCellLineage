@@ -4,10 +4,16 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 import os
-from tqdm import tqdm
 from pyLineage.lineageIO.create2DLineage import create2DLineage
+from collections import Counter
 
-unk_age = -1
+from pyLineage.util.isNotebook import isnotebook
+if isnotebook():
+    from tqdm.notebook import tqdm
+else:
+    from tqdm import tqdm
+
+unk_age = -5
 nan_age = 10
 
 def drawAgeFig(CellDF,saveDir=None,ageMax=8,atpMax=None,Z=None):
@@ -76,6 +82,9 @@ def find_distancePair(gDaughters, CellDF, mode="closest", originID=None):
         fDaughters = fDaughters.append(find_cell(greatest_distance[0], CellDF))
         fDaughters = fDaughters.append(find_cell(greatest_distance[1], CellDF))
         return fDaughters
+    else:
+        print("No such mode")
+        exit(-1)
 
 
 def find_cell(uID, CellDF):
@@ -116,20 +125,20 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
     daughters = pd.DataFrame(columns=CellDF.columns.values)
     daughter_cell = cell_slice
     daughter_cell = findDaughter(daughter_cell,CellDF)
-    daughter_cell1 = find_cell(daughter_cell['daughter1ID'].values[0], CellDF)
-    daughter_cell2 = find_cell(daughter_cell['daughter2ID'].values[0], CellDF)
+    daughter_cell1 = find_cell(int(daughter_cell['daughter1ID']), CellDF)
+    daughter_cell2 = find_cell(int(daughter_cell['daughter2ID']), CellDF)
 
 
     if daughter_cell1 is not None and not daughter_cell1.empty:
         daughters = daughters.append(daughter_timeMatch(daughter_cell1,CellDF,t))
         daughter_cell1 = findDaughter(daughter_cell1,CellDF)
-        gDaughter1 = find_cell(daughter_cell1['daughter1ID'].values[0], CellDF)
-        gDaughter2 = find_cell(daughter_cell1['daughter2ID'].values[0], CellDF)
+        gDaughter1 = find_cell(int(daughter_cell1['daughter1ID']), CellDF)
+        gDaughter2 = find_cell(int(daughter_cell1['daughter2ID']), CellDF)
     if daughter_cell2 is not None and not daughter_cell2.empty:
         daughters = daughters.append(daughter_timeMatch(daughter_cell2,CellDF,t))
         daughter_cell2 = findDaughter(daughter_cell2,CellDF)
-        gDaughter3 = find_cell(daughter_cell2['daughter1ID'].values[0], CellDF)
-        gDaughter4 = find_cell(daughter_cell2['daughter2ID'].values[0], CellDF)
+        gDaughter3 = find_cell(int(daughter_cell2['daughter1ID']), CellDF)
+        gDaughter4 = find_cell(int(daughter_cell2['daughter2ID']), CellDF)
     if mode == "daughter":
         return daughters
 
@@ -157,8 +166,7 @@ def find_grandDaughters(cell_slice, CellDF, t=None, mode=None):
             
         if gDaughter4 is not None and not gDaughter4.empty:
             gDaughters = gDaughters.append(daughter_timeMatch(gDaughter4,CellDF,t))
-
-    return gDaughters
+    return gDaughters.drop_duplicates(subset='uID')
 
 
 def find_parent(cell_slice, CellDF):
@@ -230,10 +238,15 @@ def highlight_cell(uID, CellDF, attr):
 
 def all_mothers(DF,CellDF):
     all_mothers = pd.DataFrame(columns=DF.columns.values)
+    parentIDs = list()
+    IDs = list()
     for uID in DF['uID']:
         tmp = find_cell(uID, CellDF)
-        all_mothers = all_mothers.append(find_cell(tmp['motherID'], CellDF))
-    return all_mothers
+        tmpParent = find_parent(tmp, CellDF)
+        parentIDs.append(int(tmpParent['uID']))
+        IDs.append(int(tmp['uID']))
+    motherList=zip(IDs,parentIDs)
+    return dict(motherList)
 
 
 def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
@@ -269,27 +282,32 @@ def cellular_ageTracking(CellDF, origin_frame=0, mode=None):
                             if not math.isnan(parent_age) and parent_age >= 0:
                                 CellDF.loc[fuID, 'Age'] = parent_age + 1 #add age
                             else:
-                                CellDF.loc[fuID, 'Age'] = unk_age #if no parent age is not known
+                                prvCell = find_cell(int(this_cell['motherID']),CellDF)
+                                if prvCell is not None and int(prvCell['Age'])>=0 and int(prvCell['daughter2ID']) == -2:
+                                    CellDF.loc[fuID, 'Age'] = int(prvCell['Age'])
+                                else:
+                                    CellDF.loc[fuID, 'Age'] = unk_age #if no parent age is not known
 
                 elif grand_daughters.shape[0] == 3:
                     main_cell = pd.DataFrame(columns=CellDF.columns.values)
-                    for guID in grand_daughters['motherID']:
-                        if grand_daughters['motherID'].value_counts()[guID] == 1:
-                            main_cell = grand_daughters[grand_daughters['motherID'] == guID]
-                            break
-                    closest_pair = find_distancePair(grand_daughters, CellDF, originID=main_cell['uID'].values[0])
+                    foundMothersID=Counter(all_mothers(grand_daughters,CellDF).values())
+                    mainID = min(foundMothersID, key=foundMothersID.get)
+                    closest_pair = find_distancePair(grand_daughters, CellDF, originID=mainID)
                     for guID in grand_daughters['uID']:
-                        if guID in closest_pair['uID'].values:
-                            if main_cell['uID'].values[0] != guID:
+                        if guID in closest_pair['uID'].values and mainID != guID:
                                 CellDF.loc[guID, 'Age'] = 1
-                        elif guID != main_cell['uID'].values[0]:
+                        else:
                             parent = find_parent(find_cell(guID, CellDF), CellDF)
-                            parent_age = parent['Age'].values[0]
+                            parent_age = int(parent['Age'])
                             if not parent.empty and parent_age != unk_age:
                                 CellDF.loc[guID, 'Age'] = parent_age + 1 #add age
                             else:
-                                #print guID
-                                CellDF.loc[guID, 'Age'] = unk_age #if no parent, age is not known
+                                this_cell = find_cell(guID, CellDF)
+                                prvCell = find_cell(int(this_cell['motherID']),CellDF)
+                                if prvCell is not None and int(prvCell['Age'])>=0 and int(prvCell['daughter2ID']) == -2:
+                                    CellDF.loc[guID, 'Age'] = int(prvCell['Age'])
+                                else:
+                                    CellDF.loc[guID, 'Age'] = unk_age #if no parent age is not known
 
         if mode == "debug":
             tmpDF = CellDF.copy()
