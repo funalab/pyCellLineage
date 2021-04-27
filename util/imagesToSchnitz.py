@@ -32,6 +32,8 @@ def main(strt=0):
         base = 'Phase'
     elif re.search('Ratio',baseName):
         base = '405'
+    elif re.search('532',baseName):
+        base = '532'
     else:
         print('the name of directory does not contain an information about laser wavelength.')
         sys.exit()
@@ -57,13 +59,6 @@ def main(strt=0):
             targetName = base + '-p-' + '%03d' % (i) + '.tif'
         targetFile = os.path.join(targetDir, targetName)
         shutil.copy2(sourceFile, targetFile)
-
-    saveimg_dir = os.path.join(sourceDir,"saveimg")
-    segimg_dir = os.path.join(sourceDir,"seg_img")
-    if not os.path.exists(saveimg_dir):
-        os.mkdir(saveimg_dir)
-    if not os.path.exists(segimg_dir):
-        os.mkdir(segimg_dir)
 
 if __name__ == "__main__":
     main()
