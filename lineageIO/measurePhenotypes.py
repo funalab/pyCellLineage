@@ -19,7 +19,7 @@ import pyLineage.lineageIO as myPackage
 
 
 
-def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path=None):
+def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_path=None,intenToATP=False):
     '''
     Measure phenotypes(such as cell area, fluorescence intensity) of each cell.
 
@@ -94,19 +94,20 @@ def measurePhenotypes(matFilePath, segImgsPath, rawImgsPath, originFrame=0,atp_p
     # celDfWPhenotypes['area'] = area * 0.065 ** 2 [um ^ 2]
 
     # add ATP column
-    atp = list()
-    atp_df = pd.read_csv(atp_path)
-    emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
-    d = float(atp_df[atp_df['parameter'] == 'd']['value'])
-    EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
+    if intenToATP:
+        atp = list()
+        atp_df = pd.read_csv(atp_path)
+        emax = float(atp_df[atp_df['parameter'] == 'Emax']['value'])
+        d = float(atp_df[atp_df['parameter'] == 'd']['value'])
+        EC50 = float(atp_df[atp_df['parameter'] == 'EC50']['value'])
     
-    for inten in intens:
-        atp.append(atpCalib(inten,
-                            emax=emax,
-                            d=d,
-                            EC50=EC50))
+        for inten in intens:
+            atp.append(atpCalib(inten,
+                                emax=emax,
+                                d=d,
+                                EC50=EC50))
 
-    cellDfWP['ATP'] = atp
+        cellDfWP['ATP'] = atp
     return cellDfWP
 
 

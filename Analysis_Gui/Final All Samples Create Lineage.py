@@ -42,7 +42,7 @@ debug = False
 def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
-    cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
+    cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'],intenToATP=True)        
     #parent of path
     mode = dict(instMode.getMode())
     
