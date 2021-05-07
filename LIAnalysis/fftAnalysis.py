@@ -6,12 +6,12 @@
 import numpy as np
 import os
 import pandas as pd
-from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
+from ..lineageIO.getIndependentLineage import getIndependentLineage
 import scipy.signal as sp
 from scipy import stats
 import matplotlib.pyplot as plt
 
-from pyLineage.util.isNotebook import isnotebook
+from ..util.isNotebook import isnotebook
 if isnotebook():
     from tqdm.notebook import tqdm
 else:

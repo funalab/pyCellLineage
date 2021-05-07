@@ -31,7 +31,7 @@ hmm_randomize:
 """
 
 import scipy.signal as sp
-from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
+from ..lineageIO.getIndependentLineage import getIndependentLineage
 import pandas as pd
 import numpy as np
 import pandas as pd

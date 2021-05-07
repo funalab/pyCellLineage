@@ -9,12 +9,12 @@ import os
 from skimage import measure
 from skimage import morphology
 
-from pyLineage.lineageIO.loadSchnitz import loadSchnitz
-from pyLineage.lineageIO.loadMatImgs import loadMatImgs
-from pyLineage.lineageIO.loadRawImgs import loadRawImgs
-from pyLineage.lineageIO.extractIntensity import extractIntensity
-from pyLineage.lineageIO.extractArea import extractArea
-from pyLineage.lineageIO.atpCalib import atpCalib
+from .loadSchnitz import loadSchnitz
+from .loadMatImgs import loadMatImgs
+from .loadRawImgs import loadRawImgs
+from .extractIntensity import extractIntensity
+from .extractArea import extractArea
+from .atpCalib import atpCalib
 import pyLineage.lineageIO as myPackage
 
 

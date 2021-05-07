@@ -22,10 +22,10 @@ import os
 import numpy as np
 import pandas as pd
 from scipy.stats import skew
-from pyLineage.lineageIO.bootstrap import bootstrap
-from pyLineage.lineageIO.extractIntensity import extractIntensity
-from pyLineage.lineageIO.loadRawImgs import loadRawImgs
-from pyLineage.lineageIO.loadMatImgs import loadMatImgs
+from .bootstrap import bootstrap
+from .extractIntensity import extractIntensity
+from .loadRawImgs import loadRawImgs
+from .loadMatImgs import loadMatImgs
 
 
 def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None,fname=None):

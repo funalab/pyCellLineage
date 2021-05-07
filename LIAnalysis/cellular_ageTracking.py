@@ -4,10 +4,10 @@ import math
 import matplotlib.pyplot as plt
 from scipy import stats
 import os
-from pyLineage.lineageIO.create2DLineage import create2DLineage
+from ..lineageIO.create2DLineage import create2DLineage
 from collections import Counter
 
-from pyLineage.util.isNotebook import isnotebook
+from ..util.isNotebook import isnotebook
 if isnotebook():
     from tqdm.notebook import tqdm
 else:

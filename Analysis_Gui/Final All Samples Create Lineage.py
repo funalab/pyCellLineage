@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 # In[1]:
-from pyLineage.lineageIO.measurePhenotypes import measurePhenotypes
-from pyLineage.lineageIO.create3DLineage import create3DLineage
-from pyLineage.lineageIO.create2DLineage import create2DLineage
-from pyLineage.LIAnalysis.stochastic_hmm import hmm_prep
-from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
-from pyLineage.LIAnalysis.fftAnalysis import write_ATPChange
-from pyLineage.LIAnalysis.cellular_ageTracking import cellular_ageTracking
-from pyLineage.lineageIO.createHist import createHistMovie
-from pyLineage.lineageIO.createHist import createHist
-from pyLineage.LIAnalysis.cellular_ageTracking import drawAgeFig
-from pyLineage.LIAnalysis.fftAnalysis import plot_IndiLine
-from pyLineage.lineageIO.lineage_editor import lineage_editor
-from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
-from pyLineage.Analysis_Gui.modeIO import modeIO
-from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
-from pyLineage.lineageIO.Total_ATP import Total_ATP
-from pyLineage.PDAnalysis.nineFivePercentile import nineFivePercentile
-from pyLineage.Analysis_Gui.pathParms import pathParms
-from pyLineage.PDAnalysis.findBestBIC import findBestBIC
+from ..lineageIO.measurePhenotypes import measurePhenotypes
+from ..lineageIO.create3DLineage import create3DLineage
+from ..lineageIO.create2DLineage import create2DLineage
+from ..LIAnalysis.stochastic_hmm import hmm_prep
+from ..lineageIO.getIndependentLineage import getIndependentLineage
+from ..LIAnalysis.fftAnalysis import write_ATPChange
+from ..LIAnalysis.cellular_ageTracking import cellular_ageTracking
+from ..lineageIO.createHist import createHistMovie
+from ..lineageIO.createHist import createHist
+from ..LIAnalysis.cellular_ageTracking import drawAgeFig
+from ..LIAnalysis.fftAnalysis import plot_IndiLine
+from ..lineageIO.lineage_editor import lineage_editor
+from .Final_Analysis_GUI_Class import ModeScreens
+from .modeIO import modeIO
+from .path_prep import path_prep ## Works only for a specific directory structure(check examples)
+from ..lineageIO.Total_ATP import Total_ATP
+from ..PDAnalysis.nineFivePercentile import nineFivePercentile
+from .pathParms import pathParms
+from ..PDAnalysis.findBestBIC import findBestBIC
 
 import numpy as np
 import os
@@ -105,7 +105,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     elif mode['hmmPrep']['95ATP']['both']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
-            thr = nineFivePercentile(totalDF)
+            thr = nineFivePercentile(totalDF,attr='intensity')
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
     elif mode['hmmPrep']['95ATP']['control']:

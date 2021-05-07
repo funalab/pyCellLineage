@@ -5,7 +5,7 @@
 # Last modified: Sat, 01 Dec 2018 22:18:21 +0900
 import numpy as np
 
-from pyLineage.lineageIO.createDTList import createDTList
+from ..lineageIO.createDTList import createDTList
 
 
 def calcDa(cellDfWPL, dt):
