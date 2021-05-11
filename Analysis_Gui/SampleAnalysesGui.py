@@ -1,25 +1,25 @@
 #!/usr/bin/env python
 # coding: utf-8
 # In[1]:
-from ..lineageIO.measurePhenotypes import measurePhenotypes
-from ..lineageIO.create3DLineage import create3DLineage
-from ..lineageIO.create2DLineage import create2DLineage
-from ..LIAnalysis.stochastic_hmm import hmm_prep
-from ..lineageIO.getIndependentLineage import getIndependentLineage
-from ..LIAnalysis.fftAnalysis import write_ATPChange
-from ..LIAnalysis.cellular_ageTracking import cellular_ageTracking
-from ..lineageIO.createHist import createHistMovie
-from ..lineageIO.createHist import createHist
-from ..LIAnalysis.cellular_ageTracking import drawAgeFig
-from ..LIAnalysis.fftAnalysis import plot_IndiLine
-from ..lineageIO.lineage_editor import lineage_editor
-from .Final_Analysis_GUI_Class import ModeScreens
-from .modeIO import modeIO
-from .path_prep import path_prep ## Works only for a specific directory structure(check examples)
-from ..lineageIO.Total_ATP import Total_ATP
-from ..PDAnalysis.nineFivePercentile import nineFivePercentile
-from .pathParms import pathParms
-from ..PDAnalysis.findBestBIC import findBestBIC
+from pyLineage.lineageIO.measurePhenotypes import measurePhenotypes
+from pyLineage.lineageIO.create3DLineage import create3DLineage
+from pyLineage.lineageIO.create2DLineage import create2DLineage
+from pyLineage.LIAnalysis.stochastic_hmm import hmm_prep
+from pyLineage.lineageIO.getIndependentLineage import getIndependentLineage
+from pyLineage.LIAnalysis.fftAnalysis import write_ATPChange
+from pyLineage.LIAnalysis.cellular_ageTracking import cellular_ageTracking
+from pyLineage.lineageIO.createHist import createHistMovie
+from pyLineage.lineageIO.createHist import createHist
+from pyLineage.LIAnalysis.cellular_ageTracking import drawAgeFig
+from pyLineage.LIAnalysis.fftAnalysis import plot_IndiLine
+from pyLineage.lineageIO.lineage_editor import lineage_editor
+from pyLineage.Analysis_Gui.Final_Analysis_GUI_Class import ModeScreens
+from pyLineage.Analysis_Gui.modeIO import modeIO
+from pyLineage.Analysis_Gui.path_prep import path_prep ## Works only for a specific directory structure(check examples)
+from pyLineage.lineageIO.Total_ATP import Total_ATP
+from pyLineage.PDAnalysis.nineFivePercentile import nineFivePercentile
+from pyLineage.Analysis_Gui.pathParms import pathParms
+from pyLineage.PDAnalysis.findBestBIC import findBestBIC
 
 import numpy as np
 import os
@@ -162,8 +162,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
             cellDFWP = pd.read_csv(savePath)
         drawAgeFig(cellDFWP,saveDir=saveDir,atpMax=atpMax)
 
-
-if __name__ == "__main__":
+def run():
     sampleNum = ['sample1','sample2','sample3']
     samplePath = pathParms().getSamplePath()
     
@@ -193,4 +192,7 @@ if __name__ == "__main__":
             if samples[cond][num]:
                 print ("Doing " + cond + " " + num +"\n\t Path:"+samplePath[cond][num])
                 Analysis_all(samplePath[cond][num],windows,thr=thr,atpMax=atpMax,genMax=genMax)
+    
 
+if __name__ == "__main__":
+    run()

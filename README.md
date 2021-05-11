@@ -20,8 +20,15 @@ An optional GUI is also provided,
   Very Simple GUI to select which Samples you would like to Analyze and allows you to select Analysis Modes.  
   To start GUI enter;  
   ```zsh
+  # In terminal
   % cd /Path/To/pyLineage
-  % python Analysis_Gui/Final\ All\ Samples\ Create\ Lineage.py
+  % python Analysis_Gui/Final\ All\ Samples\ Create\ Lineage.py  
+  
+  # -or on ipython-  
+  
+  from pyLineage.Analysis_Gui import SampleAnalysesGui
+  SampleAnalysesGui.run()
+  
   ```
   The results that are created by these analyses are saved in the directory of the sample.  
   
