@@ -28,14 +28,22 @@ from .loadRawImgs import loadRawImgs
 from .loadMatImgs import loadMatImgs
 
 
-def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None,fname=None):
+def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,minInten=0.,atpInten=None,fname=None,imgRange=None):
     segImgsList = loadMatImgs(matImgsPath)
     rawImgsList = loadRawImgs(rawImgsPath)
     intensityList = list()
-    for frameIdx in range(0,len(segImgsList)):
-        cellIndices = np.unique(segImgsList[frameIdx])
-        cellIndices = np.delete(cellIndices,0)
-        intensityList.append(extractIntensity(segImgsList[frameIdx],rawImgsList[frameIdx]))
+    if imgRange == None:
+        imgRange = range(len(segImgsList))
+    else:
+        mini,maxi=imgRange
+        if maxi == "max":
+            maxi = len(segImgsList)
+        imgRange = range(mini,maxi)
+    for frameIdx in range(len(segImgsList)):
+        if frameIdx in imgRange:
+            cellIndices = np.unique(segImgsList[frameIdx])
+            cellIndices = np.delete(cellIndices,0)
+            intensityList.append(extractIntensity(segImgsList[frameIdx],rawImgsList[frameIdx]))
     
     allIntens = list()
     if timelapse:
