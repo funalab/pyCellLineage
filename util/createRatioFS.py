@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import pyLineage.lineageIO as myPackage
 
-def createRatioFS(path,atp_path=None):
+def createRatioFS(path,atp_path=None,raw=False):
     if atp_path == None:
         atp_path = os.path.join(os.path.dirname(myPackage.__file__),"atp_calib.csv")
 
@@ -59,13 +59,17 @@ def createRatioFS(path,atp_path=None):
                 tmp = atpCalib(img[i,j],emax=emax,d=d,EC50=EC50)
                 if np.isnan(tmp) or np.isinf(tmp):
                     atpImg[i,j] = 0
+                    img[i,j] = 0
                 else:
                      atpImg[i,j] = tmp
                                         
                     
         atpImg = atpImg.astype(np.float32)
         savePath =os.path.join(saveDir,fname)
-        cv.imwrite(savePath,atpImg)
+        if not raw:
+            cv.imwrite(savePath,atpImg)
+        else:
+            cv.imwrite(savePath,img)
         counter = counter + 1
 
 
