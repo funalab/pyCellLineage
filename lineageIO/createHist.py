@@ -52,8 +52,9 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
     for intens in intensityList:
         if timelapse:
             count += 1
-            createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".png",saveDir=savePath)
+            createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".pdf",saveDir=savePath)
         allIntens = allIntens + list(intens.values())
+    print("n="+str(len(allIntens)))
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
 
     
@@ -96,7 +97,7 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
         if not os.path.isdir(saveDir):
             os.mkdir(saveDir)
         if fname == None:
-            fname = "Hist.png"
+            fname = "Hist.pdf"
         saveFile = os.path.join(saveDir,fname)
         fig.savefig(saveFile)
     plt.show()
@@ -107,7 +108,7 @@ def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):
         if saveDir != None:
             if not os.path.isdir(saveDir):
                 os.mkdir(saveDir)
-            fname = str(i)+".png"
+            fname = str(i)+".pdf"
         createHist(CellDf[CellDf['Z']==i],atpMax=atpMax,freqMax=freqMax,saveDir=saveDir,fname=fname,z=i,minCells=minCells)
     return
 
