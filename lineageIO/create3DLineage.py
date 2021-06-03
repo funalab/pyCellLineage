@@ -74,8 +74,20 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     graph, adjMat = createGraph(cellDfWP, attr)
 
     if attr is not None:
+        if cellDfWP.dtypes[attr] == object:
+            attrStrList = cellDfWP[attr].unique()
+            valueDict = dict(zip(attrStrList,[i for i in range(len(attrStrList))]))
+            attrIntList = list()
+            for attrStr in cellDfWP[attr]:
+                attrIntList.append(int(valueDict[attrStr]))
+
+            newName = 'StrVal'
+            cellDfWP[newName] = attrIntList
+            attr = newName
+            cmap = 'bwr'
         minPhe = float(min(cellDfWP[attr]))
         maxPhe = float(max(cellDfWP[attr]) - minPhe)
+            
         if attrMax == 0 and attrMin == 0:
             if cmap== 'gnuplot':
                 colors = {key: plt.cm.gnuplot((float(value) - minPhe)/maxPhe)

@@ -12,14 +12,67 @@ import pyLineage.Analysis_Gui as myPackage
 
 class modeIO():
     Names = list()
-    mode = dict()
+    mode = {
+        'lineage':{
+            '3d':False,
+            'save':False,
+            'show':False,
+        },
+        'cellDf':{
+            'save':False
+        },
+        'cellAge':{
+            'save':False
+        },
+        'oscillation':{
+            'prep':False,
+            'fft':False
+        },
+        'hist':{
+            'totalATP':False,
+            'totalRich':False,
+            'totalPoor':False,
+            'normal':False
+        },
+        'hmmPrep':{
+            'normal':{
+                'mean':False,
+                'median':False
+            },
+            'totalATP':{
+                'mean':False,
+                'gmmPoor':False
+            },
+            '95ATP':{
+                'both':False,
+                'control':False
+            },
+            'class':{
+                '2d':False,
+                '3d':False
+            }
+        }
+    }
     output = False
     dictList = dict()
     defaultPath = str()
+    samples = {
+        'poor':{
+            'sample1':True,
+            'sample2':True,
+            'sample3':True
+        },
+        'rich':{
+            'sample1':True,
+            'sample2':True,
+            'sample3':True
+        }
+    }
+    conditions = ['poor','rich']
 
 
-    def __init__(self,mode):
-        self.mode = mode
+
+    def __init__(self):
         if self.output:
             self.modeOutput(self.mode,0)
         self.modeSave(self.mode,0,list())
@@ -32,6 +85,18 @@ class modeIO():
     def getModeNames(self):
         return self.Names
 
+    def getMode(self):
+        return self.mode
+
+    def setMode(self,mode):
+        self.mode = mode
+
+    def getSamples(self):
+        return self.samples
+
+    def getConditions(self):
+        return self.conditions
+    
     def modeOutput(self,mode,depth):
         for modeName in list(mode.keys()):
             space = "\t" * depth

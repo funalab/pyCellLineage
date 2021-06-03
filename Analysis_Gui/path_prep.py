@@ -31,7 +31,8 @@ def path_prep (Dir):
         
         prep_paths['matFilePath'] = os.path.join(data_file,'405/data/405_lin.mat')
         prep_paths['segImgsPath'] = os.path.join(data_file,'405/segmentation/')
-        prep_paths['rawImgsPath'] = os.path.join(Dir,'Ratio')
+        prep_paths['rawImgsPath'] = os.path.join(Dir,'RatioFS')
+        prep_paths['changeCSV'] = os.path.join(Dir,'changed.csv')
         return prep_paths    
 
 if __name__ == "__main__":

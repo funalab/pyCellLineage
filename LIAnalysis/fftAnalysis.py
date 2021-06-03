@@ -17,8 +17,14 @@ if isnotebook():
 else:
     from tqdm import tqdm
 
-def write_ATPChange(CellDF,save_dir):
+def write_ATPChange(CellDF,save_dir,attr='intensity',changedCSVpath=None):
     counter = int(0)
+    skiptList = list()
+    if changedCSVpath != None:
+        if os.path.exists(changedCSVpath):
+            skipt = pd.read_csv(changedCSVpath)
+            skiptList = list(skipt[skipt['change']=='-']['frame'])
+            
     if not os.path.isdir(save_dir):
         os.mkdir(save_dir)
     for lineage in getIndependentLineage(CellDF):
@@ -27,13 +33,14 @@ def write_ATPChange(CellDF,save_dir):
         
         for cell_id in lineage['uID']:
             cell = CellDF[CellDF['uID'] == cell_id]
-            lin_change.append(float(cell['ATP']))
-            time_change.append(int(cell['Z']))
+            if int(cell['Z']) not in skiptList:
+                lin_change.append(float(cell[attr]))
+                time_change.append(int(cell['Z']))
         dict = {'time':time_change,'atp':lin_change}
         df = pd.DataFrame(dict)
         df.to_csv(os.path.join(save_dir,str(counter)+".csv"))
         counter = counter + 1
-        return
+    return
 
     
 def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None,pltshow=None):

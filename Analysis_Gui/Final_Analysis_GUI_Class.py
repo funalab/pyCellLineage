@@ -213,70 +213,20 @@ class ModeScreens(App):
     modeNames = list()
     modeNum = 0
     dictList = dict()
-    mode = {
-        'lineage':{
-            '3d':False,
-            'save':False,
-            'show':False,
-        },
-        'cellDf':{
-            'save':False
-        },
-        'cellAge':{
-            'save':False
-        },
-        'oscillation':{
-            'prep':False,
-            'fft':False
-        },
-        'hist':{
-            'totalATP':False,
-            'totalRich':False,
-            'totalPoor':False,
-            'normal':False
-        },
-        'hmmPrep':{
-            'normal':{
-                'mean':False,
-                'median':False
-            },
-            'totalATP':{
-                'mean':False,
-                'gmmPoor':False
-            },
-            '95ATP':{
-                'both':False,
-                'control':False
-            },
-            'class':{
-                '2d':False,
-                '3d':False
-            }
-        }
-    }
+    mode = dict()
     
-
-    samples = {
-        'poor':{
-            'sample1':True,
-            'sample2':True,
-            'sample3':True
-        },
-        'rich':{
-            'sample1':True,
-            'sample2':True,
-            'sample3':True
-        }
-    }
-    conditions = ['poor','rich']
-
+    conditions = list()
+    samples = dict()
 
     
     #multiple screens (screen Lineage)
     def build(self):
         #initialize fields(mode)
-        defaultModes = modeIO(self.mode)
-        modeLabels = defaultModes.splitModeNames()
+        default = modeIO()
+        self.mode = default.getMode()
+        self.samples = default.getSamples()
+        self.conditions = default.getConditions()
+        modeLabels = default.splitModeNames()
         sm = ScreenManager(transition=NoTransition())
         Labels = list(modeLabels.keys())
 
@@ -300,3 +250,4 @@ class ModeScreens(App):
     def getConditions(self):
         return self.conditions
     
+

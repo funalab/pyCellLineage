@@ -55,8 +55,8 @@ def write_Class(CellDF,target,save_dir):
         df.to_csv(os.path.join(save_dir,str(counter)+".csv"))
         counter = counter + 1
 
-def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=None):
-    CellDF['ATP_Class'] = pd.np.nan
+def hmm_prep(CellDF, attr='intensity',save_dir=None, origin_frame=0, thr=None, hname=None,lname=None):
+    CellDF['ATP_Class'] = np.nan
     avgList = None
     if hname == None:
         hname = "high_atp"
@@ -65,22 +65,22 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
     if thr == None:
         avgList = list()
         for i in range(origin_frame,max(CellDF['Z'])+1):
-            timeframeATP = CellDF[CellDF['Z']==i]['ATP'].dropna()
+            timeframeATP = CellDF[CellDF['Z']==i][attr].dropna()
             avgList.append(sum(timeframeATP)/len(timeframeATP))
     elif type(thr) is str:
         if thr == 'All_avg':
-            avg_atp = sum(CellDF['ATP'])/len(CellDF['ATP'])
+            avg_atp = sum(CellDF[attr])/len(CellDF[attr])
         elif thr == 'Median':
-            avg_atp = CellDF['ATP'].median()
+            avg_atp = CellDF[attr].median()
     else:
         avg_atp = thr
     
     class_list = list()
-    for uid in range(origin_frame,len(CellDF['ATP'])):
+    for uid in range(origin_frame,len(CellDF[attr])):
         if avgList != None:
             time = int(CellDF[CellDF['uID']==uid]['Z']) - origin_frame
             avg_atp = avgList[time]
-        if float(CellDF['ATP'][uid]) <= avg_atp:
+        if float(CellDF[attr][uid]) <= avg_atp:
             class_list.append(lname)
         else:
             class_list.append(hname)
@@ -90,7 +90,7 @@ def hmm_prep(CellDF, save_dir=None, origin_frame=0, thr=None, hname=None,lname=N
     return CellDF
 
 def hmm_randomize(CellDF, save_dir=None, origin_frame=0):
-    CellDF['Rand_Class'] = pd.np.nan
+    CellDF['Rand_Class'] = np.nan
     if len(CellDF['ATP_Class']) == 0:
         print("Make ATP_Class zone first")
         exit()
@@ -129,7 +129,7 @@ def read_states(CellDF,read_dir):
     if len(all_states) == len(CellDF):
         CellDF["States"] = all_states
     else:
-        CellDF["States"] = pd.np.nan
+        CellDF["States"] = np.nan
         print("Error in Total State size")
         exit()
     return CellDF

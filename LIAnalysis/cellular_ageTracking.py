@@ -16,28 +16,28 @@ else:
 unk_age = -5
 nan_age = 10
 
-def drawAgeFig(CellDF,saveDir=None,ageMax=8,atpMax=None,Z=None):
+def drawAgeFig(CellDF,saveDir=None,ageMax=8,atpMax=None,Z=None,attr='intensity'):
     plt.cla()
     plt.clf()
     Age = CellDF[CellDF != pd.isnull(CellDF)][CellDF['Age']!= -1]
     if Z != None:
         Age = Age[Age['Z']==Z]
     Age = Age.dropna()
-    plt.scatter(Age['Age'],Age['ATP'])
+    plt.scatter(Age['Age'],Age[attr])
     plt.xlabel('Age')
     plt.ylabel('ATP mM')
-    r, p = stats.spearmanr(Age['Age'], Age['ATP'])
+    r, p = stats.spearmanr(Age['Age'], Age[attr])
     print(('r : ', r))
     print(('p : ', p))
     plt.title("R = " + str(r))
     if ageMax is None:
        ageMax =  max(Age['Age']) + 1
     if atpMax is None:
-        atpMax = max(Age['ATP']) + 1
+        atpMax = max(Age[attr]) + 1
     plt.xlim((0,ageMax))
     plt.ylim((0,atpMax))
     if saveDir != None:
-        plt.savefig(os.path.join(saveDir,"Age.png"))
+        plt.savefig(os.path.join(saveDir,"Age.pdf"))
     else:
         plt.show()
 

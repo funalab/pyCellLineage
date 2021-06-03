@@ -58,9 +58,9 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
 
     
-def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50):
+def createHist(CellDf=None,data=None,attr='intensity',atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50,showfig=False):
     if CellDf is not None:
-        data = CellDf['ATP']
+        data = CellDf[attr]
     else:
         if data is not None and type(data) is list:
             data = pd.Series(data)
@@ -100,7 +100,11 @@ def createHist(CellDf=None,data=None,atpMax=None,freqMax=None,saveDir=None,fname
             fname = "Hist.pdf"
         saveFile = os.path.join(saveDir,fname)
         fig.savefig(saveFile)
-    plt.show()
+    if showfig:
+        plt.show()
+    else:
+        plt.cla()
+        plt.clf()
     return
 
 def createHistMovie(CellDf,atpMax=None,freqMax=None,saveDir=None,minCells=100):

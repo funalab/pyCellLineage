@@ -1,3 +1,4 @@
+
 # In[1]:
 from .measurePhenotypes import measurePhenotypes
 from .create3DLineage import create3DLineage
@@ -33,13 +34,25 @@ def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=T
     else:
         totalDF = None
         
-    # if instMode == None:
-    #     default = ModeScreens()
-    # else:
-    default = instMode
-        
-    if samples == None:
-        samples = dict(default.getSamples())
+    if instMode == None:
+        default = modeIO()
+        samples = {
+            'poor':{
+                'sample1':True,
+                'sample2':True,
+                'sample3':True
+            },
+            'rich':{
+                'sample1':True,
+                'sample2':True,
+                'sample3':True
+            }
+        }
+
+    else:
+        default = instMode
+        if samples == None:
+            samples = dict(default.getSamples())
 
     tmp = copy.deepcopy(samples)
     if conditions == None:
@@ -50,7 +63,7 @@ def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=T
             tmp['rich'][key] = False
     if not glcPoor:
         for key in sampleNum:
-            tmp['poor'][key] = False        
+            tmp['poor'][key] = False
 
     for cond in conditions:
         for num in sampleNum:

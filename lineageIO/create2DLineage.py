@@ -11,7 +11,7 @@ from .createGraph import createGraph
 
 
 def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
-                    attrMax=0, attrMin=0, ylim=None,show=True,
+                    attrMax=0, attrMin=0, ylim=None,show=False,
                     xlabel='', ylabel='time', cmap='gnuplot'):
     '''
     Draw 2D lineage.

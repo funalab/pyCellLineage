@@ -42,7 +42,7 @@ debug = False
 def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     hmmCellDF = None
     paths = path_prep(path)
-    cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'],intenToATP=True)        
+    cellDFWP = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
     #parent of path
     mode = dict(instMode.getMode())
     
@@ -71,17 +71,17 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     #make lineage
     if mode['lineage']['save']:
         savePathLin = os.path.join(saveDir,"lineage.pdf")
-        create2DLineage(cellDFWP,attr='ATP',attrMax=atpMax, ylim=genMax,savePath=savePathLin)
+        create2DLineage(cellDFWP,attr='intensity',attrMax=atpMax, ylim=genMax,savePath=savePathLin)
     elif mode['lineage']['show']:
-        create2DLineage(cellDFWP,attr='ATP',attrMax=atpMax, ylim=genMax)
+        create2DLineage(cellDFWP,attr='intensity',attrMax=atpMax, ylim=genMax)
     elif mode['lineage']['3d']:
         saveDir_3d = os.path.join(saveDir,'3dLin')
         create3DLineage(lineage_editor(None,None,None,DF=cellDFWP,mode=1),
-                        attr='ATP',
-                        attrMax=atpMax-1,
+                        attr='intensity',
+                        attrMax=atpMax,
                         savePath=saveDir_3d)
     else:
-        create2DLineage(cellDFWP,attr='ATP',attrMax=atpMax, ylim=genMax,show=False)
+        create2DLineage(cellDFWP,attr='intensity',attrMax=atpMax, ylim=genMax,show=False)
     #prepHmm
     if mode['hmmPrep']['normal']['mean']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCell/')
@@ -93,13 +93,13 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     elif mode['hmmPrep']['totalATP']['mean']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
-            thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
+            thr = sum(totalDF['intensity'])/len(totalDF['intensity'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
     elif mode['hmmPrep']['totalATP']['gmmPoor']:
         if thr == None:
-            totalDF = Total_ATP(glcRich=False)
-            thr = findBestBIC(totalDF['ATP'])
+            totalDF = Total_ATP(samples={},glcRich=False)
+            thr = findBestBIC(totalDF['intensity'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellGMM/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
     elif mode['hmmPrep']['95ATP']['both']:
@@ -122,9 +122,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         create2DLineage(hmmCellDF,
                         attr='ATP_Class',
                         ylim=genMax,
-                        attrMax=2,
-                        savePath=saveDir_2dClass,
-                        cmap='bwr')
+                        savePath=saveDir_2dClass)
     elif mode['hmmPrep']['class']['3d']:        
         saveDir_3dClass = os.path.join(saveDir,'Class_3dLin/')
         if hmmCellDF == None:
@@ -132,11 +130,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         hmmCellDF = lineage_editor(None,None,None,DF=hmmCellDF,mode=1)
         create3DLineage(hmmCellDF,
                         attr='ATP_Class',
-                        attrMax=2,
-                        attrMin=1,
-                        savePath=saveDir_3dClass,
-                        cmap='bwr')
-
+                        savePath=saveDir_3dClass)
         
         
         
@@ -147,7 +141,7 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     #Prep oscillation
     if mode['oscillation']['prep']:
         saveDir_ATPIndi = os.path.join(saveDir, 'ATP_IndiCell/')
-        write_ATPChange(cellDFWP,saveDir_ATPIndi)
+        write_ATPChange(cellDFWP,saveDir_ATPIndi,changedCSVpath=paths['changeCSV'])
     elif mode['oscillation']['fft']:
         csvPath = os.path.join(saveDir,"gprRes.csv")
         plot_IndiLine(csvPath,saveDir=saveDir,xlim=genMax)
@@ -178,13 +172,13 @@ def run():
     thr = None
     if mode['hmmPrep']['totalATP']['mean']:
         totalDF = Total_ATP(instMode=windows)
-        thr = sum(totalDF['ATP'])/len(totalDF['ATP'])
+        thr = sum(totalDF['intensity'])/len(totalDF['intensity'])
     elif mode['hmmPrep']['95ATP']['both'] or mode['hmmPrep']['95ATP']['control']:
         totalDF = Total_ATP(instMode=windows)
         thr = nineFivePercentile(totalDF)
     elif mode['hmmPrep']['totalATP']['gmmPoor']:
         totalDF = Total_ATP(glcRich=False)
-        thr = findBestBIC(totalDF['ATP'])
+        thr = findBestBIC(totalDF['intensity'])
         print ("Found GMM thr to be " + str(thr) + "\n")
 
     for cond in conditions:
