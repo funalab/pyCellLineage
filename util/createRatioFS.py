@@ -11,6 +11,7 @@ import cv2 as cv
 from pyLineage.lineageIO.atpCalib import atpCalib
 import numpy as np
 import pandas as pd
+import glob
 import pyLineage.lineageIO as myPackage
 
 def createRatioFS(path,atp_path=None,raw=False):
@@ -39,14 +40,13 @@ def createRatioFS(path,atp_path=None,raw=False):
     basenames=['405','488']
     for basename in basenames:
         baseDir = os.path.join(path, basename)
-        dirLen = len(os.listdir(baseDir))
+        dirLen = len(glob.glob(os.path.join(baseDir,'*')))
         for i in range(dirLen):
             fname = "img_"+str(i).zfill(9)+"_"+basename+"_000.tif"
             imgfile = os.path.join(path ,basename,fname)
             if os.path.isfile(imgfile):
                 tmpImg = cv.imread(imgfile,cv.IMREAD_GRAYSCALE).astype(np.float32)
                 Imgs[basename].append(tmpImg)
-            
     for i in range(dirLen):
         Imgs['Ratio'].append(np.divide(Imgs['405'][i],Imgs['488'][i]))
     counter = 0
