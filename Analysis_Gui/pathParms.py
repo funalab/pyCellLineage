@@ -1,4 +1,5 @@
 # ## Default Params
+import os
 '''
 Hardwired parameters, path to samples
 '''
@@ -14,19 +15,26 @@ class pathParms():
     rich_sample_3='/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample_3_1203_E1/Pos0'
     '''
 
-    samplePath = {
-        'poor':{
-            'sample1':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample1/Pos0',
-            'sample2':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample2/Pos0',
-            'sample3':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_poor/sample3/Pos0'
-        },
-        'rich':{
-            'sample1':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample1/Pos0',
-            'sample2':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample2/Pos0',
-            'sample3':'/Users/nakatani/LAB/2019_M1/results/TmLps/samples/glc_rich/sample3/Pos0'
+    dirPath = str()
+
+    samplePath = dict()
+
+    def __init__(self,dirPath='/Volumes/USB DISK/Final Results'):
+        self.dirPath = dirPath
+        
+        self.samplePath = {
+            'poor':{
+                'sample1': os.path.join(self.dirPath,'glc_poor/sample1/Pos0'),
+                'sample2': os.path.join(self.dirPath,'glc_poor/sample2/Pos0'),
+                'sample3': os.path.join(self.dirPath,'glc_poor/sample3/Pos0')
+            },
+            'rich':{
+                'sample1': os.path.join(self.dirPath, 'glc_rich/sample1/Pos0'),
+                'sample2': os.path.join(self.dirPath, 'glc_rich/sample2/Pos0'),
+                'sample3': os.path.join(self.dirPath, 'glc_rich/sample3/Pos0')
+            }
         }
-    }
-    def __init__(self):
+
         return
 
     def getSamplePath(self):
