@@ -25,7 +25,7 @@ import pandas as pd
 import sys
 import copy
 
-def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True):
+def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=True,glcPoor=True,t=None,num=None):
     sampleNum = ['sample1','sample2','sample3']
     samplePath = dict(pathParms().getSamplePath())
 
@@ -69,6 +69,19 @@ def Total_ATP(instMode=None,samples=None,conditions=None,cellDFWP=None,glcRich=T
         for num in sampleNum:
             if tmp[cond][num]:
                 paths = path_prep(samplePath[cond][num])
-                CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])        
+                CellDF = measurePhenotypes(paths['matFilePath'], paths['segImgsPath'], paths['rawImgsPath'])
+                if t == "max":
+                    CellDF = CellDF[CellDF['Z'] == max(CellDF['Z'])]
+                elif type(t) == int():
+                    CellDF = CellDF[CellDF['Z'] == t]
+                    
+                if type(num) == int() and t == None:
+                    for i in range(max(CellDF['Z'])):
+                        if len(CellDF[CellDF['Z']==i])>num:
+                            break
+                    CellDF = CellDF[CellDF['Z']>=i]
+                        
                 totalDF = pd.concat([totalDF,CellDF])
+
+                
     return totalDF
