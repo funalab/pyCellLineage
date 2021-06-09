@@ -36,7 +36,7 @@ def cutoffMaker(CellDF,cutoff):
 def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
                     attrMin=0, xlabel='x', ylabel='y', zlabel='time (hours)',
                     thetaTics=1, cmap='gnuplot', cutoff=None,
-                    lim=None
+                    lim=None,degree=1
                     ):
     '''
     Draw 3D lineage.
@@ -75,7 +75,7 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
 
     if attr is not None:
         if cellDfWP.dtypes[attr] == object:
-            attrStrList = cellDfWP[attr].unique()
+            attrStrList = sorted(cellDfWP[attr].unique(),reverse=True)
             valueDict = dict(zip(attrStrList,[i for i in range(len(attrStrList))]))
             attrIntList = list()
             for attrStr in cellDfWP[attr]:
@@ -160,7 +160,7 @@ def create3DLineage(cellDfWP, dt=1, attr=None, savePath=None, attrMax=0,
     if savePath is not None:
         if not os.path.isdir(savePath):
             os.mkdir(savePath)
-        for angle in range(0, 360, 1):
+        for angle in range(0, 360, degree):
             ax.view_init(30, angle)
             saveFile = os.path.join(savePath, str(angle)+'.tif')
             fig.savefig(saveFile, transparent=True)
