@@ -78,7 +78,9 @@ Make ATP images from raw images.
 
 ## GUI
 The last directory is used for GUI Analysis.
-pyLineage27 has been removed from the main branch
+
+# Update Information and News
+pyLineage27 has been removed from the main branch.
 
 
 ## requirements  
