@@ -51,7 +51,7 @@ but the util directory also contains python or zsh programs that are useful in e
 creating an automatic initSchnitz command unique to the experiment for MatLab and also creating Ratio images from the raw images.
 
 ### About utils
-ArrangeFiles.sh   
+arrangeFiles.sh   
 Arranges files to schnitz readable directory format.
 
 ex)
@@ -73,12 +73,10 @@ Makes initial initschnitz command for Schnitzcells based on current Directory. (
 % python initschnitzmaker.py #at directory that has been prepared for schnitz
 ```
 
-
-
-CreateRatioFS.py
+CreateRatioFS.py   
 Make ATP images from raw images.
 
-
+## GUI
 The last directory is used for GUI Analysis.
 pyLineage27 has been removed from the main branch
 
