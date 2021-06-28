@@ -48,7 +48,36 @@ Warnings:
 
 The first three directories are part of the pyLineage Module,  
 but the util directory also contains python or zsh programs that are useful in extracting schnitzcell prepared images from raw images,  
-creating an automatic initSchnitz command unique to the experiment for MatLab and also creating Ratio images from the raw images.  
+creating an automatic initSchnitz command unique to the experiment for MatLab and also creating Ratio images from the raw images.
+
+### About utils
+ArrangeFiles.sh   
+Arranges files to schnitz readable directory format.
+
+ex)
+```zsh
+% arrangeFiles.sh ./Pos0
+```
+imagesToSchnitz.py
+Makes image file names to schnitz readable format.
+
+ex)
+```zsh
+% imagesToSchnitz.py ./405
+```
+
+initschnitzmaker.py
+Makes initial initschnitz command for Schnitzcells based on current Directory. (Directory must be schnitz readable format)
+
+```zsh
+% python initschnitzmaker.py #at directory that has been prepared for schnitz
+```
+
+
+
+CreateRatioFS.py
+Make ATP images from raw images.
+
 
 The last directory is used for GUI Analysis.
 pyLineage27 has been removed from the main branch
