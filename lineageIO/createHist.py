@@ -54,7 +54,7 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
             count += 1
             createHist(data=[i for i in intens if i > minInten],atpMax=atpMax,fname="Hist"+str(count)+".pdf",saveDir=savePath)
         allIntens = allIntens + list(intens.values())
-    print("n="+str(len(allIntens)))
+    print("n="+str(len([i for i in allIntens if i > minInten])))
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
 
     
