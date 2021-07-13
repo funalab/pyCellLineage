@@ -58,12 +58,12 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
     elif mode['hist']['totalRich']:
-        totalDF = Total_ATP(instMode=instMode,glcPoor=False)
+        totalDF = Total_ATP(instMode=instMode,glcPoor=False,num=100)
         saveDir_hist = os.path.join(saveDir,'totalRichATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
     elif mode['hist']['totalPoor']:
-        totalDF = Total_ATP(instMode=instMode,glcRich=False)
+        totalDF = Total_ATP(instMode=instMode,glcRich=False,num=100)
         saveDir_hist = os.path.join(saveDir,'totalPoorATP_Hist/')
         createHist(totalDF,atpMax=atpMax,saveDir=saveDir_hist)
         sys.exit(0)
