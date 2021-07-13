@@ -10,6 +10,7 @@ from ..lineageIO.getIndependentLineage import getIndependentLineage
 import scipy.signal as sp
 from scipy import stats
 import matplotlib.pyplot as plt
+import statistics
 
 from ..util.isNotebook import isnotebook
 if isnotebook():
@@ -43,7 +44,7 @@ def write_ATPChange(CellDF,save_dir,attr='intensity',changedCSVpath=None):
     return
 
     
-def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None,pltshow=False):
+def plot_IndiLine(csvPath,saveDir=None,ylim=14,xlim=None,pltshow=False):
     plt.cla()
     plt.clf()
     GPR_chg = pd.read_csv(csvPath, header=1)
@@ -52,14 +53,14 @@ def plot_IndiLine(csvPath,saveDir=None,ylim=10,xlim=None,pltshow=False):
     atpChange = GPR_chg
     for i in tqdm(list(range(len(atpChange.columns)))):
         if len(atpChange[i].unique()) > len(atpChange[i])/2:
-            plt.plot(atpChange.index, atpChange[i])
+            plt.plot(range(len(atpChange)), atpChange[i])
             plt.xlabel('time (hours)')
             plt.ylabel('[ATP] (mM)')
             plt.tight_layout()
             plt.ylim((0,ylim))
             plt.xlim((0,xlim))
     if saveDir != None:
-        plt.savefig(os.path.join(saveDir,"indi.png"))
+        plt.savefig(os.path.join(saveDir,"indi.pdf"))
     if pltshow:
         plt.show()
     plot_frequency(atpChange,saveDir=saveDir)
@@ -84,51 +85,105 @@ def plot_frequency(atpChange,saveDir=None,pltshow=False):
         index = np.where(Amp[2:int(len(t)/2)] == np.max(Amp[2:int(len(t)/2)]))
         maxFreq.append(freq[index[0][0] + 1])
     if saveDir != None:
-        plt.savefig(os.path.join(saveDir,"freq.png"))
+        plt.savefig(os.path.join(saveDir,"freq.pdf"))
     if pltshow:
         plt.show()
     plot_atpAmp(atpChange,maxAmp,saveDir=saveDir)
     plot_atpFreq(atpChange,maxFreq, saveDir=saveDir)
+    plot_AmpFreq(maxAmp,maxFreq, saveDir=saveDir)
     return
 
-def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8,xlim=25,pltshow=False):
+def plot_atpAmp(atpChange,maxAmp,saveDir=None,ylim=8,xlim=25,pltshow=False,mode='last'):
     plt.cla()
     plt.clf()
+    medATP = [statistics.median(atpChange[i]) for i in range(len(atpChange.columns)) ]
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns))]
-    plt.scatter(maxAmp, lastATP)
+    maxATP = [max(atpChange[i]) for i in range(len(atpChange.columns)) ]
+    minATP = [min(atpChange[i]) for i in range(len(atpChange.columns)) ]
+        
+    if mode == 'median':
+        ATP = medATP
+    elif mode == 'last':
+        ATP = lastATP
+    elif mode == 'max':
+        ATP = maxATP
+    elif mode == 'min':
+        ATP = minATP
+    else:
+        sys.exit(-1)
+
+    plt.scatter(maxAmp, ATP)
     plt.xlabel('maximum Amplitude')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
     plt.xlim((0,xlim))
-    pc = np.polyfit(x = maxAmp, y = lastATP, deg = 1)
-    r, p = stats.spearmanr(maxAmp, lastATP)
+    pc = np.polyfit(x = maxAmp, y = ATP, deg = 1)
+    r, p = stats.spearmanr(maxAmp, ATP)
     print(('r : ', r))
     print(('p : ', p))
     print(pc)
     if saveDir != None:
-        plt.savefig(os.path.join(saveDir,"atpAmp.png"))
+        plt.savefig(os.path.join(saveDir,mode+"atpAmp.pdf"))
+        data = {'maxAmp':maxAmp,'medianATP':medATP,'maxATP':maxATP,'minATP':minATP,'lastATP':lastATP}
+        DF = pd.DataFrame(data=data,columns=data.keys())
+        DF.to_csv(os.path.join(saveDir,"atpAmp.csv"))        
     if pltshow:
         plt.show()
     return
         
-def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8,xlim=25,pltshow=False):
+def plot_atpFreq(atpChange, maxFreq, saveDir=None, ylim=8,xlim=25,pltshow=False,mode='last'):
     plt.cla()
     plt.clf()
+    medATP = [statistics.median(atpChange[i]) for i in range(len(atpChange.columns)) ]
     lastATP = [atpChange[i].values[-1] for i in range(len(atpChange.columns)) ]
-    plt.scatter(maxFreq, lastATP)
+    maxATP = [max(atpChange[i]) for i in range(len(atpChange.columns)) ]
+    minATP = [min(atpChange[i]) for i in range(len(atpChange.columns)) ]
+        
+    if mode == 'median':
+        ATP = medATP
+    elif mode == 'last':
+        ATP = lastATP
+    elif mode == 'max':
+        ATP = maxATP
+    elif mode == 'min':
+        ATP = minATP
+    else:
+        sys.exit(-1)    
+    plt.scatter(maxFreq, ATP)
     plt.xlabel('maximum Frequency ($h^{-1}$)')
     plt.ylabel('[ATP]')
     plt.ylim((0,ylim))
     plt.xlim((0,xlim))
-    r, p = stats.spearmanr(maxFreq, lastATP)
+    r, p = stats.spearmanr(maxFreq, ATP)
     print('r : ', r)
     print('p : ', p)
     plt.title("R = " + str(r))
     if saveDir != None:
-        plt.savefig(os.path.join(saveDir,"atpFreq.png"))
+        plt.savefig(os.path.join(saveDir,mode+"atpFreq.pdf"))
+        data = {'maxFreq':maxFreq,'medianATP':medATP,'maxATP':maxATP,'minATP':minATP,'lastATP':lastATP}
+        DF = pd.DataFrame(data=data,columns=data.keys())
+        DF.to_csv(os.path.join(saveDir,"atpFreq.csv"))
     if pltshow:
         plt.show()
     return
+
+def plot_AmpFreq(maxAmp,maxFreq,saveDir=None,ylim=8,xlim=25,pltshow=False,mode='last'):
+    plt.cla()
+    plt.clf()
+    plt.scatter(maxAmp, maxFreq)
+    plt.xlabel('maximum Amplitude')
+    plt.ylabel('maximum Freq')
+    plt.ylim((0,ylim))
+    plt.xlim((0,xlim))
+    r, p = stats.spearmanr(maxAmp, maxFreq)
+    print(('r : ', r))
+    print(('p : ', p))
+    if saveDir != None:
+        plt.savefig(os.path.join(saveDir,mode+"AmpFreq.pdf"))
+    if pltshow:
+        plt.show()
+    return
+
 
 def fftAnalysis(cellDfWPL):
     '''
