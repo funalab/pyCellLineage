@@ -16,7 +16,7 @@ class modeIO():
         'lineage':{
             '3d':False,
             'save':False,
-            'show':False,
+            'show':False
         },
         'cellDf':{
             'save':False
@@ -41,15 +41,16 @@ class modeIO():
             },
             'totalATP':{
                 'mean':False,
+                'median':False,
                 'gmmPoor':False
-            },
-            '95ATP':{
-                'both':False,
-                'control':False
             },
             'class':{
                 '2d':False,
                 '3d':False
+            },
+            '95ATP':{
+                'both':False,
+                'control':False
             }
         }
     }

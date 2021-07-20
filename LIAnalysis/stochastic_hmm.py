@@ -86,6 +86,7 @@ def hmm_prep(CellDF, attr='intensity',save_dir=None, origin_frame=0, thr=None, h
             class_list.append(hname)
     CellDF['ATP_Class'] = class_list
     if save_dir != None:
+        print("thr:"+str(avg_atp))
         write_Class(CellDF,'ATP_Class',save_dir)
     return CellDF
 

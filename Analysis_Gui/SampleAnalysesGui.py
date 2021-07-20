@@ -85,52 +85,64 @@ def Analysis_all(path,instMode,thr=None,atpMax=None,genMax=None):
     #prepHmm
     if mode['hmmPrep']['normal']['mean']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCell/')
-        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,lname="low",hname="high")        
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,lname="low",hname="high")
+        hmmCellDF = cellDFWP
     elif mode['hmmPrep']['normal']['median']:
         saveDir_Indi = os.path.join(saveDir, 'IndiCellMedian/')
-        thr = 'median'
+        thr = 'Median'
         cellDFWP = hmm_prep(cellDFWP,thr=thr,save_dir=saveDir_Indi,lname="low",hname="high")
+        hmmCellDF = cellDFWP
     elif mode['hmmPrep']['totalATP']['mean']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
             thr = sum(totalDF['intensity'])/len(totalDF['intensity'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
+        hmmCellDF = cellDFWP
+    elif mode['hmmPrep']['totalATP']['median']:
+        saveDir_Indi = os.path.join(saveDir, 'IndiCellTotal/')
+        if thr == None:
+            totalDF = Total_ATP(instMode=instMode)
+            thr = totalDF['intensity'].median()
+        cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
+        hmmCellDF = cellDFWP
     elif mode['hmmPrep']['totalATP']['gmmPoor']:
         if thr == None:
             totalDF = Total_ATP(samples={},glcRich=False)
             thr = findBestBIC(totalDF['intensity'])
         saveDir_Indi = os.path.join(saveDir, 'IndiCellGMM/')            
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")
+        hmmCellDF = cellDFWP
     elif mode['hmmPrep']['95ATP']['both']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode)
             thr = nineFivePercentile(totalDF,attr='intensity')
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
+        hmmCellDF = cellDFWP
     elif mode['hmmPrep']['95ATP']['control']:
         if thr == None:
             totalDF = Total_ATP(instMode=instMode,glcPoor=False)
             thr = nineFivePercentile(totalDF)
         saveDir_Indi = os.path.join(saveDir, 'IndiCellPercentile/')        
         cellDFWP = hmm_prep(cellDFWP,save_dir=saveDir_Indi,thr=thr,lname="low",hname="high")        
-
+        hmmCellDF = cellDFWP
         
     if mode['hmmPrep']['class']['2d']:
         saveDir_2dClass = os.path.join(saveDir,'Class_2dLin.pdf')
-        hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname=1,hname=2)
+        hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname="low",hname="high")
         create2DLineage(hmmCellDF,
                         attr='ATP_Class',
                         ylim=genMax,
                         savePath=saveDir_2dClass)
     elif mode['hmmPrep']['class']['3d']:        
         saveDir_3dClass = os.path.join(saveDir,'Class_3dLin/')
-        if hmmCellDF == None:
-            hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname=1,hname=3)
+        hmmCellDF = hmm_prep(cellDFWP,thr=thr,lname="low",hname="high")
         hmmCellDF = lineage_editor(None,None,None,DF=hmmCellDF,mode=1)
         create3DLineage(hmmCellDF,
                         attr='ATP_Class',
-                        savePath=saveDir_3dClass)
+                        savePath=saveDir_3dClass,
+                        degree=180)
         
         
         
