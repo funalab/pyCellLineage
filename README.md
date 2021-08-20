@@ -1,10 +1,102 @@
 # pyLineage
+===
+Ryo J. Nakatani:nakatani@fun.bio.keio.ac.jp
+Date:
+
+## License
+Copyright (c) 2021 Funahashi Lab., Keio University.
+Modifications Copyright (c)
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with this program.
+If not, see http://www.gnu.org/licenses/.
+
+## Introduction
+
+This software allows users to analyze ATP heterogeneity among single cell populations grown in a 2-dimensional surface using time-lapse fluorescent images.
+This software allows users to do the following analyses on these images.
+- Analysis of stochastic state switching using hidden markov models(HMM).
+- Analysis of periodic oscillation using Gaussian Process Regression(GPR) and Fourier Transform.
+- Analysis of cellular age using cellular lineages and spatial information.
+
+Regarding previously reported programs such as Schnitzcells(Young et al. 2012), and cellular transmission analysis (van Vliet et al. 2018) they are not included in pyLineage for license purposes.
+The user must download the above codes on their own.
+
+## Installation
+
+The software is implemented as a combination of Python and R scripts.
+To use this software you must have Python 3.7.10 and R 3.4.3.
+The software has been tested on Mac OS X High Sierra.
+
+## Quick start usage
+The software can be executed to generate figures and csv files used in the paper as follows.
+  ```zsh
+  # In terminal
+  % cd /Path/To/pyLineage
+  % python3 Analysis_Gui/Final\ All\ Samples\ Create\ Lineage.py  
+  
+  # -or on ipython-  
+  
+  from pyLineage.Analysis_Gui import SampleAnalysesGui
+  SampleAnalysesGui.run()
+  
+  ```
+Once the software has started to run you will need to select the following modes via GUI to generate results.
+All data used to make figures is saved in a cell Data Frame that can be imported by pandas.
+
+### GUI explanation
+1. Sample Selection:
+Select all samples.
+
+2. Lineage Plots:
+Allow plotting of 3d lineages and 2d lineages.
+If there are no preferences in saving select show.
+Select 3d for 3-dimensional lineage, defaults to 2-dimensional.
+
+3. Data Frames:
+Allow saving of constructed cell data frame.
+Contains cell uIDs and relationship with other cells.
+Also contains information on size, position, intensity of each individual.
+
+4. Oscillatory Analysis:
+Allows analysis for Fourier Free Transform (fft).
+If data directory is prepared for use, select fft.
+
+5. Histograms:
+None are used to plot histograms used in the paper.
+
+6. Hidden Markov Model Analysis (6,7,8th screens):
+Select hmmPrep totalATP gmmPoor for results used in paper.
+Select hmmPrep class 2D for plot of classified lineage.
+
+### Cell DataFrame Explanation
+|Variable Name|Contents|
+|-|-|
+| ID |unique ID within single image for individuals| 
+| uID | unique ID within whole lineage| 
+| motherID|ID of mother Cell| 
+| daughter1ID| ID of one daughter cell| 
+| daughter2ID| ID of other daughter cell| 
+| cenX| centroid x position| 
+| cenY| centroid y position| 
+| Z| time frame| 
+| cellNo| ID used in Schnitzcells| 
+| intensity|Intensity of Individual in image| 
+| area|Area of individual| 
+| ATP|intracellular ATP concentration when input image is raw ratio image| 
+| linIdx|ID of lineage; depends on how many cell there are in first image| 
+|...|Other variables can be appended using pandas| 
+
+
+## All code and how to use
 ***
-Used to create lineage of schnitzCell Data.  
-Has three Main directories,
+This software can be used to create lineage of schnitzCell Data.  
+The software consists of three main directories,
 - LIAnalysis  
   Mainly used for analysing the lineage for cellular age and oscillation.
-  It also prepares data for stochastic HMM Analysis and GPR.
+  It also prepares data for HMM Analysis and GPR.
   
 - PDAnalysis  
   Mainly used for analysis on doubling time and cell size.
@@ -17,7 +109,7 @@ Has three Main directories,
 
 An optional GUI is also provided,  
 - Analysis_Gui  
-  Very Simple GUI to select which Samples you would like to Analyze and allows you to select Analysis Modes.  
+  This is a very Simple GUI to select which Samples you would like to Analyze and allows you to select Analysis Modes.  
   To start GUI enter;  
   ```zsh
   # In terminal
