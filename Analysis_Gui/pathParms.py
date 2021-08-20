@@ -1,5 +1,8 @@
 # ## Default Params
 import os
+import pyLineage as myPackage
+import sys
+
 '''
 Hardwired parameters, path to samples
 '''
@@ -19,9 +22,17 @@ class pathParms():
 
     samplePath = dict()
 
-    def __init__(self,dirPath='/Volumes/USB DISK/Final Results'):
-        self.dirPath = dirPath
-        
+    def __init__(self,dirPath=None):
+        if dirPath != None:
+            self.dirPath = dirPath
+        else:
+            dataDir = os.path.join(os.path.dirname(myPackage.__file__),'Data')
+            if os.path.exists(dataDir):
+                self.dirPath = dataDir
+            else:
+                print('ERROR: Something went wrong with data root path')
+                sys.exit(-1)
+            
         self.samplePath = {
             'poor':{
                 'sample1': os.path.join(self.dirPath,'glc_poor/sample1/Pos0'),
