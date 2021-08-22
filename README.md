@@ -43,8 +43,8 @@ The software can be executed to generate figures and csv files used in the paper
   
   # -or on ipython-  
   
-  from pyLineage.Analysis_Gui import SampleAnalysesGui
-  SampleAnalysesGui.run()
+  In []: from pyLineage.Analysis_Gui import SampleAnalysesGui
+  In []: SampleAnalysesGui.run()
   
   ```
 Once the software has started to run you can select the following modes via GUI to generate Figures used in paper.
@@ -211,8 +211,8 @@ An optional GUI is also provided,
   
   # -or on ipython-  
   
-  from pyLineage.Analysis_Gui import SampleAnalysesGui
-  SampleAnalysesGui.run()
+  In []: from pyLineage.Analysis_Gui import SampleAnalysesGui
+  In []: SampleAnalysesGui.run()
   
   ```
   The results that are created by these analyses are saved in the directory of the sample.  
