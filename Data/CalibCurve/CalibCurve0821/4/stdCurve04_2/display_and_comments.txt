@@ -1,0 +1,23 @@
+{
+  "Channels": [
+    {
+      "Name": "488",
+      "DisplayMode": 1,
+      "HistogramMax": 4095,
+      "Max": 197,
+      "Gamma": 1.106174827446186,
+      "Min": 58,
+      "Color": -1
+    },
+    {
+      "Name": "405",
+      "DisplayMode": 1,
+      "HistogramMax": 4095,
+      "Max": 278,
+      "Gamma": 0.8852816829238339,
+      "Min": 54,
+      "Color": -1
+    }
+  ],
+  "Comments": {"Summary": ""}
+}
