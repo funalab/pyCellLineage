@@ -5,3 +5,4 @@ __pycache__/
 #atp_caliberated parameters
 atp_calib.csv
 .modeconfig
+.ipynb_checkpoints
