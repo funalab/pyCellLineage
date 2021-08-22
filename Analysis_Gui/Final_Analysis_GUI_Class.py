@@ -55,6 +55,7 @@ class makeButtons(GridLayout):
         self.Labels = Labels
         self.Label = Label
         self.makeBtn(sm)
+        
 
     def makeBtn(self,sm):
         for modeTitle in self.modeNames:
@@ -71,23 +72,29 @@ class makeButtons(GridLayout):
             self.add_widget(cb)
             cb = None
 
-        for i in range(2):
-            self.add_widget(Label(text=""))
-        btn = Button(text = 'done')
-        btn.bind(on_press=partial(self.quit,sm=sm))
-        self.add_widget(btn)
+        backbtn = Button(text = 'back')
+        backbtn.bind(on_press=partial(self.back,sm=sm))
+        self.add_widget(backbtn)
+
+        self.add_widget(Label(text=""))
+        
+        gobtn = Button(text = 'next')
+        gobtn.bind(on_press=partial(self.go,sm=sm))
+        self.add_widget(gobtn)
    
-    def quit(self,instance,sm):
+    def go(self,instance,sm):
         idx = self.Labels.index(self.Label)
         if idx < len(self.Labels)-1:
             sm.current = self.Labels[idx+1]
         else:
-            fin_screen = Screen(name="end_screen")
-            lbl = Label(text="Done!\n X out of Window to Continue!!")
-            fin_screen.add_widget(lbl)
-            sm.add_widget(fin_screen)
-            sm.current = fin_screen.name
+            sm.current = 'end_screen'
 
+    def back(self,instance,sm):
+        idx = self.Labels.index(self.Label)
+        if idx - 1 >= 0:
+            sm.current = self.Labels[idx-1]
+        else:
+            sm.current = 'Sample Choice'
 
     def getMode(self):
         return self.mode
@@ -171,7 +178,7 @@ class sampleButton(GridLayout):
 
         for i in range(2):
             self.add_widget(Label(text=""))
-        btn = Button(text = 'done')
+        btn = Button(text = 'Choose Analyses')
         btn.bind(on_press=partial(self.quit,sm=sm))
         self.add_widget(btn)
    
@@ -183,8 +190,8 @@ class sampleButton(GridLayout):
         self.samples = samples
 
     def getSamples(self):
-        return self.samples
-
+        return self.samples        
+    
 class sampleScreen(Screen):
     samples = dict()
     conditions = list()
@@ -207,6 +214,52 @@ class sampleScreen(Screen):
     def getSamples(self):
         return self.samples
 
+class endButton(GridLayout):
+    screenName = str()
+    root = object()
+    
+    def __init__(self,screenName,sm,root,**kwargs):
+        super(endButton,self).__init__(**kwargs)
+        self.cols = 3
+        self.orientation = 'vertical'
+        self.root = root
+
+        self.screenName = screenName
+
+        self.makeBtn(sm)
+
+    def makeBtn(self,sm):
+        lbl = Label(text="Done!\n X out of Window or press done")
+        self.add_widget(lbl)
+        for i in range(2):
+            self.add_widget(Label(text=""))
+        
+        backbtn = Button(text = 'Redo?')
+        backbtn.bind(on_press=partial(self.back,sm=sm))
+        self.add_widget(backbtn)
+        
+        self.add_widget(Label(text=""))
+
+        quitbtn = Button(text = 'Finished')
+        quitbtn.bind(on_press=partial(self.quit,sm=sm))
+        self.add_widget(quitbtn)
+
+    def back(self,instance,sm):
+        sm.current = 'Sample Choice'
+
+    def quit(self,instance,sm):
+        self.root.root_window.close()
+    
+class endScreen(Screen):
+    screenName = str()
+    
+    def __init__(self,sm,root,**kwargs):
+        self.name = 'end_screen'
+        super(endScreen, self).__init__(**kwargs)
+        self.screenName = 'end_screen'
+        btn = endButton(self.screenName,sm,root)
+        self.add_widget(btn)
+    
     
 class ModeScreens(App):
     title = "Choose Analysis mode"
@@ -238,6 +291,9 @@ class ModeScreens(App):
             allbtn = AllButtons(self.mode,modeLabels[Label],Labels,sm,Label)
             sm.add_widget(allbtn)
             self.mode = allbtn.getMode()
+        endscrn = endScreen(sm,self)
+        sm.add_widget(endscrn)
+
         sm.current = "Sample Choice"
         return sm
     
