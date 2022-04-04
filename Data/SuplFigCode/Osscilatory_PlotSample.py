@@ -7,7 +7,7 @@ from sklearn import linear_model
 
 import statistics
 import os
-import pyLineage as myPackage
+import pyCellLineage as myPackage
 
 
 modes = ['last']

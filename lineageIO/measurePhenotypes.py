@@ -15,7 +15,7 @@ from .loadRawImgs import loadRawImgs
 from .extractIntensity import extractIntensity
 from .extractArea import extractArea
 from .atpCalib import atpCalib
-import pyLineage.lineageIO as myPackage
+import pyCellLineage.lineageIO as myPackage
 
 
 

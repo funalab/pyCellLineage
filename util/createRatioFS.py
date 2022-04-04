@@ -8,11 +8,11 @@ Parameters:
 import os
 import sys
 import cv2 as cv
-from pyLineage.lineageIO.atpCalib import atpCalib
+from pyCellLineage.lineageIO.atpCalib import atpCalib
 import numpy as np
 import pandas as pd
 import glob
-import pyLineage.lineageIO as myPackage
+import pyCellLineage.lineageIO as myPackage
 
 def createRatioFS(path,atp_path=None,raw=False):
     if atp_path == None:

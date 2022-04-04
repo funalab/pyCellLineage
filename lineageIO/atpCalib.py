@@ -2,7 +2,7 @@ import pandas as pd
 import sys
 import os
 import numpy as np
-import pyLineage.lineageIO as myPackage
+import pyCellLineage.lineageIO as myPackage
 
 
 def atpCalib(intensity, emax=None, d=None, EC50=None, atp_path=None):

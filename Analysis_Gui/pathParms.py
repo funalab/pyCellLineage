@@ -1,6 +1,6 @@
 # ## Default Params
 import os
-import pyLineage as myPackage
+import pyCellLineage as myPackage
 import sys
 
 '''

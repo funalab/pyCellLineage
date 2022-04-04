@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy import stats
-import pyLineage as myPackage
+import pyCellLineage as myPackage
 
 root = os.path.join(os.path.dirname(myPackage.__file__),"Data")
 

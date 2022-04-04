@@ -5,8 +5,8 @@ Overview:
 Parameters:
 """
 
- from pyLineage.lineageIO import createHist
- import pyLineage as myPackage
+ from pyCellLineage.lineageIO import createHist
+ import pyCellLineage as myPackage
 
 
 def plotHists():

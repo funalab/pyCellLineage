@@ -8,7 +8,7 @@ Parameters:
 """
 import json
 import os
-import pyLineage.Analysis_Gui as myPackage
+import pyCellLineage.Analysis_Gui as myPackage
 
 class modeIO():
     Names = list()

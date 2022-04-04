@@ -5,7 +5,7 @@ Overview:
 Parameters:
 """
 
-import pyLineage as myPackage
+import pyCellLineage as myPackage
 import os
 import pandas as pd
 import matplotlib.pyplot as plt

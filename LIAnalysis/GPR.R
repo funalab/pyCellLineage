@@ -77,7 +77,7 @@ return(atpMat[complete.cases(atpMat * 0), , drop=FALSE])
  WorkingDirectory <- here()
  split_path <- function(x) if (dirname(x)==x) x else c(basename(x),split_path(dirname(x)))
  splitDir <- split_path(WorkingDirectory)
- i = match('pyLineage',splitDir)
+ i = match('pyCellLineage',splitDir)
  dirs <- c(rev(splitDir[c(i:length(splitDir))]),'Data')
  dirs <- dirs[2:length(dirs)]
  path = ''
