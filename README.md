@@ -1,9 +1,9 @@
-# Cellular Lineage Analysis Reveals Cellular Interaction Mechanisms for ATP Diversity in *Escherichia coli* Populations: (pyCellLineage)
+# Intercellular Interaction Mechanisms Promote Diversity in Intracellular ATP Concentration in *Escherichia coli* Populations: (pyCellLineage)
 
 - Ryo J. Nakatani: nakatani@fun.bio.keio.ac.jp
 - Masahiro Itabashi: itabashi@fun.bio.keio.ac.jp
 
-Last Modified: Sat, 02 Apr 2022 00:11:29 +0900
+Last Modified: Tue, 05 Apr 2022 20:08:02 +0900
 
 Copyright (c) 2018-2022 Funahashi Lab., Keio University.
 
