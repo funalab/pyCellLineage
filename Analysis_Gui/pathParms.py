@@ -2,10 +2,10 @@
 import os
 import pyCellLineage as myPackage
 import sys
-
 '''
 Hardwired parameters, path to samples
 '''
+
 
 class pathParms():
     '''
@@ -22,24 +22,25 @@ class pathParms():
 
     samplePath = dict()
 
-    def __init__(self,dirPath=None):
+    def __init__(self, dirPath=None):
         if dirPath != None:
             self.dirPath = dirPath
         else:
-            dataDir = os.path.join(os.path.dirname(myPackage.__file__),'Data')
+            dataDir = os.path.join(os.path.dirname(myPackage.__file__), 'Data')
+
             if os.path.exists(dataDir):
                 self.dirPath = dataDir
             else:
                 print('ERROR: Something went wrong with data root path')
                 sys.exit(-1)
-            
+
         self.samplePath = {
-            'poor':{
-                'sample1': os.path.join(self.dirPath,'glc_poor/sample1/Pos0'),
-                'sample2': os.path.join(self.dirPath,'glc_poor/sample2/Pos0'),
-                'sample3': os.path.join(self.dirPath,'glc_poor/sample3/Pos0')
+            'poor': {
+                'sample1': os.path.join(self.dirPath, 'glc_poor/sample1/Pos0'),
+                'sample2': os.path.join(self.dirPath, 'glc_poor/sample2/Pos0'),
+                'sample3': os.path.join(self.dirPath, 'glc_poor/sample3/Pos0')
             },
-            'rich':{
+            'rich': {
                 'sample1': os.path.join(self.dirPath, 'glc_rich/sample1/Pos0'),
                 'sample2': os.path.join(self.dirPath, 'glc_rich/sample2/Pos0'),
                 'sample3': os.path.join(self.dirPath, 'glc_rich/sample3/Pos0')

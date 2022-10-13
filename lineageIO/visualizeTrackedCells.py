@@ -29,7 +29,7 @@ def visualizeTrackedCells(matFilePath, segImgsPath, rawImgsPath, originFrame=0):
                   image labeld with lineage index.
     '''
 
-    cellDfWPL = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame)
+    cellDfWPL = annotateLineageIdx(matFilePath= matFilePath, segImgsPath=segImgsPath, rawImgsPath=rawImgsPath, originFrame=originFrame)
     uColList = createUniqueColorList(np.max(cellDfWPL['linIdx'] + 1))
 
     segImgs = loadMatImgs(segImgsPath)

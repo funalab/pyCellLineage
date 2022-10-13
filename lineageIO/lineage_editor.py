@@ -15,7 +15,7 @@ import sys
 
 def lineage_editor(matFilePath, segImgsPath, rawImgsPath, originFrame=0, mode=2, DF=None):
     if DF is None:
-        DF = annotateLineageIdx(matFilePath, segImgsPath, rawImgsPath, originFrame)
+        DF = annotateLineageIdx(matFilePath=matFilePath, segImgsPath=segImgsPath, rawImgsPath=rawImgsPath, originFrame=originFrame)
     bad_place = DF[DF['cenX'] == 0]
     prv_mode = None
     if mode == 1:  # find cells at weird positions and bring them to the correct place (linear)

@@ -56,7 +56,7 @@ def makeHistFromRawImage(matImgsPath,rawImgsPath,timelapse=False,savePath=None,m
         allIntens = allIntens + list(intens.values())
     print("n="+str(len([i for i in allIntens if i > minInten])))
     createHist(data=[i for i in allIntens if i > minInten],saveDir=savePath,atpMax=atpInten,fname=fname)
-
+    return [i for i in allIntens if i > minInten]
     
 def createHist(CellDf=None,data=None,attr='intensity',atpMax=None,freqMax=None,saveDir=None,fname=None,z=None,minCells=50,showfig=False):
     if CellDf is not None:

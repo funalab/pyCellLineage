@@ -1,0 +1,4 @@
+/Users/nakatani/git/pyLineage/Data/Histograms/Control/MergedSamples(N=3)/Pos0
+0.5511610104618525
+/Users/nakatani/git/pyLineage/Data/Histograms/GlucosePoor/MergedSamples(N=3)/Pos0
+0.1309192200557103

@@ -11,7 +11,7 @@ from .createGraph import createGraph
 
 
 def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
-                    attrMax=0, attrMin=0, ylim=None,show=False,
+                    attrMax=None, attrMin=None, ylim=None,show=False,
                     xlabel='', ylabel='time', cmap='gnuplot'):
     '''
     Draw 2D lineage.
@@ -55,14 +55,17 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
     plt.cla()
     plt.clf()
     rootIdx = list()
+    uIDs = list(cellDfWP['uID'])
+    uID2vertID = dict(zip(uIDs,list(range(len(uIDs)))))
+
     for i in range(len(cellDfWP)):
         motherID = cellDfWP['motherID'][i]
         Z = cellDfWP['Z'][i]
-        if motherID == -1 and Z == 0:
-            rootIdx.append(i)
-
+        if motherID == -1 or Z == min(cellDfWP['Z']):
+            uID = uID2vertID[cellDfWP['uID'][i]]
+            rootIdx.append(uID)
     if attr is not None:
-        if cellDfWP.dtypes[attr] == object:
+        if cellDfWP.dtypes[attr] == object and type(cellDfWP[attr][0])==str():
             attrStrList = sorted(cellDfWP[attr].unique(),reverse=True)
             valueDict = dict(zip(attrStrList,[i for i in range(len(attrStrList))]))
             attrIntList = list()
@@ -87,7 +90,6 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
             minAttr = attrMin
             
         if cmap == 'bwr':
-            print(attrMin,attrMax)
             colors = {key: plt.cm.bwr(
                 (float(value) - minAttr)/(float(maxAttr) - minAttr)
             ) for key, value in list(cellDfWP[attr].items())}
@@ -120,7 +122,10 @@ def create2DLineage(cellDfWP, dt=1, attr=None, savePath=None,
         target = edge.target
         dx = [pos[source][0], pos[target][0]]
         dy = [pos[source][1], pos[target][1]]
-        color = colors[target]
+        if target not in colors.keys():
+            color = (0,0,0) # Fake cells are automatically Black
+        else:
+            color = colors[target]
         plot = plt.plot(dx, dy, c=color)
     if savePath is not None:
         plt.savefig(savePath)
